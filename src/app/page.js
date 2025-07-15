@@ -11,11 +11,16 @@ import { Autoplay, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import { useCart } from '@/context/CartContext'
+import { useGetBanners, useDeleteBannerMutation } from '@/app/api/bannerApi'
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [swiperInstance, setSwiperInstance] = useState(null)
-const { addToCart } = useCart()
+  const { addToCart } = useCart()
+   const { data, isLoading } = useGetBanners()
+  const deleteBanner = useDeleteBannerMutation()
+
+  if (isLoading) return <p>Loading banners...</p>
 
 
   const slideVariants = {
@@ -32,16 +37,16 @@ const { addToCart } = useCart()
       y: -20
     }
   };
-  
 
-const handleAddToCart = (product) => {
-  addToCart({ ...product, quantity: 1 })
-}
+
+  const handleAddToCart = (product) => {
+    addToCart({ ...product, quantity: 1 })
+  }
 
   return (
     <main className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
       {/* Hero Section */}
-      <section className="relative mx-auto mt-20 flex items-center w-full">
+      {/* <section className="relative mx-auto mt-20 flex items-center w-full">
         <Swiper
           modules={[Autoplay, Pagination]}
           loop
@@ -102,8 +107,54 @@ const handleAddToCart = (product) => {
             </SwiperSlide>
           ))}
         </Swiper>
+      </section> */}
+      <section className='w-full'>
+        <div className="p-6">
+          <h1 className="text-2xl font-bold mb-4">Manage Banners</h1>
+
+          <table className="w-full table-auto border text-left">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="p-2">Image</th>
+                <th className="p-2">Heading</th>
+                <th className="p-2">Description</th>
+                <th className="p-2">Device</th>
+                <th className="p-2">Status</th>
+                <th className="p-2">Order</th>
+                <th className="p-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data?.data?.map(banner => (
+                <tr key={banner._id} className="border-t">
+                  <td className="p-2">
+                    <Image src={banner.imageUrl} alt="banner" width={120} height={60} className="rounded-md object-cover"   priority/>
+                  </td>
+                  <td className="p-2">{banner.heading}</td>
+                  <td className="p-2">{banner.description}</td>
+                  <td className="p-2">{banner.deviceType}</td>
+                  <td className="p-2">
+                    <span className={`font-semibold ${banner.isActive ? "text-green-500" : "text-red-500"}`}>
+                      {banner.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+                  <td className="p-2">{banner.order}</td>
+                  <td className="p-2 space-x-2">
+                    <button className="px-2 py-1 bg-blue-500 text-white rounded">Edit</button>
+                    <button
+                      onClick={() => deleteBanner.mutate(banner._id)}
+                      className="px-2 py-1 bg-red-500 text-white rounded"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
- <section id="categories" className="py-10 px-2 sm:px-4 md:px-8 bg-[var(--color-white)]">
+      <section id="categories" className="py-10 px-2 sm:px-4 md:px-8 bg-[var(--color-white)]">
         <div className="container mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12 text-[var(--color-pink-600)]">Shop by Category</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
@@ -165,7 +216,7 @@ const handleAddToCart = (product) => {
                     <button onClick={() => handleAddToCart(product)} className="w-full bg-[var(--color-pink-500)] text-[var(--color-white)] py-2 rounded-md hover:bg-[var(--color-pink-600)] transition-colors text-sm sm:text-base">
                       Add to Cart
                     </button>
-                  </div></Link> 
+                  </div></Link>
               </div>
             ))}
           </div>
