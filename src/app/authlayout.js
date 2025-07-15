@@ -16,9 +16,9 @@ export default function AuthLayout({ children }) {
   useEffect(() => {
     if (!loading && userData && isAuthPage) {
       if (userData.role === 'admin') {
-        router.push('/admin/dashboard')
-      } else {
         router.push('/')
+      } else {
+        router.push('/login')
       }
     }
   }, [userData, loading, pathname, isAuthPage, router])
