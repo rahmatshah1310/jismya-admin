@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useContext, createContext } from "react";
-import {authService} from "@/app/services/authService"; 
+import {authService} from "@/services/authService"; 
 
 const AuthContext = createContext(null);
 
