@@ -8,10 +8,13 @@ export const sendRequest = async (configs) => {
 
   const headers = { ...(configs.headers || {}) };
 
+    if (configs.data instanceof FormData) {
+    delete headers["Content-Type"];
+  }
+
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
-
   const requestConfig = {
     baseURL: process.env.NEXT_PUBLIC_API_URL,
     ...configs,
