@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { bannerService } from "@/app/services/bannerService";
+import { bannerService } from "@/services/bannerService";
 
 // ✅ Create Banner
 export const useCreateBannerMutation = () => {
