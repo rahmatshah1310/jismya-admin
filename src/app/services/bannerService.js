@@ -58,11 +58,11 @@ export const getBannersByDevice = async (deviceType) => {
 };
 
 
-export const reorderBanner = async (data) => {
+export const reorderBanner = async (id,data) => {
   try {
     const response = await sendRequest({
       method: "PUT", // or PATCH, based on your backend
-      url: `/banners/reorder`, 
+      url: `/banners/order/${id}`, 
       data,
     });
     return response.data;
