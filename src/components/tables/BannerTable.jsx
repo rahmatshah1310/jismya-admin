@@ -25,7 +25,7 @@ export default function BannerTable({ title, banners, setSelectedBanner, setShow
                                     <Image src={banner.imageUrl} alt="banner" width={120} height={60} className="rounded-md object-cover" />
                                 </td>
                                 <td className="p-2 min-w-[200px]">{banner.heading}</td>
-                                <td className="p-2 min-w-[250px]">{banner.description}</td>
+                                <td className="p-2 min-w-[200px] max-w-[200px] overflow-hidden whitespace-nowrap text-ellipsis">{banner.description}</td>
                                 <td className="p-2 min-w-[120px]">{banner.deviceType}</td>
                                 <td className="p-2 min-w-[100px]">
                                     <span className={`font-semibold ${banner.isActive ? "text-green-500" : "text-red-500"}`}>
