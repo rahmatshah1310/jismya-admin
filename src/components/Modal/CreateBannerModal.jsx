@@ -3,6 +3,7 @@ import { useState } from "react";
 import Modal from "react-modal";
 import InputField from "../ui/InputField";
 import Button from "../ui/Button";
+import { toast } from "react-toastify";
 
 export default function CreateBannerModal({ onClose, showCreateModal }) {
   const createBanner = useCreateBannerMutation();
@@ -16,35 +17,59 @@ export default function CreateBannerModal({ onClose, showCreateModal }) {
   const resetForm = () => {
     setForm({ heading: "", description: "", image: null, deviceType: "" });
   };
+
+  const dimensionRules = {
+    laptop: { width: 1280, height: 720 },
+    tablet: { width: 900, height: 300 },
+    mobile: { width: 500, height: 200 },
+  };
+
+
   const handleImageSelect = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setForm(prev => ({ ...prev, image: file }));
+
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+
+    img.onload = () => {
+      const { width, height } = img;
+      const { width: reqWidth, height: reqHeight } = dimensionRules[form.deviceType];
+
+      if (width !== reqWidth || height !== reqHeight) {
+        toast.error(`Invalid image dimensions. Required for ${form.deviceType}: ${reqWidth}x${reqHeight}px. Your image is ${width}x${height}px.`);
+        e.target.value = '';
+        return;
+      }
+
+      setForm(prev => ({ ...prev, image: file }));
+    };
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.heading || !form.description || !form.deviceType || !form.image) {
-      return alert("Please fill in all fields and select an image");
-    }
-
     const formData = new FormData();
     formData.append("heading", form.heading);
     formData.append("description", form.description);
     formData.append("deviceType", form.deviceType);
-    formData.append("image", form.image);  // ✅ matches backend key
-
-    await createBanner.mutateAsync(formData);
-    resetForm();
-    onClose();
+    formData.append("image", form.image);
+    try {
+      const res = await createBanner.mutateAsync(formData);
+      toast.success(res?.message || "Banner created successfully!");
+      resetForm();
+      onClose();
+    } catch (error) {
+      console.error("Banner creation error:", error);
+      toast.error(typeof error === "string" ? error : "Something went wrong.");
+    }
   };
 
 
 
   return (
     <Modal
-      isOpen={showCreateModal}
+      isOpen={true}
       ariaHideApp={false}
       onRequestClose={onClose}
       contentLabel="Create Banner Modal"
