@@ -68,10 +68,7 @@ export const reorderBanner = async (id,data) => {
     return response.data;
   } catch (error) {
     console.error("BannerService [reorderBanner] error:", error);
-   throw {
-  isHandled: true,
-  message: responseError || "Unknown API error"
-};
+   throw error;
   }
 };
 
