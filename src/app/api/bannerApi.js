@@ -31,7 +31,6 @@ export const useUpdateBannerMutation = () => {
   return useMutation({
     mutationFn: ({ id, data }) => bannerService.updateBanner(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["banners"] });
       queryClient.invalidateQueries({ queryKey: ['banners-device'] });
 
     }
