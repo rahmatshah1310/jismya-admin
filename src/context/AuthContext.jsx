@@ -10,11 +10,10 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
 
-  console.log(userData, "userData in AuthProvider");
   // Fetch current user data
  const fetchCurrentUser = async () => {
   try {
-    const response = await authService.me(); // No need to pass token
+    const response = await authService.me();
     if (response?.data?.user) {
       setUserData(response.data.user);
     } else if (response?.data) {
@@ -66,7 +65,6 @@ export const AuthProvider = ({ children }) => {
     const rawToken = data.token;
     const cleanToken = rawToken.replace("Bearer ", "");
     const user = data.user;
-    console.log(user,"user.......")
 
     localStorage.setItem("accessToken", cleanToken);
     localStorage.setItem("userData", JSON.stringify(user));
