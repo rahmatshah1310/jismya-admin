@@ -9,6 +9,8 @@ import CreateBannerModal from '@/components/Modal/CreateBannerModal'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import EditBannerModal from '@/components/Modal/EditBannerModal'
 import BannerTable from '@/components/tables/BannerTable'
+import ViewBannerModal from '@/components/Modal/ViewBannerModal'
+import ReorderBannerModal from '@/components/Modal/ReorderBannerModal'
 
 export default function Home() {
   const [showEditModal, setShowEditModal] = useState(false);
@@ -16,16 +18,28 @@ export default function Home() {
   const { data, isLoading } = useGetBanners()
   const [showCreateModal, setShowCreateModal] = useState(false)
   const deleteBanner = useDeleteBannerMutation()
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [viewBannerId, setViewBannerId] = useState(null);
+  const [showReorderModal, setShowReorderModal] = useState(false);
+const [reorderBanner, setReorderBanner] = useState(null);
+
+const handleReorderBanner = (banner) => {
+  setReorderBanner(banner);
+  setShowReorderModal(true);
+};
+
+
+
+  const handleViewBanner  = (bannerId) => {
+    setViewBannerId(bannerId);
+    setShowViewModal(true);
+  };
+
 
 
   const { data: mobileBanners, isLoading: loadingMobile } = useBannersByDevice('mobile');
   const { data: laptopBanners, isLoading: loadingLaptop } = useBannersByDevice('laptop');
   const { data: tabletBanners, isLoading: loadingTablet } = useBannersByDevice('tablet');
-  const bannerId="68769f9ad742aa1c8a1c5a80";
-   const { data: newdata,  error } = useSingleBanner(bannerId);
-
-   console.log(newdata?.data,"bannerdata...............")
-  // ✅ Helper component for rendering sections
 
   return (
     <ProtectedRoute>  <main className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
@@ -52,6 +66,22 @@ export default function Home() {
           )
         }
 
+        {showViewModal && viewBannerId && (
+          <ViewBannerModal
+            bannerId={viewBannerId}
+            onClose={() => setShowViewModal(false)}
+          />
+        )}
+ {
+          showReorderModal && (
+            <ReorderBannerModal
+            banner={reorderBanner}
+              showReorderModal={showReorderModal}
+              onClose={() => setShowReorderModal(false)}
+            />
+          )
+        }
+
         <Button onClick={() => setShowCreateModal(true)} className="mb-4 bg-green-500 text-white">Create Banner</Button>
 
         <BannerTable
@@ -60,6 +90,8 @@ export default function Home() {
           setSelectedBanner={setSelectedBanner}
           setShowEditModal={setShowEditModal}
           deleteBanner={deleteBanner}
+           handleViewBanner={handleViewBanner}
+           handleReorderBanner={handleReorderBanner}
         />
 
         <BannerTable
@@ -68,6 +100,8 @@ export default function Home() {
           setSelectedBanner={setSelectedBanner}
           setShowEditModal={setShowEditModal}
           deleteBanner={deleteBanner}
+           handleViewBanner={handleViewBanner}
+           handleReorderBanner={handleReorderBanner}
         />
 
         <BannerTable
@@ -76,6 +110,8 @@ export default function Home() {
           setSelectedBanner={setSelectedBanner}
           setShowEditModal={setShowEditModal}
           deleteBanner={deleteBanner}
+           handleViewBanner={handleViewBanner}
+           handleReorderBanner={handleReorderBanner}
         />
       </main>
     </main></ProtectedRoute>
