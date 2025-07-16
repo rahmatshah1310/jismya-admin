@@ -25,7 +25,7 @@ export default function ViewBannerModal({ bannerId, onClose }) {
                 <div className="flex flex-col w-full h-full overflow-auto p-4 space-y-4">
                     <h2 className="text-3xl font-bold text-center">{banner?.heading}</h2>
                     <Image src={banner?.imageUrl} width={300} height={300} alt="banner" className="w-full h-64 object-cover rounded" />
-                    <div className="flex-1 space-y-2 text-lg">
+                    <div className="flex-1 space-y-2 text-lg break-words overflow-auto">
                         <p><strong>Description:</strong> {banner?.description}</p>
                         <p><strong>Device Type:</strong> {banner?.deviceType}</p>
                         <p><strong>Status:</strong> {banner?.isActive ? "Active" : "Inactive"}</p>
