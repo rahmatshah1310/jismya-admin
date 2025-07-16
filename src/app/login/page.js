@@ -10,7 +10,6 @@ export default function Login() {
   const router = useRouter();
   const loginMutation = useLoginMutation();
   const { userData,setAuthData } = useAuth();
-  console.log(userData, "userData in login page");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
