@@ -1,119 +1,124 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import Button from '@/components/ui/Button'
-import 'swiper/css'
-import 'swiper/css/pagination'
-import { useGetBanners, useDeleteBannerMutation, useBannersByDevice, useSingleBanner } from '@/app/api/bannerApi'
-import CreateBannerModal from '@/components/Modal/CreateBannerModal'
-import ProtectedRoute from '@/components/ProtectedRoute'
-import EditBannerModal from '@/components/Modal/EditBannerModal'
-import BannerTable from '@/components/tables/BannerTable'
-import ViewBannerModal from '@/components/Modal/ViewBannerModal'
-import ReorderBannerModal from '@/components/Modal/ReorderBannerModal'
+import { useState } from 'react';
+import Button from '@/components/ui/Button';
+import { useGetBanners, useDeleteBannerMutation, useBannersByDevice } from '@/app/api/bannerApi';
+import CreateBannerModal from '@/components/Modal/CreateBannerModal';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import EditBannerModal from '@/components/Modal/EditBannerModal';
+import BannerTable from '@/components/tables/BannerTable';
+import ViewBannerModal from '@/components/Modal/ViewBannerModal';
+import ReorderBannerModal from '@/components/Modal/ReorderBannerModal';
+import DeleteBannerModal from '@/components/Modal/DeleleteBannerModal';
+
 
 export default function Home() {
-  const [showEditModal, setShowEditModal] = useState(false);
+  const [activeModal, setActiveModal] = useState(null); // 'create' | 'edit' | 'view' | 'reorder'
   const [selectedBanner, setSelectedBanner] = useState(null);
-  const { data, isLoading } = useGetBanners()
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const deleteBanner = useDeleteBannerMutation()
-  const [showViewModal, setShowViewModal] = useState(false);
   const [viewBannerId, setViewBannerId] = useState(null);
-  const [showReorderModal, setShowReorderModal] = useState(false);
-const [reorderBanner, setReorderBanner] = useState(null);
 
-const handleReorderBanner = (banner) => {
-  setReorderBanner(banner);
-  setShowReorderModal(true);
-};
-
-
-
-  const handleViewBanner  = (bannerId) => {
-    setViewBannerId(bannerId);
-    setShowViewModal(true);
-  };
-
-
-
-  const { data: mobileBanners, isLoading: loadingMobile } = useBannersByDevice('mobile');
   const { data: laptopBanners, isLoading: loadingLaptop } = useBannersByDevice('laptop');
   const { data: tabletBanners, isLoading: loadingTablet } = useBannersByDevice('tablet');
+  const { data: mobileBanners, isLoading: loadingMobile } = useBannersByDevice('mobile');
+
+  const deleteBanner = useDeleteBannerMutation();
+
+  const closeModal = () => {
+    setActiveModal(null);
+    setSelectedBanner(null);
+    setViewBannerId(null);
+  };
+
+  const handleEditBanner = (banner) => {
+    setSelectedBanner(banner);
+    setActiveModal('edit');
+  };
+
+  const handleViewBanner = (bannerId) => {
+    setViewBannerId(bannerId);
+    setActiveModal('view');
+  };
+
+  const handleReorderBanner = (banner) => {
+    setSelectedBanner(banner);
+    setActiveModal('reorder');
+  };
+
+  const handleDeleteBanner = (banner) => {
+    setSelectedBanner(banner);
+    setActiveModal('delete');
+  };
 
   return (
-    <ProtectedRoute>  <main className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
+    <ProtectedRoute>
       <main className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 overflow-x-visible">
-        <h1 className='text-center p-2 text-3xl '>Banners Management</h1>
+        <h1 className="text-center p-2 text-3xl">Banners Management</h1>
 
+        <div className="flex justify-end mb-4">
+          <Button
+            onClick={() => setActiveModal('create')}
+            className="w-full rounded sm:w-auto bg-green-500 text-white"
+          >
+            Create Banner
+          </Button>
+        </div>
 
-        {
-          showCreateModal && (
-            <CreateBannerModal
-              showCreateModal={showCreateModal}
-              onClose={() => setShowCreateModal(false)}
-            />
-          )
-        }
-
-        {
-          showEditModal && selectedBanner && (
-            <EditBannerModal
-              banner={selectedBanner}
-              showEditModal={showEditModal}
-              onClose={() => setShowEditModal(false)}
-            />
-          )
-        }
-
-        {showViewModal && viewBannerId && (
-          <ViewBannerModal
-            bannerId={viewBannerId}
-            onClose={() => setShowViewModal(false)}
-          />
+        {/* Modals */}
+        {activeModal === 'create' && (
+          <CreateBannerModal onClose={closeModal} />
         )}
- {
-          showReorderModal && (
-            <ReorderBannerModal
-            banner={reorderBanner}
-              showReorderModal={showReorderModal}
-              onClose={() => setShowReorderModal(false)}
-            />
-          )
-        }
+        {activeModal === 'edit' && selectedBanner && (
+          <EditBannerModal banner={selectedBanner} onClose={closeModal} />
+        )}
+        {activeModal === 'view' && viewBannerId && (
+          <ViewBannerModal bannerId={viewBannerId} onClose={closeModal} />
+        )}
+        {activeModal === 'reorder' && selectedBanner && (
+          <ReorderBannerModal banner={selectedBanner} onClose={closeModal} />
+        )}
+        {activeModal === 'delete' && selectedBanner && (
+          <DeleteBannerModal banner={selectedBanner} onClose={closeModal} />
+        )}
 
-        <Button onClick={() => setShowCreateModal(true)} className="mb-4 bg-green-500 text-white">Create Banner</Button>
-
+        {/* Laptop Banners */}
         <BannerTable
           title="Laptop Banners"
           banners={laptopBanners}
           setSelectedBanner={setSelectedBanner}
-          setShowEditModal={setShowEditModal}
+          setShowEditModal={() => setActiveModal('edit')}
           deleteBanner={deleteBanner}
-           handleViewBanner={handleViewBanner}
-           handleReorderBanner={handleReorderBanner}
+          handleViewBanner={handleViewBanner}
+          handleReorderBanner={handleReorderBanner}
+          handleDeleteBanner={handleDeleteBanner}
+          handleEditBanner={handleEditBanner}
         />
 
+        {/* Tablet Banners */}
         <BannerTable
           title="Tablet Banners"
           banners={tabletBanners}
           setSelectedBanner={setSelectedBanner}
-          setShowEditModal={setShowEditModal}
+          setShowEditModal={() => setActiveModal('edit')}
           deleteBanner={deleteBanner}
-           handleViewBanner={handleViewBanner}
-           handleReorderBanner={handleReorderBanner}
+          handleViewBanner={handleViewBanner}
+          handleReorderBanner={handleReorderBanner}
+          handleDeleteBanner={handleDeleteBanner}
+           handleEditBanner={handleEditBanner}
         />
 
+        {/* Mobile Banners */}
         <BannerTable
           title="Mobile Banners"
           banners={mobileBanners}
           setSelectedBanner={setSelectedBanner}
-          setShowEditModal={setShowEditModal}
+          setShowEditModal={() => setActiveModal('edit')}
           deleteBanner={deleteBanner}
-           handleViewBanner={handleViewBanner}
-           handleReorderBanner={handleReorderBanner}
+          handleViewBanner={handleViewBanner}
+          handleReorderBanner={handleReorderBanner}
+          handleDeleteBanner={handleDeleteBanner}
+           handleEditBanner={handleEditBanner}
         />
       </main>
-    </main></ProtectedRoute>
-  )
+    </ProtectedRoute>
+  );
 }
