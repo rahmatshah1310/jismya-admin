@@ -1,44 +1,76 @@
-// /app/hooks/useBannerMutations.js
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { bannerService } from "@/app/services/bannerService";
 
 // ✅ Create Banner
 export const useCreateBannerMutation = () => {
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (formData) => {
-      const response = await bannerService.createBanner(formData);
-      if (!response) throw new Error("Banner creation failed");
-      return response;
-    },
+    mutationFn: bannerService.createBanner,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["banners"] });
+       queryClient.invalidateQueries({ queryKey: ['banners-device'] });
+    }
   });
 };
 
 // ✅ Delete Banner
 export const useDeleteBannerMutation = () => {
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (id) => {
-      const response = await bannerService.deleteBanner(id);
-      if (!response) throw new Error("Banner deletion failed");
-      return response;
-    },
+    mutationFn: bannerService.deleteBanner,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["banners"] });
+      queryClient.invalidateQueries({ queryKey: ['banners-device'] });
+    }
   });
 };
 
 // ✅ Update Banner
 export const useUpdateBannerMutation = () => {
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, data }) => {
-      const response = await bannerService.updateBanner(id, data);
-      if (!response) throw new Error("Banner update failed");
-      return response;
-    },
+    mutationFn: ({ id, data }) => bannerService.updateBanner(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["banners"] });
+      queryClient.invalidateQueries({ queryKey: ['banners-device'] });
+
+    }
   });
 };
 
-// ✅ Fetch Banners (query, not mutation)
-export const useGetBanners = () => {
-  return useQuery({
+// ✅ Reorder Banner
+export const useReorderBannerMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: bannerService.reorderBanner,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["banners"] });
+      queryClient.invalidateQueries({ queryKey: ['banners-device'] });
+    }
+  });
+};
+
+// ✅ Fetch All Banners
+export const useGetBanners = () =>
+  useQuery({
     queryKey: ["banners"],
     queryFn: bannerService.getBanners,
   });
-};
+
+// ✅ Get Single Banner
+export const useSingleBanner = (id) =>
+  useQuery({
+    queryKey: ["banner", id],
+    queryFn: () => bannerService.getSingleBanner(id),
+    enabled: !!id,
+  });
+
+// ✅ Get Category Banners
+export const useBannersByDevice = (deviceType) =>
+  useQuery({
+    queryKey: ["banners-device", deviceType],
+    queryFn: () => bannerService.getBannersByDevice(deviceType),
+       onSuccess: () => {
+    },
+    enabled: !!deviceType,
+  });
