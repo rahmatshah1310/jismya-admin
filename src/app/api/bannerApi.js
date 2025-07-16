@@ -44,7 +44,6 @@ export const useReorderBannerMutation = () => {
   return useMutation({
     mutationFn: ({ id, data }) => bannerService.reorderBanner(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["banners"] });
       queryClient.invalidateQueries({ queryKey: ['banners-device'] });
     }
   });
