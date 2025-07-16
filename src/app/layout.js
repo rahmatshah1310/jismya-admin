@@ -3,6 +3,8 @@ import AuthLayout from './authlayout'
 import Providers from './providers'
 import { AuthProvider } from '@/context/AuthContext'
 import { CartProvider } from '@/context/CartContext'
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import ProtectedRoute from '@/components/ProtectedRoute'
 
 // const inter = Inter({ subsets: ['latin'] })
@@ -23,6 +25,7 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <CartProvider><AuthProvider><AuthLayout><Providers>{children}</Providers></AuthLayout></AuthProvider></CartProvider>
+           <ToastContainer position="top-right" autoClose={3000} />
       </body>
     </html>
   )
