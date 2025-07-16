@@ -8,7 +8,7 @@ export const useCreateBannerMutation = () => {
     mutationFn: bannerService.createBanner,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["banners"] });
-       queryClient.invalidateQueries({ queryKey: ['banners-device'] });
+      queryClient.invalidateQueries({ queryKey: ['banners-device'] });
     }
   });
 };
@@ -42,7 +42,7 @@ export const useUpdateBannerMutation = () => {
 export const useReorderBannerMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: bannerService.reorderBanner,
+    mutationFn: ({ id, data }) => bannerService.reorderBanner(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["banners"] });
       queryClient.invalidateQueries({ queryKey: ['banners-device'] });
@@ -70,7 +70,7 @@ export const useBannersByDevice = (deviceType) =>
   useQuery({
     queryKey: ["banners-device", deviceType],
     queryFn: () => bannerService.getBannersByDevice(deviceType),
-       onSuccess: () => {
+    onSuccess: () => {
     },
     enabled: !!deviceType,
   });
