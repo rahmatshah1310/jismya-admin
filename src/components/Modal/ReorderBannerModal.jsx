@@ -4,32 +4,35 @@ import { useState } from "react";
 import Modal from "react-modal";
 import InputField from "../ui/InputField";
 import Button from "../ui/Button";
+import { toast } from "react-toastify";
 
 export default function ReorderBannerModal({ banner, onClose }) {
   if (!banner) return null;
   const [order, setOrder] = useState(banner?.order);
-  const { mutate, isLoading } = useReorderBannerMutation();
+  const reOrder= useReorderBannerMutation();
+  const isLoading=reOrder.isPending;
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    mutate(
+    reOrder.mutate(
       {
         id: banner._id,
         data: { order: Number(order) }
       },
       {
-        onSuccess: () => {
+        onSuccess: (res) => {
+          toast.success(res?.message)
           onClose();
         },
         onError: (error) => {
-    if (error?.response?.data?.message) {
-      alert(error.response.data.message);
-    }
-        
+          console.error("Reorder error:", error);
+          toast.error(typeof error === "string" ? error : "Something went wrong.");
+        }
       }
-    }
     );
-  };
+};
+
 
   return (
     <Modal
