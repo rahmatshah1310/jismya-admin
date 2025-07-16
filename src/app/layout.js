@@ -3,6 +3,7 @@ import AuthLayout from './authlayout'
 import Providers from './providers'
 import { AuthProvider } from '@/context/AuthContext'
 import { CartProvider } from '@/context/CartContext'
+import ProtectedRoute from '@/components/ProtectedRoute'
 
 // const inter = Inter({ subsets: ['latin'] })
 
