@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useContext, createContext } from "react";
-import {authService} from "@/services/authService"; 
+import { authService } from "@/services/authService";
+import { toast } from "react-toastify";
 
 const AuthContext = createContext(null);
 
@@ -9,23 +10,22 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-
   // Fetch current user data
- const fetchCurrentUser = async () => {
-  try {
-    const response = await authService.me();
-    if (response?.data?.user) {
-      setUserData(response.data.user);
-    } else if (response?.data) {
-      setUserData(response.data);
+  const fetchCurrentUser = async () => {
+    try {
+      const response = await authService.me();
+      if (response?.data?.user) {
+        setUserData(response.data.user);
+      } else if (response?.data) {
+        setUserData(response.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch user data:", error);
+      handleLogout();
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("Failed to fetch user data:", error);
-    handleLogout();
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   // Load user data and token from localStorage on mount
   useEffect(() => {
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("userData");
     setToken(null);
     setUserData(null);
-    alert("Logged out successfully");
+    toast.success("Logged out successfully");
   };
 
   const setAuthData = (responseData) => {
