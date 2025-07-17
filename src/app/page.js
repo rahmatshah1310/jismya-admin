@@ -70,7 +70,7 @@ export default function Home() {
   return (
     <ProtectedRoute>
       <main className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 overflow-x-visible">
-        <h1 className="text-center p-2 text-3xl">Banners Management</h1>
+        <h1 className="text-center p-2 text-5xl">Banners Management</h1>
 
         {/* <div className="flex justify-end mb-4">
           <Button
