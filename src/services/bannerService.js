@@ -102,6 +102,21 @@ export const updateBanner = async (id, data) => {
   }
 };
 
+
+export const toggleBannerStatus = async (id, data) => {
+  try {
+    const response = await sendRequest({
+      method: "PUT",
+      url: `/banners/toggle/${id}`,
+      data,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("BannerService [toggleBannerStatus] error:", error);
+    throw error;
+  }
+};
+
 // ✅ Final export
 export const bannerService = {
   createBanner,
@@ -110,5 +125,6 @@ export const bannerService = {
   getBannersByDevice,
   updateBanner,
   getSingleBanner,
-  reorderBanner
+  reorderBanner,
+  toggleBannerStatus
 };
