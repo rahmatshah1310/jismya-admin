@@ -72,3 +72,16 @@ export const useBannersByDevice = (deviceType) =>
     },
     enabled: !!deviceType,
   });
+
+export const useToggleStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, isActive }) =>
+      bannerService.toggleBannerStatus(id, { isActive }),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['banners-device'] });
+    }
+  });
+};
