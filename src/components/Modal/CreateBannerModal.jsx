@@ -5,13 +5,17 @@ import InputField from "../ui/InputField";
 import Button from "../ui/Button";
 import { toast } from "react-toastify";
 
-export default function CreateBannerModal({ onClose, showCreateModal }) {
+export default function CreateBannerModal({
+  onClose,
+  showCreateModal,
+  deviceType,
+}) {
   const createBanner = useCreateBannerMutation();
   const [form, setForm] = useState({
     heading: "",
     description: "",
     image: null,
-    deviceType: "laptop",
+    deviceType: deviceType || "laptop",
   });
   const isSubmitting = createBanner.isPending;
   const resetForm = () => {
@@ -24,7 +28,6 @@ export default function CreateBannerModal({ onClose, showCreateModal }) {
     mobile: { width: 500, height: 200 },
   };
 
-
   const handleImageSelect = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -34,28 +37,36 @@ export default function CreateBannerModal({ onClose, showCreateModal }) {
 
     img.onload = () => {
       const { width, height } = img;
-      const { width: reqWidth, height: reqHeight } = dimensionRules[form.deviceType];
+      const { width: reqWidth, height: reqHeight } =
+        dimensionRules[form.deviceType];
 
       if (width !== reqWidth || height !== reqHeight) {
-        toast.error(`Invalid image dimensions. Required for ${form.deviceType}: ${reqWidth}x${reqHeight}px. Your image is ${width}x${height}px.`);
-        e.target.value = '';
+        toast.error(
+          `Invalid image dimensions. Required for ${form.deviceType}: ${reqWidth}x${reqHeight}px. Your image is ${width}x${height}px.`
+        );
+        e.target.value = "";
         return;
       }
 
-      setForm(prev => ({ ...prev, image: file }));
+      setForm((prev) => ({ ...prev, image: file }));
     };
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!form.image) {
+      toast.error("Image should not be empty");
+      return;
+    }
     const formData = new FormData();
     formData.append("heading", form.heading);
     formData.append("description", form.description);
-    formData.append("deviceType", form.deviceType);
+    formData.append("deviceType", deviceType);
     formData.append("image", form.image);
     try {
       const res = await createBanner.mutateAsync(formData);
+      console.log(res.message, "error message");
       toast.success(res?.message || "Banner created successfully!");
       resetForm();
       onClose();
@@ -65,18 +76,20 @@ export default function CreateBannerModal({ onClose, showCreateModal }) {
     }
   };
 
-
-
   return (
     <Modal
       isOpen={true}
       ariaHideApp={false}
       onRequestClose={onClose}
+      deviceType="laptop"
       contentLabel="Create Banner Modal"
       className="bg-white w-full flex justify-center  md:max-w-3xl rounded-lg shadow-lg overflow-y-auto outline-none"
       overlayClassName="fixed inset-0 bg-black/25 z-50 flex items-start justify-center px-4 py-8"
     >
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg space-y-4 w-full ">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded-lg space-y-4 w-full "
+      >
         <h2 className="font-bold text-xl">Create Banner</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <InputField
@@ -92,15 +105,10 @@ export default function CreateBannerModal({ onClose, showCreateModal }) {
             className="border p-2 w-full"
           />
 
-          <select
-            value={form.deviceType}
-            onChange={(e) => setForm({ ...form, deviceType: e.target.value })}
-            className="border p-2 w-full rounded"
-          >
-            <option value="laptop">Laptop</option>
-            <option value="tablet">Tablet</option>
-            <option value="mobile">Mobile</option>
-          </select>
+          {/* <div className=" font-medium text-gray-600">
+            Device Type:{" "}
+            <span className="font-bold capitalize">{deviceType}</span>
+          </div> */}
 
           <input
             type="file"
@@ -125,7 +133,6 @@ export default function CreateBannerModal({ onClose, showCreateModal }) {
         >
           Cancel
         </Button>
-
       </form>
     </Modal>
   );
