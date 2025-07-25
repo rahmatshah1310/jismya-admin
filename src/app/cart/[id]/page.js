@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import InputField from '@/components/ui/InputField'
 import { useCart } from '@/context/CartContext'
+import { ClipLoader } from 'react-spinners'
 
 export default function SingleCartItem() {
   const { id } = useParams()
@@ -23,7 +24,7 @@ export default function SingleCartItem() {
     }
   }, [cartItem])
 
-  if (loading) return <h1 className="text-center py-20">Loading...</h1>
+  if (loading) return <h1 className="text-center py-20"><ClipLoader/></h1>
   if (!cartItem) return <h1 className="text-center py-20">Item not found.</h1>
 
   const handleUpdateCart = () => {
