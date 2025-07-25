@@ -12,6 +12,7 @@ import ToggleSwitch from "../ui/ToggleSwitch";
 export default function UpdateProductModal({ isOpen, onClose, product }) {
   const [formData, setFormData] = useState({ ...product, imageFile: null });
   const updateProduct = useUpdateProduct();
+  const isSubmitting=updateProduct.isPending;
 
   useEffect(() => {
     if (product) setFormData({ ...product, imageFile: null });
@@ -46,7 +47,7 @@ export default function UpdateProductModal({ isOpen, onClose, product }) {
     formPayload.append("price", formData.price);
     formPayload.append("discount", formData.discount);
     formPayload.append("sales", formData.sales);
-    formPayload.append("saleName", formData.saleName);
+    // formPayload.append("saleName", formData.saleName);
     formPayload.append("fabrics", formData.fabrics);
     formPayload.append("isActive", formData.isActive);
     if (formData.imageFile) {
@@ -90,7 +91,7 @@ export default function UpdateProductModal({ isOpen, onClose, product }) {
           <InputField name="price" type="number" value={formData.price} onChange={handleChange} className="border p-2 w-full" label="Price" />
           <InputField name="discount" type="number" value={formData.discount} onChange={handleChange} className="border p-2 w-full" label="Discount" />
           <InputField name="sales" type="number" value={formData.sales} onChange={handleChange} className="border p-2 w-full" label="Sales" />
-          <InputField
+          {/* <InputField
             id="saleName"
             name="saleName"
             value={formData.saleName}
@@ -98,7 +99,7 @@ export default function UpdateProductModal({ isOpen, onClose, product }) {
             className="border p-2 w-full"
             placeholder="e.g. Summer Sale"
             label="Sale Name"
-          />
+          /> */}
           <InputField name="fabrics" value={formData.fabrics} onChange={handleChange} className="border p-2 w-full" label="Fabrics" />
         </div>
 
@@ -137,7 +138,7 @@ export default function UpdateProductModal({ isOpen, onClose, product }) {
         />
 
         <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl text-lg">
-          ✅ Update Product
+         {isSubmitting?"Updating...":"✅ Update Product"} 
         </Button>
       </form>
     </Modal>
