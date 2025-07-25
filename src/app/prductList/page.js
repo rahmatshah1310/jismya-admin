@@ -1,1 +1,0 @@
-// → Product list & details UI
