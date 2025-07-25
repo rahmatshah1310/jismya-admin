@@ -74,15 +74,19 @@ export const getProductsByCategory = async (categoryName) => {
   return response.data;
 };
 
-// POST /products/images
+// POST /products/:productId/description
 export const addDescriptionImages = async (data) => {
+  const productId = data.get("productId");
+
   const response = await sendRequest({
     method: "POST",
-    url: `/products/images`,
+    url: `/products/${productId}/description`,
     data,
   });
+
   return response.data;
 };
+
 
 // DELETE /products/images/:id
 export const deleteDescriptionImage = async (id) => {
