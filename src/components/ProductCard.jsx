@@ -1,24 +1,29 @@
 "use client";
 
 import { useState } from "react";
-import { FiEdit, FiTrash2 } from "react-icons/fi";
+import { FiEdit, FiTrash2, FiList } from "react-icons/fi";
 import UpdateProductModal from "./Modal/UpdateProductModal";
 import DeleteProductModal from "./Modal/DeleteProductModal";
 import ToggleSwitch from "./ui/ToggleSwitch";
 import { toast } from "react-toastify";
+import ProductOrderModal from "./Modal/ProductOrderModal";
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, onCardClick }) {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showOrderModal, setShowOrderModal] = useState(false);
 
   return (
     <>
-      <div className="relative bg-white rounded-2xl shadow-lg overflow-hidden transition-transform hover:scale-[1.02] hover:shadow-2xl">
+      <div
+        className="relative bg-white rounded-2xl shadow-lg overflow-hidden transition-transform hover:scale-[1.02] hover:shadow-2xl"
+        onClick={() => onCardClick(product._id)}
+      >
         <div className="relative">
           {/* Sale Badge */}
           {product.saleName && (
             <div
-              className={`absolute top-4 left-0 z-10 bg-yellow-400 text-white text-[10px] font-bold px-2 py-1 rounded-r-md shadow-md ${
+              className={`absolute top-4 left-0 z-10 text-white text-[10px] font-bold px-2 py-1 rounded-r-md shadow-md ${
                 product.discount >= 50 ? "bg-red-600" : "bg-yellow-500"
               }`}
             >
@@ -31,6 +36,13 @@ export default function ProductCard({ product }) {
 
         {/* Action buttons */}
         <div className="absolute top-2 right-2 flex gap-2">
+          <button
+            onClick={() => setShowOrderModal(true)}
+            className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600 p-1 rounded-full cursor-pointer"
+            title="Set Order"
+          >
+            <FiList size={16} />
+          </button>
           <button onClick={() => setShowUpdateModal(true)} className="bg-blue-100 hover:bg-blue-200 text-blue-600 p-1 rounded-full cursor-pointer" title="Edit">
             <FiEdit size={16} />
           </button>
@@ -42,17 +54,16 @@ export default function ProductCard({ product }) {
         <div className="p-4 space-y-2">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-bold text-gray-800">{product.productName}</h3>
-            <ToggleSwitch
-              isActive={product.isActive}
-              // onToggle={() =>
-              //   setFormData({ ...formData, isActive: !product.isActive })
-              // }
-              activeText="Active"
-              inactiveText="Inactive"
-              onToggle={() => {
-                toast.error("This is not Available");
-              }}
-            />
+            <div className="flex items-center gap-4">
+              <span>Order:{product.order}</span>
+              <ToggleSwitch
+                isActive={product.isActive}
+                onToggle={() => toast.error("This is not Available")}
+                activeText="Active"
+                inactiveText="Inactive"
+                className="!ml-0"
+              />
+            </div>
           </div>
 
           <p className="text-sm text-gray-500">{product.description}</p>
@@ -85,11 +96,10 @@ export default function ProductCard({ product }) {
         </div>
       </div>
 
-      {/* Update Modal */}
+      {/* Modals */}
       {showUpdateModal && <UpdateProductModal isOpen={showUpdateModal} onClose={() => setShowUpdateModal(false)} product={product} />}
-
-      {/* Delete Modal */}
       {showDeleteModal && <DeleteProductModal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} productId={product._id} />}
+      {showOrderModal && <ProductOrderModal isOpen={showOrderModal} onClose={() => setShowOrderModal(false)} product={product} />}
     </>
   );
 }
