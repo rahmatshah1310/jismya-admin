@@ -27,6 +27,7 @@ export default function ProductForm({ isOpen, onClose }) {
     isActive: true,
   });
   const createProduct = useCreateProduct();
+   const isSubmitting = createProduct.isPending;
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -170,7 +171,7 @@ export default function ProductForm({ isOpen, onClose }) {
 
         {/* Submit Button */}
         <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl text-lg transition-all duration-200">
-          💾 Create Product
+          {isSubmitting?"Creating...":"💾 Create Product"}
         </Button>
       </form>
     </Modal>
