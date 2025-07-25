@@ -3,6 +3,7 @@ import { useSingleBanner } from '@/app/api/bannerApi';
 import Image from 'next/image';
 import Modal from 'react-modal';
 import Button from '../ui/Button';
+import { ClipLoader } from 'react-spinners';
 
 export default function ViewBannerModal({ bannerId, onClose }) {
     const { data, isLoading, error } = useSingleBanner(bannerId);
@@ -18,7 +19,7 @@ export default function ViewBannerModal({ bannerId, onClose }) {
             overlayClassName="fixed inset-0 bg-black/25 z-50 flex items-center justify-center px-4 py-8"
         >
             {isLoading ? (
-                <p className="p-4 flex justify-center items-center h-full">Loading...</p>
+                <p className="p-4 flex justify-center items-center h-full"><ClipLoader/></p>
             ) : error ? (
                 <p className="p-4 text-red-500">Failed to load banner</p>
             ) : (
