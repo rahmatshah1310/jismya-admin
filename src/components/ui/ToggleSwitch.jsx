@@ -7,11 +7,12 @@ export default function ToggleSwitch({
   onToggle,
   activeText = "Active",
   inactiveText = "Inactive",
+  className
 }) {
   return (
     <Button
       onClick={onToggle}
-      className={`relative flex items-center h-8 w-24 ml-15 rounded-full transition-colors duration-300 ${
+      className={`relative flex items-center h-8 w-24 ml-15 rounded-full transition-colors duration-300 ${className} ${
         isActive ? "bg-green-500" : "bg-red-500"
       }`}
     >
