@@ -28,14 +28,15 @@ export const createSale = async (data) => {
 };
 
 // POST /products/sale/add
-export const addProductsToSale = async ({ saleId, data }) => {
+export const addProductsToSale = async ({ saleId, productIds }) => {
   const response = await sendRequest({
     method: "POST",
-    url: `/sales/${saleId}/products`,
-    data, 
+    url: `/sales/${saleId}/products`, 
+    data: { productIds },            
   });
   return response.data;
 };
+
 
 
 // DELETE /products/sale/remove
@@ -58,11 +59,22 @@ export const updateSaleStatus = async (id, data) => {
   return response.data;
 };
 
+// PATCH /api/sales/:id
+export const updateSale = async (id, data) => {
+  const response = await sendRequest({
+    method: "PUT",
+    url: `/sales/${id}`,
+    data,
+  });
+  return response.data;
+};
+
+
 // DELETE /products/sale/:id
 export const deleteSale = async (id) => {
   const response = await sendRequest({
     method: "DELETE",
-    url: `/products/sale/${id}`,
+    url: `/sales/${id}`,
   });
   return response.data;
 };
@@ -76,6 +88,8 @@ export const getSalesStats = async () => {
   return response.data;
 };
 
+
+
 export const saleService = {
   getProductSales,
   getAllSales,
@@ -83,6 +97,7 @@ export const saleService = {
   addProductsToSale,
   removeProductsFromSale,
   updateSaleStatus,
+  updateSale,
   deleteSale,
   getSalesStats,
 };
