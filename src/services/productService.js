@@ -154,6 +154,54 @@ export const createSale = async (data) => {
   return response.data;
 };
 
+ // POST /products/sale/add
+export const addProductToSale = async (data) => {
+  const response = await sendRequest({
+    method: "POST",
+    url: "/products/sale/add",
+    data,
+  });
+  return response.data;
+};
+
+// DELETE /products/sale/remove
+export const removeProductsFromSale = async (data) => {
+  const response = await sendRequest({
+    method: "DELETE",
+    url: "/products/sale/remove",
+    data,
+  });
+  return response.data;
+};
+
+// PATCH /products/sale/status/:id
+export const updateSaleStatus = async (id, data) => {
+  const response = await sendRequest({
+    method: "PATCH",
+    url: `/products/sale/status/${id}`,
+    data,
+  });
+  return response.data;
+};
+
+// DELETE /products/sale/:id
+export const deleteSale = async (id) => {
+  const response = await sendRequest({
+    method: "DELETE",
+    url: `/products/sale/${id}`,
+  });
+  return response.data;
+};
+
+// GET /products/sale/stats
+export const getSalesStats = async () => {
+  const response = await sendRequest({
+    method: "GET",
+    url: `/products/sale/stats`,
+  });
+  return response.data;
+};
+
 export const productService = {
   createProduct,
   updateProduct,
@@ -171,4 +219,9 @@ export const productService = {
   getProductSales,
   getAllSales,
   createSale,
+  addProductToSale,
+  removeProductsFromSale,
+  updateSaleStatus,
+  deleteSale,
+  getSalesStats,
 };
