@@ -10,6 +10,8 @@ export const useCreateProduct = () => {
     mutationFn: productService.createProduct,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
+     queryClient.invalidateQueries({ queryKey: ["products-by-category"] });
+
     },
   });
 };
@@ -20,6 +22,8 @@ export const useUpdateProduct = () => {
     mutationFn: ({ id, data }) => productService.updateProduct(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["products-by-category"] });
+       queryClient.invalidateQueries({ queryKey: ["sizes"] })
     },
   });
 };
@@ -35,11 +39,7 @@ export const useUpdateProductOrder = () =>
 
 export const useCreateReview = () =>
   useMutation({ mutationFn: productService.createProductReview });
-
-export const useCreateSale = () =>
-  useMutation({ mutationFn: productService.createSale });
-
-// 📦 Queries
+s
 
 export const useSingleProduct = (id) =>
   useQuery({
@@ -47,6 +47,19 @@ export const useSingleProduct = (id) =>
     queryFn: () => productService.getSingleProduct(id),
     enabled: !!id,
   });
+
+
+  export const useDeleteSingleProduct = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+      mutationFn: productService.deleteSingleProduct,
+      onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+       queryClient.invalidateQueries({ queryKey: ["products-by-category"] });
+      queryClient.invalidateQueries({ queryKey: ["sizes"] })
+    },
+    });
+  };
 
 export const useGetAllProducts = () =>
   useQuery({
@@ -88,17 +101,5 @@ export const useGetProductReviews = (id) =>
     enabled: !!id,
   });
 
-export const useGetProductSales = (id) =>
-  useQuery({
-    queryKey: ["product-sales", id],
-    queryFn: () => productService.getProductSales(id),
-    enabled: !!id,
-  });
-
-export const useGetAllSales = () =>
-  useQuery({
-    queryKey: ["all-sales"],
-    queryFn: productService.getAllSales,
-  });
 
  
