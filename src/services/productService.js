@@ -29,6 +29,14 @@ export const getSingleProduct = async (id) => {
   return response.data;
 };
 
+export const deleteSingleProduct = async (id) => {
+  const response = await sendRequest({
+    method: "DELETE",
+    url: `/products/${id}`,
+  });
+  return response.data;
+};
+
 // GET /categories
 export const getAllCategories = async () => {
   const response = await sendRequest({
@@ -126,86 +134,13 @@ export const createProductReview = async (data) => {
   return response.data;
 };
 
-// GET /products/sales/:id
-export const getProductSales = async (id) => {
-  const response = await sendRequest({
-    method: "GET",
-    url: `/products/sales/${id}`,
-  });
-  return response.data;
-};
 
-// GET /products/sales
-export const getAllSales = async () => {
-  const response = await sendRequest({
-    method: "GET",
-    url: `/products/sales`,
-  });
-  return response.data;
-};
-
-// POST /products/sale
-export const createSale = async (data) => {
-  const response = await sendRequest({
-    method: "POST",
-    url: `/products/sale`,
-    data,
-  });
-  return response.data;
-};
-
- // POST /products/sale/add
-export const addProductToSale = async (data) => {
-  const response = await sendRequest({
-    method: "POST",
-    url: "/products/sale/add",
-    data,
-  });
-  return response.data;
-};
-
-// DELETE /products/sale/remove
-export const removeProductsFromSale = async (data) => {
-  const response = await sendRequest({
-    method: "DELETE",
-    url: "/products/sale/remove",
-    data,
-  });
-  return response.data;
-};
-
-// PATCH /products/sale/status/:id
-export const updateSaleStatus = async (id, data) => {
-  const response = await sendRequest({
-    method: "PATCH",
-    url: `/products/sale/status/${id}`,
-    data,
-  });
-  return response.data;
-};
-
-// DELETE /products/sale/:id
-export const deleteSale = async (id) => {
-  const response = await sendRequest({
-    method: "DELETE",
-    url: `/products/sale/${id}`,
-  });
-  return response.data;
-};
-
-// GET /products/sale/stats
-export const getSalesStats = async () => {
-  const response = await sendRequest({
-    method: "GET",
-    url: `/products/sale/stats`,
-  });
-  return response.data;
-};
 
 export const productService = {
   createProduct,
   updateProduct,
   getSingleProduct,
+  deleteSingleProduct,
   getAllCategories,
   getAllProducts,
   getSizes,
@@ -216,12 +151,4 @@ export const productService = {
   updateProductOrder,
   getProductReviews,
   createProductReview,
-  getProductSales,
-  getAllSales,
-  createSale,
-  addProductToSale,
-  removeProductsFromSale,
-  updateSaleStatus,
-  deleteSale,
-  getSalesStats,
 };
