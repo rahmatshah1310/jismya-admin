@@ -25,6 +25,10 @@ const InputField = ({
         name={name}
         type={type}
         value={value}
+          onWheel={(e) => {
+    // Disable scroll for number inputs
+    if (type === "number") e.target.blur();
+  }}
         onChange={onChange}
         className={`${className}`}
         placeholder={placeholder}
