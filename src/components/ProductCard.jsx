@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { FiEdit, FiTrash2, FiList } from "react-icons/fi";
+import { FiEdit, FiTrash2, FiList, FiTag } from "react-icons/fi";
 import UpdateProductModal from "./Modal/UpdateProductModal";
 import DeleteProductModal from "./Modal/DeleteProductModal";
 import ToggleSwitch from "./ui/ToggleSwitch";
 import { toast } from "react-toastify";
 import ProductOrderModal from "./Modal/ProductOrderModal";
 
-export default function ProductCard({ product, onCardClick }) {
+export default function ProductCard({ product, onCardClick,onAddToSale }) {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showOrderModal, setShowOrderModal] = useState(false);
@@ -26,7 +26,7 @@ export default function ProductCard({ product, onCardClick }) {
 
         {/* Action buttons */}
         <div className="absolute top-2 right-2 flex gap-2">
-          <button
+          {/* <button
             onClick={(e) => {
               e.stopPropagation();
               setShowOrderModal(true);
@@ -35,7 +35,18 @@ export default function ProductCard({ product, onCardClick }) {
             title="Set Order"
           >
             <FiList size={16} />
+          </button> */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddToSale(product); // this will come as prop
+            }}
+            className="bg-green-100 hover:bg-green-200 text-green-600 p-1 rounded-full cursor-pointer"
+            title="Add to Sale"
+          >
+            <FiTag size={16} />
           </button>
+
           <button
             onClick={(e) => {
               e.stopPropagation();
