@@ -39,7 +39,7 @@ export const useUpdateProductOrder = () =>
 
 export const useCreateReview = () =>
   useMutation({ mutationFn: productService.createProductReview });
-s
+
 
 export const useSingleProduct = (id) =>
   useQuery({
@@ -102,4 +102,9 @@ export const useGetProductReviews = (id) =>
   });
 
 
- 
+export const useProductSaleStats = () => {
+  return useQuery({
+    queryKey: ["product-sale-stats"],
+    queryFn: productService.getProductSalestats,
+  });
+};
