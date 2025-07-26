@@ -16,7 +16,7 @@ export default function ProductCard({ product, onCardClick }) {
   return (
     <>
       <div
-        className="relative bg-white rounded-2xl shadow-lg overflow-hidden transition-transform hover:scale-[1.02] hover:shadow-2xl"
+        className="relative bg-white rounded-2xl shadow-lg overflow-hidden transition-transform hover:scale-[1.02] hover:shadow-2xl cursor-pointer"
         onClick={() => onCardClick(product._id)}
       >
         <div className="relative">
@@ -37,16 +37,25 @@ export default function ProductCard({ product, onCardClick }) {
         {/* Action buttons */}
         <div className="absolute top-2 right-2 flex gap-2">
           <button
-            onClick={() => setShowOrderModal(true)}
+            onClick={(e) => {
+    e.stopPropagation();
+    setShowOrderModal(true);
+  }}
             className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600 p-1 rounded-full cursor-pointer"
             title="Set Order"
           >
             <FiList size={16} />
           </button>
-          <button onClick={() => setShowUpdateModal(true)} className="bg-blue-100 hover:bg-blue-200 text-blue-600 p-1 rounded-full cursor-pointer" title="Edit">
+          <button  onClick={(e) => {
+    e.stopPropagation();
+    setShowUpdateModal(true);
+  }} className="bg-blue-100 hover:bg-blue-200 text-blue-600 p-1 rounded-full cursor-pointer" title="Edit">
             <FiEdit size={16} />
           </button>
-          <button onClick={() => setShowDeleteModal(true)} className="bg-red-100 hover:bg-red-200 text-red-600 p-1 rounded-full cursor-pointer" title="Delete">
+          <button  onClick={(e) => {
+    e.stopPropagation();
+    setShowDeleteModal(true);
+  }} className="bg-red-100 hover:bg-red-200 text-red-600 p-1 rounded-full cursor-pointer" title="Delete">
             <FiTrash2 size={16} />
           </button>
         </div>
