@@ -20,16 +20,6 @@ export default function ProductCard({ product, onCardClick }) {
         onClick={() => onCardClick(product._id)}
       >
         <div className="relative">
-          {/* Sale Badge */}
-          {product.saleName && (
-            <div
-              className={`absolute top-4 left-0 z-10 text-white text-[10px] font-bold px-2 py-1 rounded-r-md shadow-md ${
-                product.discount >= 50 ? "bg-red-600" : "bg-yellow-500"
-              }`}
-            >
-              {product.saleName}
-            </div>
-          )}
           {/* Product Image */}
           <img src={product.imageUrl} alt={product.productName} className="h-56 w-full object-cover" />
         </div>
@@ -38,24 +28,32 @@ export default function ProductCard({ product, onCardClick }) {
         <div className="absolute top-2 right-2 flex gap-2">
           <button
             onClick={(e) => {
-    e.stopPropagation();
-    setShowOrderModal(true);
-  }}
+              e.stopPropagation();
+              setShowOrderModal(true);
+            }}
             className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600 p-1 rounded-full cursor-pointer"
             title="Set Order"
           >
             <FiList size={16} />
           </button>
-          <button  onClick={(e) => {
-    e.stopPropagation();
-    setShowUpdateModal(true);
-  }} className="bg-blue-100 hover:bg-blue-200 text-blue-600 p-1 rounded-full cursor-pointer" title="Edit">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowUpdateModal(true);
+            }}
+            className="bg-blue-100 hover:bg-blue-200 text-blue-600 p-1 rounded-full cursor-pointer"
+            title="Edit"
+          >
             <FiEdit size={16} />
           </button>
-          <button  onClick={(e) => {
-    e.stopPropagation();
-    setShowDeleteModal(true);
-  }} className="bg-red-100 hover:bg-red-200 text-red-600 p-1 rounded-full cursor-pointer" title="Delete">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowDeleteModal(true);
+            }}
+            className="bg-red-100 hover:bg-red-200 text-red-600 p-1 rounded-full cursor-pointer"
+            title="Delete"
+          >
             <FiTrash2 size={16} />
           </button>
         </div>
@@ -63,22 +61,20 @@ export default function ProductCard({ product, onCardClick }) {
         <div className="p-4 space-y-2">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-bold text-gray-800">{product.productName}</h3>
-            <div className="flex items-center gap-4">
-              <span>Order:{product.order}</span>
-              <ToggleSwitch
-                isActive={product.isActive}
-                onToggle={() => toast.error("This is not Available")}
-                activeText="Active"
-                inactiveText="Inactive"
-                className="!ml-0"
-              />
-            </div>
           </div>
 
           <p className="text-sm text-gray-500">{product.description}</p>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm text-blue-600 font-semibold">${product.price}</span>
+            {product.discount > 0 ? (
+              <>
+                <span className="text-sm text-gray-400 line-through">${product.price.toFixed(2)}</span>
+                <span className="text-sm text-green-600 font-semibold">${(product.price - (product.price * product.discount) / 100).toFixed(2)}</span>
+                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">{product.discount}% OFF</span>
+              </>
+            ) : (
+              <span className="text-sm text-blue-600 font-semibold">${product.price.toFixed(2)}</span>
+            )}
             <span className="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full">{product.fabrics}</span>
           </div>
 
