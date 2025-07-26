@@ -8,6 +8,7 @@ import ProductFilters from "@/components/ProductFilters";
 import { useGetAllProducts, useProductsByCategory, useProductsBySize } from "../api/productApi";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { ClipLoader } from "react-spinners";
+import ConnectProductsToSaleModal from "@/components/Modal/SalesModal/ConnectProductToSaleModal";
 
 const Product = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,6 +18,13 @@ const Product = () => {
   const router = useRouter();
   const category = searchParams.get("category");
   const size = searchParams.get("size");
+  const [saleModalOpen, setSaleModalOpen] = useState(false);
+const [selectedProduct, setSelectedProduct] = useState(null);
+
+const handleAddToSale = (product) => {
+  setSelectedProduct(product);
+  setSaleModalOpen(true);
+};
 
   const handleCardClick = (id) => {
   router.push(`/product/${id}`);
@@ -67,13 +75,19 @@ const Product = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
-            <ProductCard key={product._id} product={product}    onCardClick={handleCardClick}/>
+            <ProductCard key={product._id} product={product}    onCardClick={handleCardClick}  onAddToSale={handleAddToSale}/>
           ))}
         </div>
       )}
 
       {/* Product Modal */}
       {isModalOpen && <ProductForm open={isModalOpen} onClose={() => setIsModalOpen(false)} />}
+        <ConnectProductsToSaleModal
+  isOpen={saleModalOpen}
+  onClose={() => setSaleModalOpen(false)}
+  productId={selectedProduct?._id}
+/>
+
     </div>
   );
 };
