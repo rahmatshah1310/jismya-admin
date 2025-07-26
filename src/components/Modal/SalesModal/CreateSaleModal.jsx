@@ -32,7 +32,6 @@ export default function CreateSaleModal({ isOpen, onClose }) {
       formData.append("discountPercentage", Number(form.discountPercentage).toString());
       formData.append("startDate", form.startDate);
       formData.append("endDate", form.endDate);
-console.log(formData,"formdata................")
       // ⬇️ capture response from mutateAsync
 const res = await createSale.mutateAsync(form);
 
