@@ -39,19 +39,34 @@ export default function ProductDetailsPage() {
 
       {/* Product Info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white rounded-xl p-6 shadow-md">
-        <Image
-          src={product.imageUrl}
-          alt={product.productName}
-          width={500}
-          height={400}
-          className="rounded-xl object-cover border shadow"
-        />
+        <Image src={product.imageUrl} alt={product.productName} width={500} height={400} className="rounded-xl object-cover border shadow" />
         <div className="space-y-4 text-gray-700">
-          <p><span className="font-semibold">Name:</span> {product.productName}</p>
-          <p><span className="font-semibold">Category:</span> {product.categoryName}</p>
-          <p><span className="font-semibold">Price:</span> ${product.price}</p>
-          <p><span className="font-semibold">Discount:</span> {product.discount}%</p>
-          <p><span className="font-semibold">Sales:</span> {product.sales}</p>
+          <p>
+            <span className="font-semibold">Name:</span> {product.productName}
+          </p>
+          <p>
+            <span className="font-semibold">Category:</span> {product.categoryName}
+          </p>
+          <div className="space-y-1">
+            <div>
+              <span className="font-semibold">Price:</span>{" "}
+              {product.discount > 0 ? (
+                <>
+                  <span className="text-gray-400 line-through">${product.price.toFixed(2)}</span>{" "}
+                  <span className="text-green-600 font-semibold">${(product.price - (product.price * product.discount) / 100).toFixed(2)}</span>
+                </>
+              ) : (
+                <span className="text-blue-600 font-semibold">${product.price.toFixed(2)}</span>
+              )}
+            </div>
+            <p>
+              <span className="font-semibold">Discount:</span> {product.discount}%
+            </p>
+          </div>
+
+          <p>
+            <span className="font-semibold">Sales:</span> {product.sales}
+          </p>
         </div>
       </div>
 
@@ -61,27 +76,14 @@ export default function ProductDetailsPage() {
           <h2 className="text-2xl font-semibold text-gray-800">📷 Description Images</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {product.descriptionImages.map((img, idx) => (
-              <Image
-                key={idx}
-                src={img}
-                alt={`desc-${idx}`}
-                width={300}
-                height={200}
-                className="rounded-lg border shadow-sm"
-              />
+              <Image key={idx} src={img} alt={`desc-${idx}`} width={300} height={200} className="rounded-lg border shadow-sm" />
             ))}
           </div>
         </div>
       )}
 
       {/* Modal for Description Image Upload */}
-      {openUploader && (
-        <DescriptionImageUploaderModal
-          productId={id}
-          isopen={openUploader}
-          onClose={() => setOpenUploader(false)}
-        />
-      )}
+      {openUploader && <DescriptionImageUploaderModal productId={id} isopen={openUploader} onClose={() => setOpenUploader(false)} />}
     </div>
   );
 }
