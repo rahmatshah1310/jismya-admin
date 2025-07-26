@@ -119,7 +119,7 @@ export const updateProductOrder = async (id, data) => {
 export const getProductReviews = async (id) => {
   const response = await sendRequest({
     method: "GET",
-    url: `/products/reviews/${id}`,
+    url: `/products/${id}/reviews`,
   });
   return response.data;
 };
@@ -134,6 +134,13 @@ export const createProductReview = async (data) => {
   return response.data;
 };
 
+export const  getProductSalestats=async () =>{
+  const response=await sendRequest({
+    method:"GET",
+    url: "/api/v1/products/stats/overview",
+  });
+  return response.data
+}
 
 
 export const productService = {
@@ -151,4 +158,5 @@ export const productService = {
   updateProductOrder,
   getProductReviews,
   createProductReview,
+  getProductSalestats
 };
