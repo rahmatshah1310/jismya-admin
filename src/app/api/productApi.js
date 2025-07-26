@@ -100,3 +100,5 @@ export const useGetAllSales = () =>
     queryKey: ["all-sales"],
     queryFn: productService.getAllSales,
   });
+
+ 
