@@ -9,7 +9,7 @@ const navLinks = [
   { href: '/', label: 'Banners Management' },
   { href: '/product', label: 'Product Management' },
   { href: '#statistics', label: 'Statistics' },
-  { href: '#order', label: 'Orders' },
+  { href: '/sales', label: 'Sales' },
 ]
 
 const Header = () => {
