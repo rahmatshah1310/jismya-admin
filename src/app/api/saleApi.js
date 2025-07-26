@@ -36,16 +36,16 @@ export const useCreateSale = () => {
 };
 
 // 🔸 ADD products to sale
-export const useAddProductsToSale = () => {
+export const useConnectProductsToSale = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ saleId, data }) =>
-      saleService.addProductsToSale({ saleId, data }),
-    onSuccess: (_, { saleId }) => {
-      queryClient.invalidateQueries(["product-sales", saleId]);
+    mutationFn: saleService.addProductsToSale,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["all-sales"]);
     },
   });
 };
+
 
 // 🔸 REMOVE products from sale
 export const useRemoveProductsFromSale = () => {
@@ -72,6 +72,19 @@ export const useUpdateSaleStatus = () => {
   });
 };
 
+// 🔸 UPDATE sale (name, description, discount, etc.)
+export const useUpdateSale = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }) => saleService.updateSale(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries(["all-sales"]);
+      queryClient.invalidateQueries(["product-sales", id]);
+    },
+  });
+};
+
+
 // 🔸 DELETE a sale
 export const useDeleteSale = () => {
   const queryClient = useQueryClient();
@@ -83,3 +96,4 @@ export const useDeleteSale = () => {
     },
   });
 };
+
