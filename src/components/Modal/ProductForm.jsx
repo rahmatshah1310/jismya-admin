@@ -24,7 +24,6 @@ export default function ProductForm({ isOpen, onClose }) {
     fabrics: "",
     imageUrl: "",
     imageFile: null,
-    isActive: true,
   });
   const createProduct = useCreateProduct();
    const isSubmitting = createProduct.isPending;
@@ -61,12 +60,10 @@ export default function ProductForm({ isOpen, onClose }) {
     formPayload.append("productName", formData.productName);
     formPayload.append("categoryName", formData.categoryName);
     formPayload.append("description", formData.description);
-    formPayload.append("saleName", formData.saleName);
     formPayload.append("price", formData.price);
     formPayload.append("discount", formData.discount);
     formPayload.append("sales", formData.sales || 1);
     formPayload.append("fabrics", formData.fabrics);
-    formPayload.append("isActive", formData.isActive);
     formPayload.append("image", formData.imageFile);
 
     // Append each color and size individually
@@ -118,17 +115,6 @@ export default function ProductForm({ isOpen, onClose }) {
         <div className="grid grid-cols-3 gap-4">
             <InputField id="price" name="price" type="number" value={formData.price} onChange={handleChange} className="border p-2 w-full" label="Price" />
             <InputField id="discount" name="discount" type="number" value={formData.discount} onChange={handleChange} className="border p-2 w-full" label="Discount  (%)" />
-            <InputField id="sales" name="sales" type="number" value={formData.sales} onChange={handleChange} className="border p-2 w-full" label="Sales" />
-          {/* Sale Name */}
-            <InputField
-              id="saleName"
-              name="saleName"
-              value={formData.saleName}
-              onChange={handleChange}
-              className="border p-2 w-full"
-              label="Sale Name"
-              placeholder="e.g. Summer Sale"
-            />
           {/* Fabrics */}
             <InputField id="fabrics" name="fabrics" value={formData.fabrics} onChange={handleChange} className="border p-2 w-full" label="fabrics" />
         </div>
@@ -159,15 +145,6 @@ export default function ProductForm({ isOpen, onClose }) {
           <label className="block font-semibold text-gray-700 mb-1">Image</label>
           <InputField type="file" accept="image/*" onChange={handleImageSelect} className="border p-2 w-full" />
         </div>
-
-        {/* Active toggle */}
-        <ToggleSwitch
-          isActive={formData.isActive}
-          onToggle={() => setFormData({ ...formData, isActive: !formData.isActive })}
-          activeText="Active"
-          inactiveText="Inactive"
-          className="!ml-0"
-        />
 
         {/* Submit Button */}
         <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl text-lg transition-all duration-200">
