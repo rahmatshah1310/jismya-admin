@@ -58,7 +58,7 @@ export default function UpdateSaleModal({ sale, isOpen, onClose }) {
       onRequestClose={onClose}
       ariaHideApp={false}
       className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl animate-fadeIn transition-all"
-      overlayClassName="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      overlayClassName="fixed inset-0 bg-black/25  flex items-center justify-center z-50 p-4"
     >
       <div>
         <h2 className="text-2xl font-semibold text-gray-800 mb-5 text-center">✏️ Update Sale</h2>
