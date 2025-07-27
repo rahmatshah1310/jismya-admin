@@ -1,8 +1,9 @@
 "use client";
 
 import { ClipLoader } from "react-spinners";
-import { FaBoxOpen, FaCheckCircle, FaTimesCircle, FaStar } from "react-icons/fa";
+import { FaBoxOpen, FaCheckCircle, FaTimesCircle, FaStar, FaTags, FaPercent } from "react-icons/fa";
 import { useProductSaleStats } from "../api/productApi";
+import { useGetSalesStats } from "../api/saleApi";
 
 const Card = ({ icon: Icon, title, value, color }) => (
   <div className="flex items-center gap-4 bg-white shadow-sm rounded-xl p-4 border border-gray-200 hover:shadow-md transition">
@@ -18,8 +19,10 @@ const Card = ({ icon: Icon, title, value, color }) => (
 
 export default function StatisticsPage() {
   const { data, isLoading, isError } = useProductSaleStats();
+  const { data: saleStatsData, isLoading: isSalesLoading, isError: isSalesError } = useGetSalesStats();
+  console.log(saleStatsData,"salestatsData........................")
 
-  if (isLoading) {
+  if (isLoading || isSalesLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <ClipLoader size={50} />
@@ -27,28 +30,35 @@ export default function StatisticsPage() {
     );
   }
 
-  if (isError) {
-    return <div className="text-center text-red-500">Failed to load statistics</div>;
+  if (isError || isSalesError) {
+    return <div className="text-center text-red-500">Failed to load product or sale statistics</div>;
   }
 
-const { total = {}, byCategory = [] } = data?.data || {};
+  const { total = {}, byCategory = [] } = data?.data || {};
+  const { totalSales = 0, activeSales = 0, totalProductsOnSale = 0, avgDiscount = 0 } = saleStatsData?.data || {};
 
   return (
-    <div className="p-6 space-y-8">
-      <h2 className="text-2xl font-bold text-gray-800">Product Statistics</h2>
+    <div className="p-6 space-y-10">
+      {/* Product Stats */}
+      <div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">Product Statistics</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card icon={FaBoxOpen} title="Total Products" value={total.totalProducts} color="bg-blue-500" />
+          <Card icon={FaCheckCircle} title="Active Products" value={total.totalActive} color="bg-green-500" />
+          <Card icon={FaTimesCircle} title="Inactive Products" value={total.totalInactive} color="bg-red-500" />
+          <Card icon={FaStar} title="Avg Rating" value={typeof total.avgRating === "number" ? total.avgRating.toFixed(1) : "0.0"} color="bg-yellow-500" />
+        </div>
+      </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card icon={FaBoxOpen} title="Total Products" value={total.totalProducts} color="bg-blue-500" />
-        <Card icon={FaCheckCircle} title="Active Products" value={total.totalActive} color="bg-green-500" />
-        <Card icon={FaTimesCircle} title="Inactive Products" value={total.totalInactive} color="bg-red-500" />
-      <Card
-  icon={FaStar}
-  title="Avg Rating"
-  value={typeof total.avgRating === "number" ? total.avgRating.toFixed(1) : "0.0"}
-  color="bg-yellow-500"
-/>
-
+      {/* Sale Stats */}
+      <div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">Sales Statistics</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card icon={FaTags} title="Total Sales" value={totalSales} color="bg-indigo-500" />
+          <Card icon={FaCheckCircle} title="Active Sales" value={activeSales} color="bg-emerald-500" />
+          <Card icon={FaBoxOpen} title="Products on Sale" value={totalProductsOnSale} color="bg-pink-500" />
+          <Card icon={FaPercent} title="Avg Discount (%)" value={`${avgDiscount.toFixed(1)}%`} color="bg-orange-500" />
+        </div>
       </div>
 
       {/* Table View */}
@@ -72,10 +82,7 @@ const { total = {}, byCategory = [] } = data?.data || {};
                   <td className="p-2">{cat.count}</td>
                   <td className="p-2 text-green-600">{cat.activeCount}</td>
                   <td className="p-2 text-red-500">{cat.inactiveCount}</td>
-<td className="p-2">
-  {typeof cat.avgRating === "number" ? cat.avgRating.toFixed(1) : "0.0"}
-</td>
-
+                  <td className="p-2">{typeof cat.avgRating === "number" ? cat.avgRating.toFixed(1) : "0.0"}</td>
                 </tr>
               ))}
             </tbody>
