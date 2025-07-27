@@ -137,7 +137,7 @@ export const createProductReview = async (data) => {
 export const  getProductSalestats=async () =>{
   const response=await sendRequest({
     method:"GET",
-    url: "/api/v1/products/stats/overview",
+    url: "/products/stats/overview",
   });
   return response.data
 }
