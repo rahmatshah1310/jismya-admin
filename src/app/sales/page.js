@@ -14,7 +14,7 @@ import ToggleSwitch from "@/components/ui/ToggleSwitch";
 
 export default function Sales() {
   const { data: sales, isLoading } = useGetAllSales();
-  const { mutate: toggleSaleStatus, isLoading: isToggling } = useUpdateSaleStatus();
+  const toggleStatus = useUpdateSaleStatus();
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -29,6 +29,11 @@ export default function Sales() {
     setSelectedSale(sale);
     setUpdateModalOpen(true);
   };
+
+ const handleToggle = (id, currentStatus) => {
+    toggleStatus.mutate({ id, isActive: !currentStatus });
+  };
+
 
   return (
     <div className="p-6">
@@ -63,16 +68,19 @@ export default function Sales() {
                 </div>
               </div>
               <div className="flex justify-between">
-               <div> <p className="text-sm opacity-80">{sale.description}</p>
-                <p className="mt-2">
-                  <span className="font-semibold">Discount:</span> {sale.discountPercentage}%
-                </p>
-                <p className="text-sm mt-1">
-                  {new Date(sale.startDate).toLocaleDateString()} - {new Date(sale.endDate).toLocaleDateString()}
-                </p></div>
+                <div>
+                  {" "}
+                  <p className="text-sm opacity-80">{sale.description}</p>
+                  <p className="mt-2">
+                    <span className="font-semibold">Discount:</span> {sale.discountPercentage}%
+                  </p>
+                  <p className="text-sm mt-1">
+                    {new Date(sale.startDate).toLocaleDateString()} - {new Date(sale.endDate).toLocaleDateString()}
+                  </p>
+                </div>
                 <ToggleSwitch
                   isActive={sale.isActive}
-                  onToggle={() =>{console.log("Toggle Sale:", sale._id, sale.isActive); toggleSaleStatus({ saleId: sale._id, isActive: sale.isActive })}}
+                  onToggle={() =>{ handleToggle(sale._id, sale.isActive)} }
                   activeText="Active"
                   inactiveText="Inactive"
                   className="items-end mb-auto"
