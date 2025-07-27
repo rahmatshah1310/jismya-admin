@@ -19,7 +19,7 @@ useEffect(() => {
   if (userData) {
     if (isAuthPage) router.push('/');
   } else {
-    if (!isAuthPage) router.push('/login');
+    if (!isAuthPage&&!loading) router.push('/login');
   }
 }, [userData, loading, pathname, isAuthPage, router]);
 
