@@ -11,7 +11,6 @@ import Card from "@/components/Card";
 export default function StatisticsPage() {
   const { data, isLoading, isError } = useProductSaleStats();
   const { data: saleStatsData, isLoading: isSalesLoading, isError: isSalesError } = useGetSalesStats();
-  console.log(saleStatsData,"salestatsData........................")
 
   if (isLoading || isSalesLoading) {
     return (
@@ -20,13 +19,13 @@ export default function StatisticsPage() {
       </div>
     );
   }
-
+console.log(saleStatsData,"salesdata............")
   if (isError || isSalesError) {
     return <div className="text-center text-red-500">Failed to load product or sale statistics</div>;
   }
 
   const { total = {}, byCategory = [] } = data?.data || {};
-  const { totalSales = 0, activeSales = 0, totalProductsOnSale = 0, avgDiscount = 0 } = saleStatsData?.data || {};
+  const salestats = saleStatsData?.data || {};
 
   return (
     <div className="p-6 space-y-10">
@@ -45,10 +44,10 @@ export default function StatisticsPage() {
       <div>
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Sales Statistics</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card icon={FaTags} title="Total Sales" value={totalSales} color="bg-indigo-500" />
-          <Card icon={FaCheckCircle} title="Active Sales" value={activeSales} color="bg-emerald-500" />
-          <Card icon={FaBoxOpen} title="Products on Sale" value={totalProductsOnSale} color="bg-pink-500" />
-          <Card icon={FaPercent} title="Avg Discount (%)" value={`${avgDiscount.toFixed(1)}%`} color="bg-orange-500" />
+          <Card icon={FaTags} title="Total Sales" value={salestats.totalSales} color="bg-indigo-500" />
+          <Card icon={FaCheckCircle} title="Active Sales" value={salestats.activeSales} color="bg-emerald-500" />
+          <Card icon={FaBoxOpen} title="Products on Sale" value={salestats.totalProductsOnSale} color="bg-pink-500" />
+          <Card icon={FaPercent} title="Avg Discount (%)" value={`${salestats.avgDiscount.toFixed(1)}%`} color="bg-orange-500" />
         </div>
       </div>
 
