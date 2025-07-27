@@ -52,8 +52,8 @@ export const removeProductsFromSale = async (data) => {
 // PATCH /products/sale/status/:id
 export const updateSaleStatus = async (id, data) => {
   const response = await sendRequest({
-    method: "PATCH",
-    url: `sales/${id}/toggle`,
+    method: "PUT",
+    url: `/sales/${id}/toggle`,
     data,
   });
   return response.data;
