@@ -63,7 +63,7 @@ export const useRemoveProductsFromSale = () => {
 export const useUpdateSaleStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }) => saleService.updateSaleStatus(id, data),
+    mutationFn: ({ id, isActive }) => saleService.updateSaleStatus(id, {isActive}),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries(["all-sales"]);
       queryClient.invalidateQueries(["product-sales", id]);
@@ -71,6 +71,8 @@ export const useUpdateSaleStatus = () => {
     },
   });
 };
+
+
 
 // 🔸 UPDATE sale (name, description, discount, etc.)
 export const useUpdateSale = () => {
