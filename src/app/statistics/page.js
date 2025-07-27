@@ -58,12 +58,12 @@ export default function StatisticsPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-gray-700">
             <thead className="bg-gray-50">
-              <tr>
-                <th className="text-left p-2">Category</th>
-                <th className="text-left p-2">Total</th>
-                <th className="text-left p-2">Active</th>
-                <th className="text-left p-2">Inactive</th>
-                <th className="text-left p-2">Avg Rating</th>
+              <tr className="text-left">
+                <th className=" p-2">Category</th>
+                <th className=" p-2">Total</th>
+                <th className=" p-2">Active</th>
+                <th className=" p-2">Inactive</th>
+                <th className=" p-2 min-w-[90px]">Avg Rating</th>
               </tr>
             </thead>
             <tbody>
@@ -73,7 +73,7 @@ export default function StatisticsPage() {
                   <td className="p-2">{cat.count}</td>
                   <td className="p-2 text-green-600">{cat.activeCount}</td>
                   <td className="p-2 text-red-500">{cat.inactiveCount}</td>
-                  <td className="p-2">{typeof cat.avgRating === "number" ? cat.avgRating.toFixed(1) : "0.0"}</td>
+                  <td className="p-2 ">{typeof cat.avgRating === "number" ? cat.avgRating.toFixed(1) : "0.0"}</td>
                 </tr>
               ))}
             </tbody>
