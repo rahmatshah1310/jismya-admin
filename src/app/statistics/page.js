@@ -19,7 +19,6 @@ export default function StatisticsPage() {
       </div>
     );
   }
-console.log(saleStatsData,"salesdata............")
   if (isError || isSalesError) {
     return <div className="text-center text-red-500">Failed to load product or sale statistics</div>;
   }
