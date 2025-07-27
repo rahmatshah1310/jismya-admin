@@ -12,31 +12,46 @@ export const AuthProvider = ({ children }) => {
 
   // Fetch current user data
   const fetchCurrentUser = async () => {
-    try {
-      const response = await authService.me();
-      if (response?.data?.user) {
-        setUserData(response.data.user);
-      } else if (response?.data) {
-        setUserData(response.data);
-      }
-    } catch (error) {
-      console.error("Failed to fetch user data:", error);
-      handleLogout();
-    } finally {
-      setLoading(false);
+  try {
+    const response = await authService.me();
+    if (response?.data?.user) {
+      setUserData(response.data.user);
+    } else if (response?.data) {
+      setUserData(response.data);
     }
-  };
+  } catch (error) {
+    console.error("Failed to fetch user data:", error);
+
+    // ✅ Only logout if it's unauthorized
+    if (error?.response?.status === 401) {
+      handleLogout();
+    } else {
+      toast.warn("You're offline or server is unreachable");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // Load user data and token from localStorage on mount
   useEffect(() => {
-    const storedToken = localStorage.getItem("accessToken");
+   const storedToken = localStorage.getItem("accessToken");
+const storedUserData = localStorage.getItem("userData");
 
-    if (storedToken) {
-      setToken(storedToken);
-      fetchCurrentUser(storedToken);
-    } else {
-      setLoading(false);
-    }
+if (storedToken) {
+  setToken(storedToken);
+
+  // ✅ If userData exists locally, use it as a fallback
+  if (storedUserData) {
+    setUserData(JSON.parse(storedUserData));
+  }
+
+  fetchCurrentUser(); // Still try to update from server
+} else {
+  setLoading(false);
+}
+
   }, []);
 
   // Refetch user data when token changes
