@@ -53,7 +53,7 @@ export const removeProductsFromSale = async (data) => {
 export const updateSaleStatus = async (id, data) => {
   const response = await sendRequest({
     method: "PATCH",
-    url: `/products/sale/status/${id}`,
+    url: `sales/${id}/toggle`,
     data,
   });
   return response.data;
@@ -83,7 +83,7 @@ export const deleteSale = async (id) => {
 export const getSalesStats = async () => {
   const response = await sendRequest({
     method: "GET",
-    url: `/products/sale/stats`,
+    url: `/sales/stats`,
   });
   return response.data;
 };
