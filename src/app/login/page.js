@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 export default function Login() {
   const router = useRouter();
   const loginMutation = useLoginMutation();
+  const isLoading=loginMutation.isPending;
   const { userData, setAuthData } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -60,7 +61,7 @@ export default function Login() {
           type="submit"
           className="bg-[var(--color-pink-500)] hover:bg-[var(--color-pink-600)] text-white py-2 px-6 mt-2 rounded cursor-pointer w-full"
         >
-          Log In
+       { isLoading?"Log In...":" Log In"}
         </Button>
       </div>
     </form>
