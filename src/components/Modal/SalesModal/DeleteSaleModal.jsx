@@ -41,7 +41,7 @@ export default function DeleteSaleModal({ sale, onClose,isOpen }) {
           <Button 
             onClick={handleDelete} 
             disabled={isLoading} 
-            className="bg-red-500 text-white w-full"
+            className={isLoading?"bg-red-500 w-full text-gray-300":"bg-red-500 text-white w-full "}
           >
             {isLoading ? "Deleting..." : "Delete"}
           </Button>
