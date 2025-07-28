@@ -147,7 +147,7 @@ export default function ProductForm({ isOpen, onClose }) {
         </div>
 
         {/* Submit Button */}
-        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl text-lg transition-all duration-200">
+        <Button disabled={isSubmitting} type="submit" className={isSubmitting?"text-gray-300 w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-xl text-lg transition-all duration-200":"w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl text-lg transition-all duration-200"}>
           {isSubmitting?"Creating...":"💾 Create Product"}
         </Button>
       </form>
