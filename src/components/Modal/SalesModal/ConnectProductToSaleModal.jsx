@@ -40,7 +40,7 @@ export default function ConnectProductToSaleModal({ productId, isOpen, onClose }
       isOpen={isOpen}
       onRequestClose={onClose}
       ariaHideApp={false}
-      className="bg-white p-6 rounded max-w-md mx-auto shadow-lg"
+      className="bg-white p-6 rounded max-w-2xl mx-auto shadow-lg"
       overlayClassName="fixed inset-0 bg-black/40 flex justify-center items-center"
     >
       <h2 className="text-xl font-bold mb-4">Attach Product to Sale</h2>
@@ -66,13 +66,13 @@ export default function ConnectProductToSaleModal({ productId, isOpen, onClose }
         </select>
       )}
 
-      <div className="mt-6 flex gap-4">
+      <div className="mt-6 flex gap-4 overflow-auto">
         <Button onClick={onClose} className="bg-gray-300 text-black w-full">
           Cancel
         </Button>
         <Button
           onClick={handleSubmit}
-          className="bg-blue-500 text-white w-full"
+          className={connectMutation.isPending?"text-gray-300 bg-blue-500 w-full":"bg-blue-500 text-white w-full "}
           disabled={connectMutation.isPending || !selectedSaleId}
         >
           {connectMutation.isPending ? 'Attaching...' : 'Attach'}
