@@ -109,7 +109,7 @@ export default function UpdateProductModal({ isOpen, onClose, product }) {
 
         <InputField type="file" accept="image/*" onChange={handleImageSelect} className="border p-2 w-full" />
 
-        <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl text-lg">
+        <Button disabled={isSubmitting} type="submit" className={isSubmitting?"text-gray-300 w-full bg-green-600 hover:bg-green-700 py-2 rounded-xl text-lg":"w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl text-lg"}>
          {isSubmitting?"Updating...":"✅ Update Product"} 
         </Button>
       </form>
