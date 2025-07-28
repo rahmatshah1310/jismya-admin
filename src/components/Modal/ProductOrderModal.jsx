@@ -51,7 +51,7 @@ export default function ProductOrderModal({ product, onClose,isOpen }) {
           onChange={(e) => setOrder(Number(e.target.value))}
           className="border p-2 w-full"
         />
-        <Button type="submit" disabled={isLoading} className="bg-green-500 text-white w-full">
+        <Button type="submit" disabled={isLoading} className={isLoading?"text-gray-300 bg-green-500 w-full ":"bg-green-500 text-white w-full "}>
           {isLoading ? "Saving..." : "Save"}
         </Button>
         <Button onClick={onClose} type="button" className="bg-red-500 text-white w-full">
