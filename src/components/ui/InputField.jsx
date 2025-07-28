@@ -4,16 +4,17 @@ import React from "react";
 const InputField = ({
   label,
   name,
-  value,
+  value = "",
   onChange,
   placeholder,
   type = "text",
   required = false,
+  maxLength,
   className = "",
   ...rest
 }) => {
   return (
-    <div className={`flex flex-col gap-1 `}>
+    <div className="flex flex-col gap-1">
       {label && (
         <label htmlFor={name} className="text-sm font-medium text-gray-700">
           {label}
@@ -25,12 +26,12 @@ const InputField = ({
         name={name}
         type={type}
         value={value}
-          onWheel={(e) => {
-    // Disable scroll for number inputs
-    if (type === "number") e.target.blur();
-  }}
+        maxLength={maxLength} // ✅ This works as long as value is string
         onChange={onChange}
-        className={`${className}`}
+        onWheel={(e) => {
+          if (type === "number") e.target.blur();
+        }}
+        className={className}
         placeholder={placeholder}
         {...rest}
       />
