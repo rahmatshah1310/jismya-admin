@@ -37,7 +37,7 @@ export default function DeleteProductModal({ isOpen, onClose, productId }) {
         <Button onClick={onClose} className="bg-gray-200 hover:bg-gray-300 text-black">
           Cancel
         </Button>
-        <Button onClick={handleDelete} className="bg-red-600 hover:bg-red-700 text-white">
+        <Button disabled={isLoading} onClick={handleDelete} className={isLoading?"text-gray-300 bg-red-600 hover:bg-red-700":"bg-red-600 hover:bg-red-700 text-white"}>
           {isLoading ? "Deleting..." : "  🗑️ Delete"}
         </Button>
       </div>
