@@ -72,14 +72,16 @@ export default function UpdateSaleModal({ sale, isOpen, onClose }) {
             className="w-full p-2 border rounded"
             placeholder="e.g. Summer Blast 2025"
           />
-          <InputField
-            label="Description"
+            <textarea
+            id="description"
             name="description"
+            rows={3}
+            label="Description"
             value={form.description}
             onChange={handleChange}
             className="w-full p-2 border rounded"
             placeholder="Short summary of the sale"
-          />
+          ></textarea>
           <InputField
             label="Discount Percentage"
             name="discountPercentage"
@@ -97,7 +99,7 @@ export default function UpdateSaleModal({ sale, isOpen, onClose }) {
           <Button onClick={onClose} className="w-1/3 bg-gray-100 text-gray-700 hover:bg-gray-200">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={updateSaleMutation.isPending} className="w-2/3 bg-blue-600 hover:bg-blue-700 text-white">
+          <Button onClick={handleSubmit} disabled={updateSaleMutation.isPending} className={updateSaleMutation.isPending?"text-gray-300 w-2/3 bg-blue-600 hover:bg-blue-700":"w-2/3 bg-blue-600 hover:bg-blue-700 text-white"}>
             {updateSaleMutation.isPending ? "Updating..." : "Update Sale"}
           </Button>
         </div>
