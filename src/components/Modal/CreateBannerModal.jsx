@@ -93,9 +93,12 @@ export default function CreateBannerModal({
         <h2 className="font-bold text-xl">Create Banner</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <InputField
-            value={form.heading}
+          id="heading"
+          name="heading"
+            value={form.heading??""}
             onChange={(e) => setForm({ ...form, heading: e.target.value })}
             placeholder="Heading"
+            maxLength={200}
             className="border p-2 w-full"
           />
           <input
