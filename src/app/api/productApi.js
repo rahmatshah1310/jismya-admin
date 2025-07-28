@@ -11,6 +11,7 @@ export const useCreateProduct = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
      queryClient.invalidateQueries({ queryKey: ["products-by-category"] });
+     queryClient.invalidateQueries({ queryKey: ["categories"] });
 
     },
   });
@@ -23,6 +24,7 @@ export const useUpdateProduct = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       queryClient.invalidateQueries({ queryKey: ["products-by-category"] });
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
        queryClient.invalidateQueries({ queryKey: ["sizes"] })
     },
   });
@@ -56,6 +58,7 @@ export const useSingleProduct = (id) =>
       onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
        queryClient.invalidateQueries({ queryKey: ["products-by-category"] });
+       queryClient.invalidateQueries({ queryKey: ["categories"] });
       queryClient.invalidateQueries({ queryKey: ["sizes"] })
     },
     });
