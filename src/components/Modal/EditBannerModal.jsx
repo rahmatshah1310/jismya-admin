@@ -66,12 +66,6 @@ export default function EditBannerModal({ onClose, showEditModal, banner }) {
             placeholder="Heading"
             className="border p-2 w-full"
           />
-          <InputField
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-            placeholder="Description"
-            className="border p-2 w-full"
-          />
           {/* 
                     <select
                         value={form.deviceType}
@@ -90,11 +84,20 @@ export default function EditBannerModal({ onClose, showEditModal, banner }) {
             className="border p-2 w-full"
           />
         </div>
+         <textarea
+            id="description"
+            name="description"
+            rows={3}
+            className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+            placeholder="Description"
+          ></textarea>
 
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-green-500 text-white p-2 rounded"
+          className={isSubmitting?"w-full bg-green-500 text-gray-300 p-2 rounded":"w-full bg-green-500 text-white p-2 rounded"}
         >
           {isSubmitting ? "Updating..." : "Update"}
         </Button>
