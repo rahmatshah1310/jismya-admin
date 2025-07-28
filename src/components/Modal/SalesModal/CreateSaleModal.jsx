@@ -101,7 +101,7 @@ const res = await createSale.mutateAsync(form);
           onClick={handleSubmit}
           disabled={isSubmitting}
           variant="brand"
-          className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:opacity-90"
+          className={ isSubmitting?"bg-gradient-to-r from-indigo-500 to-purple-600 text-gray-300 hover:opacity-90":"bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:opacity-90"}
         >
           {isSubmitting ? "Creating..." : "Create"}
         </Button>
