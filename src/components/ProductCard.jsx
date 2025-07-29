@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import { FiEdit, FiTrash2, FiList, FiTag } from "react-icons/fi";
-import UpdateProductModal from "./Modal/UpdateProductModal";
-import DeleteProductModal from "./Modal/DeleteProductModal";
-import ToggleSwitch from "./ui/ToggleSwitch";
 import { toast } from "react-toastify";
-import ProductOrderModal from "./Modal/ProductOrderModal";
+import ProductOrderModal from "./Modal/ProductModals/ProductOrderModal";
+import UpdateProductModal from "./Modal/ProductModals/UpdateProductModal";
+import DeleteProductModal from "./Modal/ProductModals/DeleteProductModal";
 
 export default function ProductCard({ product, onCardClick,onAddToSale }) {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
