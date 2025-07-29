@@ -8,13 +8,13 @@ import {
   useBannersByDevice,
   useToggleStatus,
 } from "@/app/api/bannerApi";
-import CreateBannerModal from "@/components/Modal/CreateBannerModal";
+import CreateBannerModal from "@/components/Modal/BannerModals/CreateBannerModal";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import EditBannerModal from "@/components/Modal/EditBannerModal";
+import EditBannerModal from "@/components/Modal/BannerModals/EditBannerModal";
 import BannerTable from "@/components/tables/BannerTable";
-import ViewBannerModal from "@/components/Modal/ViewBannerModal";
-import ReorderBannerModal from "@/components/Modal/ReorderBannerModal";
-import DeleteBannerModal from "@/components/Modal/DeleleteBannerModal";
+import ViewBannerModal from "@/components/Modal/BannerModals/ViewBannerModal";
+import ReorderBannerModal from "@/components/Modal/BannerModals/ReorderBannerModal";
+import DeleteBannerModal from "@/components/Modal/BannerModals/DeleleteBannerModal";
 
 export default function Home() {
   const [activeModal, setActiveModal] = useState(null); // 'create' | 'edit' | 'view' | 'reorder'
