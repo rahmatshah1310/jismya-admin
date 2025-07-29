@@ -6,7 +6,7 @@ import { useSingleProduct } from "@/app/api/productApi";
 import { ClipLoader } from "react-spinners";
 import { useState } from "react";
 import Button from "@/components/ui/Button";
-import DescriptionImageUploaderModal from "@/components/Modal/DescriptionImageUploaderModal";
+import DescriptionImageUploaderModal from "@/components/Modal/ProductModals/DescriptionImageUploaderModal";
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
