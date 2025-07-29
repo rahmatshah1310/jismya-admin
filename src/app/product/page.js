@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import ProductForm from "@/components/Modal/ProductForm";
+import ProductForm from "@/components/Modal/ProductModals/ProductForm";
 import Button from "@/components/ui/Button";
 import ProductCard from "@/components/ProductCard";
 import ProductFilters from "@/components/ProductFilters";
