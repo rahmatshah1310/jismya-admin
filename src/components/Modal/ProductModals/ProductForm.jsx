@@ -92,7 +92,7 @@ export default function ProductForm({ isOpen, onClose }) {
       <form onSubmit={handleSubmit} className="h-auto p-8 space-y-6 bg-gradient-to-tr from-white to-blue-50 rounded-2xl shadow-lg border border-gray-200">
         <h2 className="text-3xl font-bold text-blue-700 mb-4 border-b pb-2">🛍️ Create Product</h2>
         {/* Product Name */}
-          <InputField id="productName" name="productName" value={formData.productName} onChange={handleChange} className="border p-2 w-full" label="Product Name"/>
+          <InputField maxLength={200}  id="productName" name="productName" value={formData.productName??""} onChange={handleChange} className="border p-2 w-full" label="Product Name"/>
         {/* Category */}
           <InputField id="categoryName"  name="categoryName" value={formData.categoryName} onChange={handleChange} className="border p-2 w-full" label="Category" />
         {/* Description */}
