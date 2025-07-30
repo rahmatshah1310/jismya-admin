@@ -14,8 +14,8 @@ export default function StatisticsPage() {
 
   if (isLoading || isSalesLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <ClipLoader size={50} />
+      <div className="flex items-center justify-center min-h-[79vh]">
+        <ClipLoader/>
       </div>
     );
   }
