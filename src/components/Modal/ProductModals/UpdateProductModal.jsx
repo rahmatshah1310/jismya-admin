@@ -80,7 +80,7 @@ export default function UpdateProductModal({ isOpen, onClose, product }) {
 
         {/* Same fields as in ProductForm */}
         {/* Example: */}
-        <InputField name="productName" value={formData.productName} onChange={handleChange} className="border p-2 w-full" label="Product Name" />
+        <InputField maxLength={200} name="productName" value={formData.productName??""} onChange={handleChange} className="border p-2 w-full" label="Product Name" />
         <InputField name="categoryName" value={formData.categoryName} onChange={handleChange} className="border p-2 w-full" label="Category" />
         <textarea name="description" value={formData.description} onChange={handleChange} className="w-full p-2 border rounded" rows={3} />
 
