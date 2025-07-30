@@ -67,7 +67,7 @@ const handleAddToSale = (product) => {
       </div>
 
       {isLoading ? (
-        <div className="flex items-center justify-center h-screen">
+        <div className="flex items-center justify-center">
           <ClipLoader />
         </div>
       ) : products.length === 0 ? (
