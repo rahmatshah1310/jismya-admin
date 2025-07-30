@@ -6,16 +6,14 @@ import { useProductSaleStats } from "../api/productApi";
 import { useGetSalesStats } from "../api/saleApi";
 import Card from "@/components/Card";
 
-
-
 export default function StatisticsPage() {
   const { data, isLoading, isError } = useProductSaleStats();
   const { data: saleStatsData, isLoading: isSalesLoading, isError: isSalesError } = useGetSalesStats();
 
   if (isLoading || isSalesLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[79vh]">
-        <ClipLoader/>
+      <div className="flex justify-center items-center min-h-[calc(100vh-210px)] md:min-h-[calc(100vh-180px)]">
+        <ClipLoader />
       </div>
     );
   }
