@@ -2,12 +2,7 @@
 
 import { useState } from "react";
 import Button from "@/components/ui/Button";
-import {
-  useGetBanners,
-  useDeleteBannerMutation,
-  useBannersByDevice,
-  useToggleStatus,
-} from "@/app/api/bannerApi";
+import { useGetBanners, useDeleteBannerMutation, useBannersByDevice, useToggleStatus } from "@/app/api/bannerApi";
 import CreateBannerModal from "@/components/Modal/BannerModals/CreateBannerModal";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import EditBannerModal from "@/components/Modal/BannerModals/EditBannerModal";
@@ -23,16 +18,13 @@ export default function Home() {
   const [createDeviceType, setCreateDeviceType] = useState(null);
   const toggleStatus = useToggleStatus();
 
-  const handleToggle = (id, currentStatus) => {
-    toggleStatus.mutate({ id, isActive: !currentStatus });
+  const handleToggle = async (id, isActive) => {
+    return toggleStatus.mutateAsync({ id, isActive }); // use mutateAsync for promise
   };
 
-  const { data: laptopBanners, isLoading: loadingLaptop } =
-    useBannersByDevice("laptop");
-  const { data: tabletBanners, isLoading: loadingTablet } =
-    useBannersByDevice("tablet");
-  const { data: mobileBanners, isLoading: loadingMobile } =
-    useBannersByDevice("mobile");
+  const { data: laptopBanners, isLoading: loadingLaptop } = useBannersByDevice("laptop");
+  const { data: tabletBanners, isLoading: loadingTablet } = useBannersByDevice("tablet");
+  const { data: mobileBanners, isLoading: loadingMobile } = useBannersByDevice("mobile");
 
   const deleteBanner = useDeleteBannerMutation();
 
@@ -82,31 +74,15 @@ export default function Home() {
         </div> */}
 
         {/* Modals */}
-        {activeModal === "create" && (
-          <CreateBannerModal
-            onClose={closeModal}
-            deviceType={createDeviceType}
-          />
-        )}
+        {activeModal === "create" && <CreateBannerModal onClose={closeModal} deviceType={createDeviceType} />}
 
-        {activeModal === "edit" && selectedBanner && (
-          <EditBannerModal banner={selectedBanner} onClose={closeModal} />
-        )}
-        {activeModal === "view" && viewBannerId && (
-          <ViewBannerModal bannerId={viewBannerId} onClose={closeModal} />
-        )}
-        {activeModal === "reorder" && selectedBanner && (
-          <ReorderBannerModal banner={selectedBanner} onClose={closeModal} />
-        )}
-        {activeModal === "delete" && selectedBanner && (
-          <DeleteBannerModal banner={selectedBanner} onClose={closeModal} />
-        )}
+        {activeModal === "edit" && selectedBanner && <EditBannerModal banner={selectedBanner} onClose={closeModal} />}
+        {activeModal === "view" && viewBannerId && <ViewBannerModal bannerId={viewBannerId} onClose={closeModal} />}
+        {activeModal === "reorder" && selectedBanner && <ReorderBannerModal banner={selectedBanner} onClose={closeModal} />}
+        {activeModal === "delete" && selectedBanner && <DeleteBannerModal banner={selectedBanner} onClose={closeModal} />}
 
         <div className="flex justify-end pt-10">
-          <Button
-            onClick={() => openCreateModal("laptop")}
-            className="bg-green-500 text-white rounded"
-          >
+          <Button onClick={() => openCreateModal("laptop")} className="bg-green-500 text-white rounded">
             Create Laptop Banner
           </Button>
         </div>
@@ -126,10 +102,7 @@ export default function Home() {
         />
 
         <div className="flex justify-end mt-10">
-          <Button
-            onClick={() => openCreateModal("tablet")}
-            className="bg-green-500 rounded text-white"
-          >
+          <Button onClick={() => openCreateModal("tablet")} className="bg-green-500 rounded text-white">
             Create Tablet Banner
           </Button>
         </div>
@@ -148,10 +121,7 @@ export default function Home() {
         />
 
         <div className="flex justify-end pt-10">
-          <Button
-            onClick={() => openCreateModal("mobile")}
-            className="bg-green-500 rounded text-white"
-          >
+          <Button onClick={() => openCreateModal("mobile")} className="bg-green-500 rounded text-white">
             Create Mobile Banner
           </Button>
         </div>
