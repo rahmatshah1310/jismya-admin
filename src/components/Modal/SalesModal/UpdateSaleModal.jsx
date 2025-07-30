@@ -69,6 +69,7 @@ export default function UpdateSaleModal({ sale, isOpen, onClose }) {
             name="saleName"
             value={form.saleName}
             onChange={handleChange}
+            maxLength={200}
             className="w-full p-2 border rounded"
             placeholder="e.g. Summer Blast 2025"
           />
