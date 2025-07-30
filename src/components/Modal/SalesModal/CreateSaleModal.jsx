@@ -71,6 +71,7 @@ const res = await createSale.mutateAsync(form);
           name="saleName"
           placeholder="Sale Name"
           value={form.saleName}
+          maxLength={200}
           onChange={handleChange}
           className="border-2 border-pink-400 focus:ring-pink-500 p-2 rounded-lg"
         />
