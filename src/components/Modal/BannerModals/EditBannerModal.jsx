@@ -61,9 +61,10 @@ export default function EditBannerModal({ onClose, showEditModal, banner }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <InputField
-            value={form.heading}
+            value={form.heading??""}
             onChange={(e) => setForm({ ...form, heading: e.target.value })}
             placeholder="Heading"
+            maxLength={200}
             className="border p-2 w-full"
           />
           {/* 
