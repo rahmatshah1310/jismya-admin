@@ -113,7 +113,7 @@ export default function Home() {
 
         {/* Laptop Banners */}
         <BannerTable
-          title="Laptop Banners"
+          title="Laptop Banners (1280x720)"
           banners={laptopBanners}
           setSelectedBanner={setSelectedBanner}
           setShowEditModal={() => setActiveModal("edit")}
@@ -135,7 +135,7 @@ export default function Home() {
         </div>
         {/* Tablet Banners */}
         <BannerTable
-          title="Tablet Banners"
+          title="Tablet Banners (900x300)"
           banners={tabletBanners}
           setSelectedBanner={setSelectedBanner}
           setShowEditModal={() => setActiveModal("edit")}
@@ -157,7 +157,7 @@ export default function Home() {
         </div>
         {/* Mobile Banners */}
         <BannerTable
-          title="Mobile Banners"
+          title="Mobile Banners (500x200)"
           banners={mobileBanners}
           setSelectedBanner={setSelectedBanner}
           setShowEditModal={() => setActiveModal("edit")}
