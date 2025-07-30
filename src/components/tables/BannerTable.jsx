@@ -35,8 +35,8 @@ export default function BannerTable({
                     src={banner.imageUrl}
                     alt="banner"
                     width={120}
-                    height={60}
-                    className="rounded-md object-cover"
+                    height={10}
+                    className="rounded-md h-[80px] object-cover"
                   />
                 </td>
                 <td className="p-2 min-w-[10px] max-w-[10px] overflow-hidden whitespace-nowrap text-ellipsis">
