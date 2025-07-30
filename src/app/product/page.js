@@ -52,16 +52,14 @@ const Product = () => {
     isLoading = loadingSize;
   }
 
-  const formattedCategoryHeading = category
-    ? `${category.charAt(0).toUpperCase() + category.slice(1)} Category`
-    : "All Categories";
+  const formattedCategoryHeading = category ? `${category.charAt(0).toUpperCase() + category.slice(1)} Category` : "All Categories";
 
   return (
     <div className="p-6">
       <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
         {/* <div className="flex items-center gap-2"> */}
-          <h1 className="text-3xl font-bold text-gray-800">{formattedCategoryHeading}</h1>
-          {/* {isLoading && <ClipLoader size={20} />} */}
+        <h1 className="text-3xl font-bold text-gray-800">{formattedCategoryHeading}</h1>
+        {/* {isLoading && <ClipLoader size={20} />} */}
         {/* </div> */}
 
         <ProductFilters />
@@ -71,7 +69,7 @@ const Product = () => {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="flex justify-center items-center min-h-[calc(100vh-555px)] md:min-h-[calc(100vh-365px)]">
           <ClipLoader />
         </div>
       ) : products.length === 0 ? (
@@ -79,23 +77,14 @@ const Product = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
-            <ProductCard
-              key={product._id}
-              product={product}
-              onCardClick={handleCardClick}
-              onAddToSale={handleAddToSale}
-            />
+            <ProductCard key={product._id} product={product} onCardClick={handleCardClick} onAddToSale={handleAddToSale} />
           ))}
         </div>
       )}
 
       {/* Modals */}
       {isModalOpen && <ProductForm open={isModalOpen} onClose={() => setIsModalOpen(false)} />}
-      <ConnectProductsToSaleModal
-        isOpen={saleModalOpen}
-        onClose={() => setSaleModalOpen(false)}
-        productId={selectedProduct?._id}
-      />
+      <ConnectProductsToSaleModal isOpen={saleModalOpen} onClose={() => setSaleModalOpen(false)} productId={selectedProduct?._id} />
     </div>
   );
 };
