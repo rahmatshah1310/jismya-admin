@@ -10,7 +10,7 @@ import UpdateSaleModal from "@/components/Modal/SalesModal/UpdateSaleModal";
 import { ClipLoader } from "react-spinners";
 import { FaTrash, FaEdit } from "react-icons/fa";
 import Image from "next/image";
-import ToggleSwitch from "@/components/ui/ToggleSwitch";
+import StatusToggle from "@/components/ui/common/StatusToggle";
 
 export default function Sales() {
   const { data: sales, isLoading } = useGetAllSales();
@@ -30,10 +30,9 @@ export default function Sales() {
     setUpdateModalOpen(true);
   };
 
- const handleToggle = (id, currentStatus) => {
+  const handleToggle = (id, currentStatus) => {
     toggleStatus.mutate({ id, isActive: !currentStatus });
   };
-
 
   return (
     <div className="p-6">
@@ -45,7 +44,7 @@ export default function Sales() {
       </div>
 
       {isLoading ? (
-        <div className="flex items-center justify-center h-screen">
+        <div className="flex justify-center items-center min-h-[calc(100vh-555px)] md:min-h-[calc(100vh-365px)]">
           <ClipLoader />
         </div>
       ) : (
@@ -78,13 +77,7 @@ export default function Sales() {
                     {new Date(sale.startDate).toLocaleDateString()} - {new Date(sale.endDate).toLocaleDateString()}
                   </p>
                 </div>
-                <ToggleSwitch
-                  isActive={sale.isActive}
-                  onToggle={() =>{ handleToggle(sale._id, sale.isActive)} }
-                  activeText="Active"
-                  inactiveText="Inactive"
-                  className="items-end mb-auto"
-                />
+                <StatusToggle id={sale._id} isActive={sale.isActive} mutationFn={({ id, isActive }) => toggleStatus.mutateAsync({ id, isActive })} />
               </div>
 
               {/* ✅ Product Preview */}
