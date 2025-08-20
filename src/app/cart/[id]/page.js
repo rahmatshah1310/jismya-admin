@@ -1,10 +1,9 @@
-"use client"
+'use client'
 
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import InputField from '@/components/ui/InputField'
 import { useCart } from '@/context/CartContext'
 import { ClipLoader } from 'react-spinners'
 
@@ -15,16 +14,21 @@ export default function SingleCartItem() {
   const cartItem = cart.find((item) => item.id === String(id))
 
   const [quantity, setQuantity] = useState(1)
-  const [selectedOption, setSelectedOption] = useState("")
+  const [selectedOption, setSelectedOption] = useState('')
 
   useEffect(() => {
     if (cartItem) {
       setQuantity(cartItem.quantity || 1)
-      setSelectedOption(cartItem.selectedOption || "")
+      setSelectedOption(cartItem.selectedOption || '')
     }
   }, [cartItem])
 
-  if (loading) return <h1 className="text-center py-20"><ClipLoader/></h1>
+  if (loading)
+    return (
+      <h1 className="text-center py-20">
+        <ClipLoader />
+      </h1>
+    )
   if (!cartItem) return <h1 className="text-center py-20">Item not found.</h1>
 
   const handleUpdateCart = () => {
@@ -56,16 +60,26 @@ export default function SingleCartItem() {
           {/* Product Details */}
           <div className="flex-1 flex flex-col justify-between">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">{cartItem.name}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
+                {cartItem.name}
+              </h1>
               <p className="text-xl text-pink-600 font-semibold mb-4">
                 Rs. {cartItem.price.toLocaleString()}
               </p>
 
               <div className="text-gray-600 mb-4 space-y-1 text-sm sm:text-base">
-                <div><strong>Ships In:</strong> {cartItem.delivery}</div>
-                <div><strong>Delivery Area:</strong> {cartItem.area}</div>
-                <div><strong>Origin:</strong> {cartItem.origin}</div>
-                <div><strong>Shipped By:</strong> {cartItem.shippedBy}</div>
+                <div>
+                  <strong>Ships In:</strong> {cartItem.delivery}
+                </div>
+                <div>
+                  <strong>Delivery Area:</strong> {cartItem.area}
+                </div>
+                <div>
+                  <strong>Origin:</strong> {cartItem.origin}
+                </div>
+                <div>
+                  <strong>Shipped By:</strong> {cartItem.shippedBy}
+                </div>
               </div>
 
               {/* Size Selection */}
@@ -78,7 +92,9 @@ export default function SingleCartItem() {
                 >
                   <option value="">Choose an Option...</option>
                   {cartItem.options.map((opt) => (
-                    <option key={opt} value={opt}>{opt}</option>
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -91,11 +107,13 @@ export default function SingleCartItem() {
                   onChange={(e) => setQuantity(Number(e.target.value))}
                   className="w-full sm:w-24 px-2 py-2 border border-gray-300 rounded"
                 >
-                  {(cartItem.availableQuantities || ['1', '2', '3', '4']).map((qty) => (
-                    <option key={qty} value={qty}>
-                      {qty}
-                    </option>
-                  ))}
+                  {(cartItem.availableQuantities || ['1', '2', '3', '4']).map(
+                    (qty) => (
+                      <option key={qty} value={qty}>
+                        {qty}
+                      </option>
+                    )
+                  )}
                 </select>
               </div>
             </div>
