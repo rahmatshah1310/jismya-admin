@@ -1,9 +1,9 @@
-"use client"
+'use client'
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { BsThreeDotsVertical } from "react-icons/bs"
-import Button from '@/components/ui/Button'
+import { BsThreeDotsVertical } from 'react-icons/bs'
+import { Button } from '@/components/ui/Button'
 
 const navLinks = [
   { href: '/', label: 'Banners Management' },
@@ -43,7 +43,11 @@ const Header = () => {
 
           <div className="hidden md:flex space-x-6">
             {navLinks.map(({ href, label }) => (
-              <Link key={href} href={href} className="text-pink-500 hover:text-pink-700">
+              <Link
+                key={href}
+                href={href}
+                className="text-pink-500 hover:text-pink-700"
+              >
                 {label}
               </Link>
             ))}
@@ -53,7 +57,7 @@ const Header = () => {
             <Button
               className="text-2xl text-pink-500"
               onClick={(e) => {
-                e.stopPropagation(); // prevent immediate close
+                e.stopPropagation() // prevent immediate close
                 setMenuOpen(!menuOpen)
               }}
               aria-label="Toggle menu"
