@@ -1,36 +1,36 @@
 /* ProductFilters.tsx */
-"use client";
+'use client'
 
-import { useGetAllCategories, useGetSizes } from "@/app/api/productApi";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useGetAllCategories, useGetSizes } from '@/app/api/productApi'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 const ProductFilters = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
-  const [category, setCategory] = useState(searchParams.get("category") || "");
-  const [size, setSize] = useState(searchParams.get("size") || "");
+  const [category, setCategory] = useState(searchParams.get('category') || '')
+  const [size, setSize] = useState(searchParams.get('size') || '')
 
-  const { data: categories } = useGetAllCategories();
-  const { data: sizes } = useGetSizes();
-  const categoriesall=categories?.data
-  const sizesall=sizes?.data
+  const { data: categories } = useGetAllCategories()
+  const { data: sizes } = useGetSizes()
+  const categoriesall = categories?.data
+  const sizesall = sizes?.data
 
   useEffect(() => {
-    const query = new URLSearchParams();
-    if (category) query.set("category", category);
-    if (size) query.set("size", size);
-    router.push(`/product?${query.toString()}`);
-  }, [category, size]);
+    const query = new URLSearchParams()
+    if (category) query.set('category', category)
+    if (size) query.set('size', size)
+    router.push(`/product?${query.toString()}`)
+  }, [category, size])
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-4 w-full">
       {/* Category Filter */}
       <select
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        className="border border-gray-300 rounded px-3 py-1"
+        className="border border-gray-800 rounded p-3 flex-1 bg-transparent"
       >
         <option value="">All Categories</option>
         {categoriesall?.map((cat) => (
@@ -44,9 +44,11 @@ const ProductFilters = () => {
       <select
         value={size}
         onChange={(e) => setSize(e.target.value)}
-        className="border border-gray-300 rounded px-3 py-1"
+        className="border border-gray-800 rounded p-3 flex-1 bg-transparent"
       >
-        <option value="">All Sizes</option>
+        <option value="" className="bg-transparent">
+          All Sizes
+        </option>
         {sizesall?.map((sz) => (
           <option key={sz} value={sz}>
             {sz}
@@ -54,7 +56,7 @@ const ProductFilters = () => {
         ))}
       </select>
     </div>
-  );
-};
+  )
+}
 
-export default ProductFilters;
+export default ProductFilters
