@@ -13,25 +13,27 @@ export default function AuthLayout({ children }) {
 
   const isAuthPage = pathname === '/login' || pathname === '/register'
 
-useEffect(() => {
-  if (loading) return;
+  useEffect(() => {
+    if (loading) return
 
-  if (userData) {
-    if (isAuthPage) router.push('/');
-  } else {
-    if (!isAuthPage&&!loading) router.push('/login');
-  }
-}, [userData, loading, pathname, isAuthPage, router]);
-
-  if (loading) {
-    return <div className="h-screen flex justify-center items-center"><ClipLoader/></div>
-  }
+    if (userData && isAuthPage) {
+      router.push('/')
+    } else if (!userData && !isAuthPage) {
+      router.push('/login')
+    }
+  }, [userData, loading, pathname, isAuthPage, router])
 
   return (
     <div className="flex flex-col min-h-screen">
       {!isAuthPage && <Header />}
       <main className={`flex-grow bg-white ${!isAuthPage ? 'mt-24' : ''}`}>
-        {children}
+        {loading ? (
+          <div className="h-[70vh] flex justify-center items-center">
+            <ClipLoader color="#fff" />
+          </div>
+        ) : (
+          children
+        )}
       </main>
     </div>
   )
