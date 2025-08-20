@@ -1,81 +1,177 @@
-"use client";
+'use client'
 
-import { ClipLoader } from "react-spinners";
-import { FaBoxOpen, FaCheckCircle, FaTimesCircle, FaStar, FaTags, FaPercent } from "react-icons/fa";
-import { useProductSaleStats } from "../api/productApi";
-import { useGetSalesStats } from "../api/saleApi";
-import Card from "@/components/Card";
+import { ClipLoader } from 'react-spinners'
+import {
+  FaBoxOpen,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaStar,
+  FaTags,
+  FaPercent,
+} from 'react-icons/fa'
+import { useProductSaleStats } from '../api/productApi'
+import { useGetSalesStats } from '../api/saleApi'
+import { DashboardLayout } from '@/components/layout/dashboard-layout'
+
+function StatCard({ icon: Icon, title, value, color }) {
+  return (
+    <div className="bg-card border rounded-xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition">
+      <div className={`p-3 rounded-lg ${color} bg-opacity-20 text-xl`}>
+        <Icon className={`text-lg ${color.replace('bg-', 'text-')}`} />
+      </div>
+      <div>
+        <p className="text-sm text-muted-foreground">{title}</p>
+        <h3 className="text-lg font-semibold text-foreground">{value}</h3>
+      </div>
+    </div>
+  )
+}
 
 export default function StatisticsPage() {
-  const { data, isLoading, isError } = useProductSaleStats();
-  const { data: saleStatsData, isLoading: isSalesLoading, isError: isSalesError } = useGetSalesStats();
+  const { data, isLoading, isError } = useProductSaleStats()
+  const {
+    data: saleStatsData,
+    isLoading: isSalesLoading,
+    isError: isSalesError,
+  } = useGetSalesStats()
 
   if (isLoading || isSalesLoading) {
     return (
       <div className="flex justify-center items-center min-h-[calc(100vh-210px)] md:min-h-[calc(100vh-180px)]">
-        <ClipLoader />
+        <ClipLoader color="#fff" />
       </div>
-    );
+    )
   }
   if (isError || isSalesError) {
-    return <div className="text-center text-red-500">Failed to load product or sale statistics</div>;
+    return (
+      <div className="text-center text-red-500">
+        Failed to load product or sale statistics
+      </div>
+    )
   }
 
-  const { total = {}, byCategory = [] } = data?.data || {};
-  const salestats = saleStatsData?.data || {};
+  const { total = {}, byCategory = [] } = data?.data || {}
+  const salestats = saleStatsData?.data || {}
 
   return (
-    <div className="p-6 space-y-10">
-      {/* Product Stats */}
-      <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Product Statistics</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card icon={FaBoxOpen} title="Total Products" value={total.totalProducts} color="bg-blue-500" />
-          <Card icon={FaCheckCircle} title="Active Products" value={total.totalActive} color="bg-green-500" />
-          <Card icon={FaTimesCircle} title="Inactive Products" value={total.totalInactive} color="bg-red-500" />
-          <Card icon={FaStar} title="Avg Rating" value={typeof total.avgRating === "number" ? total.avgRating.toFixed(1) : "0.0"} color="bg-yellow-500" />
+    <DashboardLayout>
+      <div className="p-2 space-y-10">
+        {/* Product Stats */}
+        <div>
+          <h2 className="text-xl font-bold text-muted-foreground mb-4">
+            Product Statistics
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <StatCard
+              icon={FaBoxOpen}
+              title="Total Products"
+              value={total.totalProducts}
+              color="bg-blue-500"
+            />
+            <StatCard
+              icon={FaCheckCircle}
+              title="Active Products"
+              value={total.totalActive}
+              color="bg-green-500"
+            />
+            <StatCard
+              icon={FaTimesCircle}
+              title="Inactive Products"
+              value={total.totalInactive}
+              color="bg-red-500"
+            />
+            <StatCard
+              icon={FaStar}
+              title="Avg Rating"
+              value={
+                typeof total.avgRating === 'number'
+                  ? total.avgRating.toFixed(1)
+                  : '0.0'
+              }
+              color="bg-yellow-500"
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Sale Stats */}
-      <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Sales Statistics</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card icon={FaTags} title="Total Sales" value={salestats.totalSales} color="bg-indigo-500" />
-          <Card icon={FaCheckCircle} title="Active Sales" value={salestats.activeSales} color="bg-emerald-500" />
-          <Card icon={FaBoxOpen} title="Products on Sale" value={salestats.totalProductsOnSale} color="bg-pink-500" />
-          <Card icon={FaPercent} title="Avg Discount (%)" value={`${salestats.avgDiscount.toFixed(1)}%`} color="bg-orange-500" />
+        {/* Sale Stats */}
+        <div>
+          <h2 className="text-xl font-bold text-muted-foreground mb-4">
+            Sales Statistics
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <StatCard
+              icon={FaTags}
+              title="Total Sales"
+              value={salestats.totalSales}
+              color="bg-indigo-500"
+            />
+            <StatCard
+              icon={FaCheckCircle}
+              title="Active Sales"
+              value={salestats.activeSales}
+              color="bg-emerald-500"
+            />
+            <StatCard
+              icon={FaBoxOpen}
+              title="Products on Sale"
+              value={salestats.totalProductsOnSale}
+              color="bg-pink-500"
+            />
+            <StatCard
+              icon={FaPercent}
+              title="Avg Discount (%)"
+              value={
+                typeof salestats.avgDiscount === 'number'
+                  ? `${salestats.avgDiscount.toFixed(1)}%`
+                  : '0.0%'
+              }
+              color="bg-orange-500"
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Table View */}
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-700 mb-4">Products by Category</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-gray-700">
-            <thead className="bg-gray-50">
-              <tr className="text-left">
-                <th className=" p-2">Category</th>
-                <th className=" p-2">Total</th>
-                <th className=" p-2">Active</th>
-                <th className=" p-2">Inactive</th>
-                <th className=" p-2 min-w-[90px]">Avg Rating</th>
-              </tr>
-            </thead>
-            <tbody>
-              {byCategory.map((cat) => (
-                <tr key={cat._id} className="border-t hover:bg-gray-50">
-                  <td className="p-2 font-medium">{cat._id}</td>
-                  <td className="p-2">{cat.count}</td>
-                  <td className="p-2 text-green-600">{cat.activeCount}</td>
-                  <td className="p-2 text-red-500">{cat.inactiveCount}</td>
-                  <td className="p-2 ">{typeof cat.avgRating === "number" ? cat.avgRating.toFixed(1) : "0.0"}</td>
+        {/* Table View */}
+        <div className="bg-card p-6 rounded-xl shadow-sm border">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
+            Products by Category
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left border-collapse">
+              <thead>
+                <tr className="bg-muted/40 text-muted-foreground text-xs uppercase tracking-wide">
+                  <th className="p-3">Category</th>
+                  <th className="p-3">Total</th>
+                  <th className="p-3">Active</th>
+                  <th className="p-3">Inactive</th>
+                  <th className="p-3 min-w-[90px]">Avg Rating</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {byCategory.map((cat, i) => (
+                  <tr
+                    key={cat._id}
+                    className={`${
+                      i % 2 === 0 ? 'bg-muted/40' : 'bg-muted/30'
+                    } border-t`}
+                  >
+                    <td className="p-3 font-medium text-foreground">
+                      {cat._id}
+                    </td>
+                    <td className="p-3">{cat.count}</td>
+                    <td className="p-3 text-green-600">{cat.activeCount}</td>
+                    <td className="p-3 text-red-500">{cat.inactiveCount}</td>
+                    <td className="p-3">
+                      {typeof cat.avgRating === 'number'
+                        ? cat.avgRating.toFixed(1)
+                        : '0.0'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    </DashboardLayout>
+  )
 }
