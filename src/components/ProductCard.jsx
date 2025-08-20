@@ -1,120 +1,152 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { FiEdit, FiTrash2, FiList, FiTag } from "react-icons/fi";
-import { toast } from "react-toastify";
-import ProductOrderModal from "./Modal/ProductModals/ProductOrderModal";
-import UpdateProductModal from "./Modal/ProductModals/UpdateProductModal";
-import DeleteProductModal from "./Modal/ProductModals/DeleteProductModal";
+import { useState } from 'react'
+import { FiEdit, FiTrash2, FiTag } from 'react-icons/fi'
+import { Badge } from '@/components/ui/badge'
+import UpdateProductModal from './Modal/ProductModals/UpdateProductModal'
+import DeleteProductModal from './Modal/ProductModals/DeleteProductModal'
+import ProductOrderModal from './Modal/ProductModals/ProductOrderModal'
 
-export default function ProductCard({ product, onCardClick,onAddToSale }) {
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showOrderModal, setShowOrderModal] = useState(false);
+export default function ProductCard({ product, onCardClick, onAddToSale }) {
+  const [showUpdateModal, setShowUpdateModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showOrderModal, setShowOrderModal] = useState(false)
 
   return (
     <>
       <div
-        className="relative bg-white rounded-2xl shadow-lg overflow-hidden transition-transform hover:scale-[1.02] hover:shadow-2xl cursor-pointer"
+        className="bg-card border rounded-xl shadow-sm hover:shadow-md transition cursor-pointer m-2"
         onClick={() => onCardClick(product._id)}
       >
-        <div className="relative">
-          {/* Product Image */}
-          <img src={product.imageUrl} alt={product.productName} className="h-56 w-full object-cover" />
-        </div>
-
-        {/* Action buttons */}
-        <div className="absolute top-2 right-2 flex gap-2">
-          {/* <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowOrderModal(true);
-            }}
-            className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600 p-1 rounded-full cursor-pointer"
-            title="Set Order"
-          >
-            <FiList size={16} />
-          </button> */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddToSale(product); // this will come as prop
-            }}
-            className="bg-green-100 hover:bg-green-200 text-green-600 p-1 rounded-full cursor-pointer"
-            title="Add to Sale"
-          >
-            <FiTag size={16} />
-          </button>
-
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowUpdateModal(true);
-            }}
-            className="bg-blue-100 hover:bg-blue-200 text-blue-600 p-1 rounded-full cursor-pointer"
-            title="Edit"
-          >
-            <FiEdit size={16} />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowDeleteModal(true);
-            }}
-            className="bg-red-100 hover:bg-red-200 text-red-600 p-1 rounded-full cursor-pointer"
-            title="Delete"
-          >
-            <FiTrash2 size={16} />
-          </button>
-        </div>
-
-        <div className="p-4 space-y-2">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-bold text-gray-800">{product.productName}</h3>
+        {/* Top Section */}
+        <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center gap-3">
+            <img
+              src={product.imageUrl}
+              alt={product.productName}
+              className="h-14 w-14 rounded-lg object-cover border"
+            />
+            <div>
+              <h3 className="text-sm font-semibold text-foreground">
+                {product.productName}
+              </h3>
+              <p className="text-xs text-muted-foreground line-clamp-1">
+                {product.description}
+              </p>
+            </div>
           </div>
 
-          <p className="text-sm text-gray-500">{product.description}</p>
+          {/* Actions */}
+          <div className="flex gap-2">
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                onAddToSale(product)
+              }}
+              className="p-2 rounded-md bg-green-100 text-green-600 hover:bg-green-200"
+              title="Add to Sale"
+            >
+              <FiTag size={16} />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowUpdateModal(true)
+              }}
+              className="p-2 rounded-md bg-blue-100 text-blue-600 hover:bg-blue-200"
+              title="Edit"
+            >
+              <FiEdit size={16} />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowDeleteModal(true)
+              }}
+              className="p-2 rounded-md bg-red-100 text-red-600 hover:bg-red-200"
+              title="Delete"
+            >
+              <FiTrash2 size={16} />
+            </button>
+          </div>
+        </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+        {/* Details Section */}
+        <div className="p-4 space-y-2 text-sm">
+          {/* Price & Discount */}
+          <div className="flex items-center gap-2">
             {product.discount > 0 ? (
               <>
-                <span className="text-sm text-gray-400 line-through">${product.price.toFixed(2)}</span>
-                <span className="text-sm text-green-600 font-semibold">${(product.price - (product.price * product.discount) / 100).toFixed(2)}</span>
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">{product.discount}% OFF</span>
+                <span className="line-through text-muted-foreground text-xs">
+                  ${product.price.toFixed(2)}
+                </span>
+                <span className="text-green-600 font-semibold">
+                  $
+                  {(
+                    product.price -
+                    (product.price * product.discount) / 100
+                  ).toFixed(2)}
+                </span>
+                <Badge className="bg-green-100 text-green-700 text-xs">
+                  {product.discount}% OFF
+                </Badge>
               </>
             ) : (
-              <span className="text-sm text-blue-600 font-semibold">${product.price.toFixed(2)}</span>
+              <span className="text-primary font-medium">
+                ${product.price.toFixed(2)}
+              </span>
             )}
-            <span className="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full">{product.fabrics}</span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            {product.colorsAvailable.map((color, index) => (
-              <span
-                key={index}
-                className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                  color === "Red" ? "bg-red-100 text-red-700" : color === "Blue" ? "bg-blue-100 text-blue-700" : "bg-black text-white"
-                }`}
-              >
+          {/* Fabrics */}
+          <div>
+            <Badge variant="secondary" className="text-xs">
+              {product.fabrics}
+            </Badge>
+          </div>
+
+          {/* Colors */}
+          <div className="flex flex-wrap gap-1">
+            {product.colorsAvailable.map((color, i) => (
+              <Badge key={i} variant="outline" className="text-xs">
                 {color}
-              </span>
+              </Badge>
             ))}
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          {/* Sizes */}
+          <div className="flex flex-wrap gap-1">
             {product.sizesAvailable.map((size) => (
-              <span key={size} className="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded-md">
+              <Badge key={size} variant="outline" className="text-xs">
                 {size}
-              </span>
+              </Badge>
             ))}
           </div>
         </div>
       </div>
 
       {/* Modals */}
-      {showUpdateModal && <UpdateProductModal isOpen={showUpdateModal} onClose={() => setShowUpdateModal(false)} product={product} />}
-      {showDeleteModal && <DeleteProductModal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} productId={product._id} />}
-      {showOrderModal && <ProductOrderModal isOpen={showOrderModal} onClose={() => setShowOrderModal(false)} product={product} />}
+      {showUpdateModal && (
+        <UpdateProductModal
+          isOpen={showUpdateModal}
+          onClose={() => setShowUpdateModal(false)}
+          product={product}
+        />
+      )}
+      {showDeleteModal && (
+        <DeleteProductModal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          productId={product._id}
+        />
+      )}
+      {showOrderModal && (
+        <ProductOrderModal
+          isOpen={showOrderModal}
+          onClose={() => setShowOrderModal(false)}
+          product={product}
+        />
+      )}
     </>
-  );
+  )
 }
