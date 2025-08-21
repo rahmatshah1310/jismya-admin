@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { Suspense, useState } from 'react'
 import ProductForm from '@/components/Modal/ProductModals/ProductForm'
 import ProductCard from '@/components/ProductCard'
 import ProductFilters from '@/components/ProductFilters'
@@ -15,6 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/Button'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import { ProductCardSkeleton } from '@/components/ui/common/Skeleton'
+import { ClipLoader } from 'react-spinners'
 
 export default function ProductClient() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -75,7 +76,16 @@ export default function ProductClient() {
           </p>
 
           <div className="flex items-center gap-3">
-            <ProductFilters />
+            <Suspense
+              fallback={
+                <div>
+                  <ClipLoader color="#fff" />
+                </div>
+              }
+            >
+              <ProductFilters />
+            </Suspense>
+
             <Button
               onClick={() => setIsModalOpen(true)}
               className="bg-blue-700 text-white rounded"

@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react'
 const ProductFilters = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
-
   const [category, setCategory] = useState(searchParams.get('category') || '')
   const [size, setSize] = useState(searchParams.get('size') || '')
 
