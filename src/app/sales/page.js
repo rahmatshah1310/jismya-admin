@@ -11,6 +11,8 @@ import Image from 'next/image'
 import StatusToggle from '@/components/ui/common/StatusToggle'
 import { Button } from '@/components/ui/Button'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
+import { SalesCardSkeleton } from '@/components/ui/common/Skeleton'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function Sales() {
   const { data: sales, isLoading } = useGetAllSales()
@@ -63,9 +65,15 @@ export default function Sales() {
 
         {/* Loader */}
         {isLoading ? (
-          <div className="flex justify-center items-center min-h-[calc(100vh-555px)] md:min-h-[calc(100vh-365px)]">
-            <ClipLoader color="#fff" />
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <SalesCardSkeleton key={i} />
+            ))}
           </div>
+        ) : !sales?.data || sales.data.length === 0 ? (
+          <Card className="text-center p-2">
+            <CardTitle>No sales found</CardTitle>
+          </Card>
         ) : (
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
             {sales?.data?.map((sale, idx) => (
@@ -73,7 +81,7 @@ export default function Sales() {
                 key={sale._id}
                 className={`bg-gradient-to-br ${
                   cardColors[idx % cardColors.length]
-                } 
+                }
                 p-5 rounded-xl text-white shadow-lg hover:shadow-2xl transition transform hover:scale-[1.02]`}
               >
                 {/* Title + Actions */}
@@ -131,13 +139,13 @@ export default function Sales() {
                         key={product._id}
                         className="flex gap-3 bg-white bg-opacity-20 p-2 rounded-lg items-center"
                       >
-                        {/* <Image
+                        <Image
                           src={product.productId.imageUrl}
                           alt={product.productId.productName}
                           width={60}
                           height={60}
                           className="w-14 h-14 object-cover rounded-lg border border-white/30"
-                        /> */}
+                        />
                         <div className="text-sm">
                           <h4 className="font-semibold">
                             {/* {product.productId.productName} */}
