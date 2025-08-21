@@ -56,6 +56,7 @@ export default function BannersPage() {
   const [activeModal, setActiveModal] = useState(null)
   const [selectedBanner, setSelectedBanner] = useState(null)
   const [createDeviceType, setCreateDeviceType] = useState(null)
+  const [activeStatuses, setActiveStatuses] = useState({})
 
   // Handlers
   const handleCreateBanner = (deviceType) => {
@@ -97,8 +98,13 @@ export default function BannersPage() {
   const deleteBanner = useDeleteBannerMutation()
   const toggleStatus = useToggleStatus()
 
-  const handleToggle = async (id, isActive) => {
-    return toggleStatus.mutateAsync({ id, isActive })
+  const handleToggle = (banner) => {
+    setActiveStatuses((prev) => ({
+      ...prev,
+      [banner._id]: !banner.isActive,
+    }))
+
+    toggleStatus.mutate({ id: banner._id, isActive: !banner.isActive })
   }
 
   // 🔹 Map API data per device
@@ -165,32 +171,52 @@ export default function BannersPage() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Title</TableHead>
-                        <TableHead className="text-center">
+                        <TableHead className="w-[250px]">Title</TableHead>
+                        <TableHead className="w-[200px] text-left pl-20">
                           Description
                         </TableHead>
-                        <TableHead className="text-center ">Status</TableHead>
-                        <TableHead className="text-center">Order</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className="w-[100px] text-center">
+                          Status
+                        </TableHead>
+                        <TableHead className="w-[80px] text-center">
+                          Order
+                        </TableHead>
+                        <TableHead className="w-[200px] text-right">
+                          Actions
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {banners.map((banner) => (
                         <TableRow key={banner.id} className="text-center">
-                          <TableCell className="font-medium flex gap-x-4 w-[100%] h-[100px]">
-                            <Image
-                              src={banner.imageUrl}
-                              width={100}
-                              height={100}
-                              className="w-100 h-100 object-cover"
-                            />
-                            {banner.heading}
+                          <TableCell className="font-medium w-[250px] h-[100px]">
+                            <div className="flex gap-x-4 items-center w-full overflow-hidden">
+                              <Image
+                                src={banner.imageUrl}
+                                width={100}
+                                height={100}
+                                className="w-[100px] h-[100px] object-cover shrink-0"
+                                alt=""
+                              />
+                              {/* Text wrapper MUST have max width + truncate */}
+                              <span className="">{banner.heading}</span>
+                            </div>
                           </TableCell>
-                          <TableCell>{banner.description}</TableCell>
+
+                          <TableCell>
+                            <span className="truncate block max-w-[200px]">
+                              {banner.description}
+                            </span>
+                          </TableCell>
+
                           <TableCell>
                             <ToggleSwitch
-                              isActive={banner.isActive}
-                              onToggle={() => handleToggle(banner._id)}
+                              isActive={
+                                activeStatuses[banner._id] !== undefined
+                                  ? activeStatuses[banner._id]
+                                  : banner.isActive
+                              }
+                              onToggle={() => handleToggle(banner)}
                             />
                           </TableCell>
                           <TableCell>{banner.order}</TableCell>
@@ -253,6 +279,7 @@ export default function BannersPage() {
         {/* Real Modals Integration */}
         {/* Create Modal */}
         <CreateBannerModal
+          key={createDeviceType}
           onClose={closeModal}
           showCreateModal={activeModal === 'create'}
           deviceType={createDeviceType}
@@ -297,3 +324,4 @@ export default function BannersPage() {
     </DashboardLayout>
   )
 }
+
