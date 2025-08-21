@@ -19,7 +19,7 @@ import {
   Activity,
   CreditCard,
 } from 'lucide-react'
-import Image from 'next/image'
+// import Image from 'next/image'
 import Link from 'next/link'
 
 const stats = [
@@ -187,11 +187,11 @@ export default function DashboardPage() {
                   href="/banners"
                   className="flex flex-col items-center space-y-2 p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors"
                 >
-                  <Image
+                  {/* <Image
                     width={10}
                     height={10}
                     className="h-8 w-8 text-muted-foreground"
-                  />
+                  /> */}
                   <span className="text-sm font-medium">Upload Banner</span>
                 </Link>
                 <Link
