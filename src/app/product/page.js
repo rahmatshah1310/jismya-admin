@@ -10,7 +10,6 @@ import {
   useProductsBySize,
 } from '../api/productApi'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
-import { ClipLoader } from 'react-spinners'
 import ConnectProductsToSaleModal from '@/components/Modal/SalesModal/ConnectProductToSaleModal'
 
 // Radix UI components
@@ -41,6 +40,7 @@ const Product = () => {
   }
 
   const { data: allProductsData, isLoading: loadingAll } = useGetAllProducts()
+  console.log(allProductsData, 'allproduct..........')
   const { data: categoryFilteredData, isLoading: loadingCategory } =
     useProductsByCategory(category)
   const { data: sizeFilteredData, isLoading: loadingSize } =
@@ -102,12 +102,12 @@ const Product = () => {
             ))}
           </div>
         ) : products.length === 0 ? (
-          <Card variant="surface">
+          <Card variant="surface" className="text-center ">
             <CardHeader>
               <CardTitle>No products found</CardTitle>
             </CardHeader>
             <CardContent>
-              <p size="3" color="gray" className="text-gray-600">
+              <p size="3" color="gray" className="text-gray-600 mb-3">
                 Try adjusting your filters or add a new product.
               </p>
               <Button onClick={() => setIsModalOpen(true)}>Add Product</Button>
