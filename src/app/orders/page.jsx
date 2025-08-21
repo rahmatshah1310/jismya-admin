@@ -1,120 +1,204 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { useUpdateOrderStatus, useGetAllOrders, useDeleteOrder } from "../api/orderApi";
-import CreateOrderForm from "@/components/Modal/OrderModal";
+import { useState } from 'react'
+import { DashboardLayout } from '@/components/layout/dashboard-layout'
+import { useGetAllOrders } from '@/app/api/orderApi'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/Button'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@radix-ui/react-tabs'
+import { Edit, Eye, Trash2 } from 'lucide-react'
+import EditOrderModal from '@/components/Modal/OrdersModel/EditOrderModal'
+import DeleteOrderModal from '@/components/Modal/OrdersModel/DeleteOrderModel'
+import ViewOrderModal from '@/components/Modal/OrdersModel/ViewOrderModal'
+import { OrderSkeletonRow } from '@/components/ui/common/Skeleton'
+
+// Import your modals
+
+const statusColors = {
+  complete: 'bg-green-100 text-green-700',
+  pending: 'bg-yellow-100 text-yellow-700',
+  cancelled: 'bg-red-100 text-red-700',
+  delivered: 'bg-blue-100 text-blue-700',
+  shifted: 'bg-purple-100 text-purple-700',
+}
 
 export default function OrdersPage() {
-  const { data: orders = [], isLoading, isError } = useGetAllOrders();
-  console.log(orders, "orders....................");
-  const updateStatusMutation = useUpdateOrderStatus();
-  const deleteOrderMutation = useDeleteOrder();
+  const { data: orders = [], isLoading } = useGetAllOrders()
+  const [tab, setTab] = useState('all')
 
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [openOrderModal, setOpenOrderModal] = useState();
-  const [tempStatus, setTempStatus] = useState("");
+  // state for modals
+  // state for modals
+  const [activeModal, setActiveModal] = useState(null)
 
-  if (isLoading) return <p>Loading orders...</p>;
-  if (isError) return <p>Failed to load orders.</p>;
-
-  const handleModalOpen = () => {
-    setOpenOrderModal(true);
-  };
-
-  const handleModalClose = () => {
-    setOpenOrderModal(false);
-  };
-
-  const handleSaveStatus = () => {
-    updateStatusMutation.mutate({ id: selectedOrder._id, status: tempStatus }, { onSuccess: () => setSelectedOrder(null) });
-  };
-
-  const handleDeleteOrder = (id) => {
-    if (confirm("Are you sure you want to delete this order?")) {
-      deleteOrderMutation.mutate(id);
-    }
-  };
+  // Filter orders based on tab
+  const filteredOrders =
+    tab === 'all' ? orders : orders.filter((o) => o.status === tab)
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Orders Management</h1>
-      {openOrderModal && <CreateOrderForm open={handleModalOpen} onClose={handleModalClose} />}
+    <DashboardLayout>
+      <div className="p-6">
+        <h1 className="text-2xl font-semibold mb-6">Orders</h1>
 
-      {/* Orders Table */}
-      <div className="border rounded-lg overflow-x-auto">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="text-left border-b bg-gray-100">
-              <th className="p-2">Order ID</th>
-              <th className="p-2">Customer</th>
-              <th className="p-2">Total</th>
-              <th className="p-2">Status</th>
-              <th className="p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order._id} className="border-b hover:bg-gray-50">
-                <td className="p-2">{order._id}</td>
-                <td className="p-2">{order.customer.name}</td>
-                <td className="p-2">${order.total}</td>
-                <td className="p-2 capitalize">{order.status}</td>
-                <td className="p-2 flex gap-2">
-                  <button
-                    onClick={() => {
-                      setSelectedOrder(order);
-                      setTempStatus(order.status);
-                    }}
-                    className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
-                  >
-                    View / Update
-                  </button>
-                  <button onClick={() => handleDeleteOrder(order._id)} className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {/* Tabs */}
+        <Tabs value={tab} onValueChange={setTab}>
+          <TabsList className="mb-6 flex gap-5">
+            <TabsTrigger value="all">All orders</TabsTrigger>
+            <TabsTrigger value="delivered">Delivered</TabsTrigger>
+            <TabsTrigger value="shifted">Shifted</TabsTrigger>
+            <TabsTrigger value="pending">Pending</TabsTrigger>
+            <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value={tab}>
+            <div className="border rounded-lg overflow-hidden bg-background  text-foreground shadow-sm">
+              <table className="w-full border-collapse text-sm">
+                <thead className="bg-gray-50 text-background">
+                  <tr>
+                    <th className="p-3 text-left">#</th>
+                    <th className="p-3 text-left">Order ID</th>
+                    <th className="p-3 text-left">Products</th>
+                    <th className="p-3 text-left">Address</th>
+                    <th className="p-3 text-left">Date</th>
+                    <th className="p-3 text-left">Price</th>
+                    <th className="p-3 text-left">Status</th>
+                    <th className="p-3 text-left">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {isLoading
+                    ? [...Array(6)].map((_, i) => <OrderSkeletonRow key={i} />)
+                    : filteredOrders.map((order, i) => (
+                        <tr
+                          key={order._id}
+                          className="border-t hover:bg-gray-50 transition"
+                        >
+                          <td className="p-3 text-foreground">{i + 1}</td>
+                          <td className="p-3 font-medium text-foreground">
+                            #{order._id}
+                          </td>
+                          <td className="p-3">
+                            {order.items.map((item) => (
+                              <div
+                                key={item._id}
+                                className="flex items-center gap-2"
+                              >
+                                <img
+                                  src={item.productId.imageUrl}
+                                  alt={item.productId.productName}
+                                  className="w-8 h-8 rounded"
+                                />
+                                <span>
+                                  {item.productId.productName} (x{item.quantity}
+                                  )
+                                </span>
+                              </div>
+                            ))}
+                          </td>
+                          <td className="p-3 text-foreground">
+                            {order.customer.address.line1}
+                          </td>
+                          <td className="p-3">
+                            {new Date(order.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="p-3 text-foreground">
+                            ${order.total}
+                          </td>
+                          <td className="p-3 text-foreground">
+                            <Badge
+                              className={
+                                statusColors[order.status] ||
+                                'bg-gray-100 text-background'
+                              }
+                            >
+                              {order.status.charAt(0).toUpperCase() +
+                                order.status.slice(1)}
+                            </Badge>
+                          </td>
+                          <td className="p-3 text-foreground flex gap-3">
+                            <Eye
+                              className="cursor-pointer"
+                              onClick={() =>
+                                setActiveModal({
+                                  type: 'view',
+                                  orderId: order._id,
+                                })
+                              }
+                            />
+                            <Edit
+                              className="cursor-pointer"
+                              onClick={() =>
+                                setActiveModal({
+                                  type: 'edit',
+                                  orderId: order._id,
+                                })
+                              }
+                            />
+                            <Trash2
+                              className="cursor-pointer"
+                              onClick={() =>
+                                setActiveModal({
+                                  type: 'delete',
+                                  orderId: order._id,
+                                })
+                              }
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                </tbody>
+              </table>
+
+              {/* Pagination */}
+              <div className="flex items-center justify-between p-4 border-t">
+                <p className="text-sm text-gray-500">
+                  Showing 1 to 10 of {orders.length} entries
+                </p>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm">
+                    Previous
+                  </Button>
+                  {[1, 2, 3, 4, 5].map((num) => (
+                    <Button
+                      key={num}
+                      variant={num === 1 ? 'default' : 'outline'}
+                      size="sm"
+                    >
+                      {num}
+                    </Button>
+                  ))}
+                  <Button variant="outline" size="sm">
+                    Next
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
 
-      {/* Order Detail Modal */}
-      {selectedOrder && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50">
-          <div className="bg-white p-6 rounded-lg w-[400px] relative">
-            <h2 className="text-xl font-semibold mb-4">Order #{selectedOrder._id}</h2>
-            <p>
-              <strong>Customer:</strong> {selectedOrder.customer.name} ({selectedOrder.customer.phone})
-            </p>
-            <p>
-              <strong>Address:</strong> {selectedOrder.customer.address.line1}, {selectedOrder.customer.address.city}
-            </p>
-            <p>
-              <strong>Total:</strong> ${selectedOrder.total}
-            </p>
-
-            <h3 className="font-medium mt-4">Update Status</h3>
-            <select value={tempStatus} onChange={(e) => setTempStatus(e.target.value)} className="border rounded px-3 py-2 w-full mt-2">
-              <option value="pending">Pending</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="shipped">Shipped</option>
-              <option value="delivered">Delivered</option>
-              <option value="cancelled">Cancelled</option>
-              <option value="returned">Returned</option>
-            </select>
-
-            <div className="flex justify-end gap-2 mt-6">
-              <button onClick={() => setSelectedOrder(null)} className="px-4 py-2 border rounded hover:bg-gray-100">
-                Close
-              </button>
-              <button onClick={handleSaveStatus} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
+      {/* ===== Modals ===== */}
+      {activeModal?.type === 'view' && (
+        <ViewOrderModal
+          orderId={activeModal.orderId}
+          onClose={() => setActiveModal(null)}
+          showViewModal={activeModal?.type === 'view'}
+        />
       )}
-    </div>
-  );
+      {activeModal?.type === 'edit' && (
+        <EditOrderModal
+          orderId={activeModal.orderId}
+          onClose={() => setActiveModal(null)}
+          showEditModal={activeModal?.type === 'edit'}
+        />
+      )}
+      {activeModal?.type === 'delete' && (
+        <DeleteOrderModal
+          orderId={activeModal.orderId}
+          onClose={() => setActiveModal(null)}
+          order={orders}
+          showDeleteModal={activeModal?.type === 'delete'}
+        />
+      )}
+    </DashboardLayout>
+  )
 }
