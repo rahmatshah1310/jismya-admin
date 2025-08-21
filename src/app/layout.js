@@ -3,6 +3,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { AuthProvider } from '@/context/AuthContext'
 import { CartProvider } from '@/context/CartContext'
 import Providers from './providers'
+import { ToastContainer } from 'react-toastify'
 
 export const metadata = {
   title: 'Jismya Admin Dashboard',
@@ -22,7 +23,18 @@ export default function RootLayout({ children }) {
         >
           <CartProvider>
             <AuthProvider>
-              <Providers>{children}</Providers>
+              <Providers>
+                {children}
+                <ToastContainer
+                  position="top-right"
+                  autoClose={3000}
+                  hideProgressBar={false}
+                  newestOnTop
+                  closeOnClick
+                  pauseOnHover
+                  theme="colored"
+                />
+              </Providers>
             </AuthProvider>
           </CartProvider>
         </ThemeProvider>
