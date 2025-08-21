@@ -27,7 +27,7 @@ export default function ProductDetailsPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <ClipLoader />
+        <ClipLoader color="#fff" />
       </div>
     )
   }
@@ -39,7 +39,10 @@ export default function ProductDetailsPage() {
   }
 
   const product = data.data
-  const allImages = [product.imageUrl, ...(product.additionalImages?.map(img => img.imageUrl) || [])]
+  const allImages = [
+    product.imageUrl,
+    ...(product.additionalImages?.map((img) => img.imageUrl) || []),
+  ]
   const mainImage = allImages[currentImageIndex]
 
   const nextImage = () => {
@@ -47,7 +50,9 @@ export default function ProductDetailsPage() {
   }
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length)
+    setCurrentImageIndex(
+      (prev) => (prev - 1 + allImages.length) % allImages.length
+    )
   }
 
   return (
@@ -74,8 +79,8 @@ export default function ProductDetailsPage() {
                   <div
                     key={idx}
                     className={`cursor-pointer border-2 rounded-lg overflow-hidden transition-all duration-200 ${
-                      idx === currentImageIndex 
-                        ? 'border-blue-500 scale-105' 
+                      idx === currentImageIndex
+                        ? 'border-blue-500 scale-105'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                     onClick={() => setCurrentImageIndex(idx)}
@@ -102,7 +107,7 @@ export default function ProductDetailsPage() {
                   height={600}
                   className="rounded-xl object-cover border shadow-lg w-[500px] h-[500px]"
                 />
-                
+
                 {/* Navigation Arrows */}
                 {allImages.length > 1 && (
                   <>
@@ -110,17 +115,37 @@ export default function ProductDetailsPage() {
                       onClick={prevImage}
                       className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110 border"
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 19l-7-7 7-7"
+                        />
                       </svg>
                     </button>
-                    
+
                     <button
                       onClick={nextImage}
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110 border"
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
                       </svg>
                     </button>
                   </>
@@ -143,12 +168,18 @@ export default function ProductDetailsPage() {
 
               {/* Price Section */}
               <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-foreground">Pricing</h3>
+                <h3 className="text-lg font-semibold text-foreground">
+                  Pricing
+                </h3>
                 <div className="flex items-center gap-3">
                   {product.discount > 0 ? (
                     <>
                       <span className="text-2xl font-bold text-foreground">
-                        ${((product.price - (product.price * product.discount) / 100)).toFixed(2)}
+                        $
+                        {(
+                          product.price -
+                          (product.price * product.discount) / 100
+                        ).toFixed(2)}
                       </span>
                       <span className="text-lg text-gray-400 line-through">
                         ${product.price.toFixed(2)}
@@ -169,47 +200,65 @@ export default function ProductDetailsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-gray-50 p-4 rounded-lg text-foreground">
                   <p className="text-sm text-gray-600">Sales</p>
-                  <p className="text-xl font-semibold text-foreground">{product.sales}</p>
+                  <p className="text-xl font-semibold text-foreground">
+                    {product.sales}
+                  </p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg text-foreground">
                   <p className="text-sm text-gray-600">Rating</p>
-                  <p className="text-xl font-semibold text-foreground">⭐ {product.averageRating}</p>
+                  <p className="text-xl font-semibold text-foreground">
+                    ⭐ {product.averageRating}
+                  </p>
                 </div>
               </div>
 
               {/* Product Details */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Product Details</h3>
+                <h3 className="text-lg font-semibold text-foreground">
+                  Product Details
+                </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center py-2 border-b border-gray-100 text-foreground">
                     <span className="text-gray-600">Status</span>
-                    <span className={`px-2 py-1 rounded-full text-sm font-medium ${
-                      product.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
+                    <span
+                      className={`px-2 py-1 rounded-full text-sm font-medium ${
+                        product.isActive
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                      }`}
+                    >
                       {product.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </div>
-                  
+
                   {product.saleName && (
                     <div className="flex justify-between items-center py-2 border-b border-gray-100 text-foreground">
                       <span className="text-gray-600">Sale</span>
-                      <span className="text-foreground font-medium">{product.saleName}</span>
+                      <span className="text-foreground font-medium">
+                        {product.saleName}
+                      </span>
                     </div>
                   )}
-                  
+
                   <div className="flex justify-between items-center py-2 border-b border-gray-100 text-foreground">
                     <span className="text-gray-600">Fabric</span>
-                    <span className="text-foreground font-medium">{product.fabrics}</span>
+                    <span className="text-foreground font-medium">
+                      {product.fabrics}
+                    </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center py-2 border-b border-gray-100 text-foreground">
                     <span className="text-gray-600">Colors</span>
-                    <span className="text-foreground font-medium">{product.colorsAvailable.join(', ')}</span>
+                    <span className="text-foreground font-medium">
+                      {product.colorsAvailable.join(', ')}
+                    </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center py-2 border-b border-gray-100 text-foreground">
                     <span className="text-gray-600">Sizes</span>
-                    <span className="text-foreground font-medium">{product.sizesAvailable.join(', ')}</span>
+                    <span className="text-foreground font-medium">
+                      {product.sizesAvailable.join(', ')}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -217,22 +266,34 @@ export default function ProductDetailsPage() {
               {/* Description */}
               {product.description && (
                 <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-foreground">Description</h3>
-                  <p className="text-gray-600 leading-relaxed">{product.description}</p>
+                  <h3 className="text-lg font-semibold text-foreground">
+                    Description
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {product.description}
+                  </p>
                 </div>
               )}
 
               {/* Reviews Summary */}
               <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-foreground">Customer Reviews</h3>
+                <h3 className="text-lg font-semibold text-foreground">
+                  Customer Reviews
+                </h3>
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1">
                     <span className="text-2xl">⭐</span>
-                    <span className="text-lg font-semibold">{product.averageRating}</span>
+                    <span className="text-lg font-semibold">
+                      {product.averageRating}
+                    </span>
                   </div>
-                  <span className="text-gray-600">({product.ratingCount} ratings)</span>
+                  <span className="text-gray-600">
+                    ({product.ratingCount} ratings)
+                  </span>
                 </div>
-                <p className="text-sm text-gray-500">Total reviews: {product.reviewsCount}</p>
+                <p className="text-sm text-gray-500">
+                  Total reviews: {product.reviewsCount}
+                </p>
               </div>
             </div>
           </div>
