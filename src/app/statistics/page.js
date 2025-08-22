@@ -8,6 +8,8 @@ import {
   FaStar,
   FaTags,
   FaPercent,
+  FaTruck,
+  FaMoneyBillWave,
 } from 'react-icons/fa'
 import { useProductSaleStats } from '../api/productApi'
 import { useGetSalesStats } from '../api/saleApi'
@@ -16,6 +18,7 @@ import {
   StatCardSkeleton,
   TableSkeleton,
 } from '@/components/ui/common/Skeleton'
+import { useGetOrderStats } from '../api/orderApi'
 
 function StatCard({ icon: Icon, title, value, color }) {
   return (
@@ -33,6 +36,8 @@ function StatCard({ icon: Icon, title, value, color }) {
 
 export default function StatisticsPage() {
   const { data, isLoading, isError } = useProductSaleStats()
+  const { data: orderStatsData } = useGetOrderStats()
+  const orderStats = orderStatsData?.data || {}
   const {
     data: saleStatsData,
     isLoading: isSalesLoading,
@@ -99,6 +104,55 @@ export default function StatisticsPage() {
           </div>
         </div>
 
+        <div>
+          <h2 className="text-xl font-bold text-muted-foreground mb-4">
+            Order Statistics
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+            <StatCard
+              icon={FaTruck}
+              title="Total Orders"
+              value={orderStats.totalOrders}
+              color="bg-blue-600"
+            />
+            <StatCard
+              icon={FaMoneyBillWave}
+              title="Total Revenue"
+              value={`$${orderStats.totalRevenue?.toFixed(2)}`}
+              color="bg-green-600"
+            />
+          </div>
+
+          <div className="bg-card p-4 rounded-xl shadow-sm border">
+            <h3 className="text-md font-semibold text-foreground mb-3">
+              Order Status Breakdown
+            </h3>
+            <table className="w-full text-sm text-left border-collapse">
+              <thead>
+                <tr className="bg-muted/40 text-muted-foreground text-xs uppercase tracking-wide">
+                  <th className="p-3">Status</th>
+                  <th className="p-3">Count</th>
+                  <th className="p-3">Total Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orderStats.statusBreakdown?.map((stat, i) => (
+                  <tr
+                    key={i}
+                    className={`${
+                      i % 2 === 0 ? 'bg-muted/40' : 'bg-muted/30'
+                    } border-t`}
+                  >
+                    <td className="p-3">{stat.status}</td>
+                    <td className="p-3">{stat.count}</td>
+                    <td className="p-3">${stat.totalAmount.toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         {/* Sale Stats */}
         <div>
           <h2 className="text-xl font-bold text-muted-foreground mb-4">
@@ -154,7 +208,6 @@ export default function StatisticsPage() {
               <table className="w-full text-sm text-left border-collapse">
                 <thead>
                   <tr className="bg-muted/40 text-muted-foreground text-xs uppercase tracking-wide">
-                    <th className="p-3">Category</th>
                     <th className="p-3">Total</th>
                     <th className="p-3">Active</th>
                     <th className="p-3">Inactive</th>
@@ -169,9 +222,6 @@ export default function StatisticsPage() {
                         i % 2 === 0 ? 'bg-muted/40' : 'bg-muted/30'
                       } border-t`}
                     >
-                      <td className="p-3 font-medium text-foreground">
-                        {cat._id}
-                      </td>
                       <td className="p-3">{cat.count}</td>
                       <td className="p-3 text-green-600">{cat.activeCount}</td>
                       <td className="p-3 text-red-500">{cat.inactiveCount}</td>

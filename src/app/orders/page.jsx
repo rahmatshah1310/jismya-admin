@@ -2,203 +2,239 @@
 
 import { useState } from 'react'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
-import { useGetAllOrders } from '@/app/api/orderApi'
+import { useCancelOrder, useGetAllOrders, useUpdateOrderStatus } from '@/app/api/orderApi'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/Button'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@radix-ui/react-tabs'
 import { Edit, Eye, Trash2 } from 'lucide-react'
-import EditOrderModal from '@/components/Modal/OrdersModel/EditOrderModal'
 import DeleteOrderModal from '@/components/Modal/OrdersModel/DeleteOrderModel'
-import ViewOrderModal from '@/components/Modal/OrdersModel/ViewOrderModal'
 import { OrderSkeletonRow } from '@/components/ui/common/Skeleton'
-
-// Import your modals
+import OrderFilters from '@/components/OrderFilter'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const statusColors = {
   complete: 'bg-green-100 text-green-700',
   pending: 'bg-yellow-100 text-yellow-700',
-  cancelled: 'bg-red-100 text-red-700',
   delivered: 'bg-blue-100 text-blue-700',
   shifted: 'bg-purple-100 text-purple-700',
 }
 
 export default function OrdersPage() {
-  const { data: orders = [], isLoading } = useGetAllOrders()
-  const [tab, setTab] = useState('all')
-
-  // state for modals
-  // state for modals
+  const searchParams = useSearchParams()
+  const router = useRouter()
   const [activeModal, setActiveModal] = useState(null)
+  const updateStatusMutation = useUpdateOrderStatus()
+  const cancelOrderMutation = useCancelOrder();
 
-  // Filter orders based on tab
-  const filteredOrders =
-    tab === 'all' ? orders : orders.filter((o) => o.status === tab)
+  // Extract filters from URL
+  const filtersFromURL = Object.fromEntries(
+    [...searchParams.entries()].filter(([_, value]) => value !== '')
+  )
+
+  // Convert page & limit to numbers
+  if (filtersFromURL.page) filtersFromURL.page = Number(filtersFromURL.page)
+  if (filtersFromURL.limit) filtersFromURL.limit = Number(filtersFromURL.limit)
+
+  const { data, isLoading } = useGetAllOrders(filtersFromURL)
+
+  const orders = data?.data?.orders || []
+  const totalPages = data?.data?.total || 1
+  const page = filtersFromURL.page || 1
+
+  const updateURL = (filters) => {
+    const nonEmptyFilters = Object.fromEntries(
+      Object.entries(filters).filter(([_, value]) => value !== '' && value != null)
+    )
+    const url = Object.keys(nonEmptyFilters).length
+      ? `/orders?${new URLSearchParams(nonEmptyFilters)}`
+      : '/orders'
+    router.push(url)
+  }
+
+  const handlePageChange = (newPage) => updateURL({ ...filtersFromURL, page: newPage })
+  const handleFilter = (newFilters) => updateURL({ ...newFilters, page: 1 })
 
   return (
     <DashboardLayout>
       <div className="p-6">
         <h1 className="text-2xl font-semibold mb-6">Orders</h1>
 
-        {/* Tabs */}
-        <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="mb-6 flex gap-5">
-            <TabsTrigger value="all">All orders</TabsTrigger>
-            <TabsTrigger value="delivered">Delivered</TabsTrigger>
-            <TabsTrigger value="shifted">Shifted</TabsTrigger>
-            <TabsTrigger value="pending">Pending</TabsTrigger>
-            <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
-          </TabsList>
+        {/* Filters */}
+        <OrderFilters onFilter={handleFilter} currentFilters={filtersFromURL} />
 
-          <TabsContent value={tab}>
-            <div className="border rounded-lg overflow-hidden bg-background  text-foreground shadow-sm">
-              <table className="w-full border-collapse text-sm">
-                <thead className="bg-gray-50 text-background">
-                  <tr>
-                    <th className="p-3 text-left">#</th>
-                    <th className="p-3 text-left">Order ID</th>
-                    <th className="p-3 text-left">Products</th>
-                    <th className="p-3 text-left">Address</th>
-                    <th className="p-3 text-left">Date</th>
-                    <th className="p-3 text-left">Price</th>
-                    <th className="p-3 text-left">Status</th>
-                    <th className="p-3 text-left">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {isLoading
-                    ? [...Array(6)].map((_, i) => <OrderSkeletonRow key={i} />)
-                    : filteredOrders.map((order, i) => (
-                        <tr
-                          key={order._id}
-                          className="border-t hover:bg-gray-50 transition"
+        {/* Orders Table */}
+        <div className="border rounded-lg overflow-hidden bg-background text-foreground shadow-sm">
+          <table className="w-full border-collapse text-sm">
+            <thead className="bg-background text-foreground">
+              <tr>
+                <th className="p-3 text-left">#</th>
+                <th className="p-3 text-left">Order ID</th>
+                <th className="p-3 text-left">Customer</th>
+                <th className="p-3 text-left">Products</th>
+                <th className="p-3 text-left">Address</th>
+                <th className="p-3 text-left">Date</th>
+                <th className="p-3 text-left">Total</th>
+                <th className="p-3 text-left">Payment</th>
+                <th className="p-3 text-left">Shipping</th>
+                <th className="p-3 text-left">Notes</th>
+                <th className="p-3 text-left">Status</th>
+                <th className="p-3 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading
+                ? [...Array(6)].map((_, i) => <OrderSkeletonRow key={i} />)
+                : orders.map((order, i) => (
+                  <tr key={order._id} className="border-t transition">
+                    <td className="p-3">{i + 1}</td>
+                    <td className="p-3 font-medium">#{order.orderId}</td>
+
+                    {/* Customer */}
+                    <td className="p-3">
+                      <div className="font-medium">{order.user.name}</div>
+                      <div className="text-xs text-gray-500">{order.user.email}</div>
+                      <div className="text-xs text-gray-500">{order.user.phone}</div>
+                    </td>
+
+                    {/* Products */}
+                    <td className="p-3">
+                      {order.items.map((item) => (
+                        <div key={item._id} className="flex items-center gap-2">
+                          <img
+                            src={item.productId.imageUrl}
+                            alt={item.productId.productName}
+                            className="w-8 h-8 rounded"
+                          />
+                          <span>{item.productId.productName} (x{item.quantity})</span>
+                        </div>
+                      ))}
+                    </td>
+
+                    {/* Address */}
+                    <td className="p-3">{order.user.completeAddress}</td>
+
+                    {/* Date */}
+                    <td className="p-3">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                      {order.estimatedDelivery && (
+                        <div className="text-xs text-gray-500">
+                          ETA: {new Date(order.estimatedDelivery).toLocaleDateString()}
+                        </div>
+                      )}
+                    </td>
+
+                    {/* Total */}
+                    <td className="p-3">${order.totalAmount.toFixed(2)}</td>
+
+                    {/* Payment */}
+                    <td className="p-3">
+                      <Badge
+                        className={
+                          order.paymentStatus === 'paid'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-yellow-100 text-yellow-700'
+                        }
+                      >
+                        {order.paymentStatus}
+                      </Badge>
+                    </td>
+
+                    {/* Shipping */}
+                    <td className="p-3 capitalize">{order.shippingMethod}</td>
+
+                    {/* Notes */}
+                    <td className="p-3 text-xs text-gray-600">{order.notes || '-'}</td>
+
+                    {/* Status */}
+                    {/* <td className="p-3">
+                        <Badge
+                          className={statusColors[order.status] || 'bg-gray-100 text-background'}
                         >
-                          <td className="p-3 text-foreground">{i + 1}</td>
-                          <td className="p-3 font-medium text-foreground">
-                            #{order._id}
-                          </td>
-                          <td className="p-3">
-                            {order.items.map((item) => (
+                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        </Badge>
+                      </td> */}
+                    <td className="p-3 relative">
+                      <div className="relative inline-block">
+                        <Badge
+                          className={statusColors[order.status] || 'bg-gray-100 text-background'}
+                          onClick={() => setActiveModal({ type: 'status', orderId: order._id })}
+                        >
+                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        </Badge>
+
+                        {/* Dropdown for status update (except cancelled) */}
+                        {activeModal?.type === 'status' && activeModal.orderId === order._id && (
+                          <div className="absolute z-10 mt-1 bg-background border rounded shadow w-max">
+                            {['pending', 'shifted', 'delivered', 'complete'].map((s) => (
                               <div
-                                key={item._id}
-                                className="flex items-center gap-2"
+                                key={s}
+                                className="px-4 py-2 cursor-pointer"
+                                onClick={() => {
+                                  updateStatusMutation.mutate(
+                                    { id: order._id, status: s },
+                                    {
+                                      onSuccess: () => setActiveModal(null),
+                                    }
+                                  );
+                                }}
                               >
-                                <img
-                                  src={item.productId.imageUrl}
-                                  alt={item.productId.productName}
-                                  className="w-8 h-8 rounded"
-                                />
-                                <span>
-                                  {item.productId.productName} (x{item.quantity}
-                                  )
-                                </span>
+                                {s.charAt(0).toUpperCase() + s.slice(1)}
                               </div>
                             ))}
-                          </td>
-                          <td className="p-3 text-foreground">
-                            {order.customer.address.line1}
-                          </td>
-                          <td className="p-3">
-                            {new Date(order.createdAt).toLocaleDateString()}
-                          </td>
-                          <td className="p-3 text-foreground">
-                            ${order.total}
-                          </td>
-                          <td className="p-3 text-foreground">
-                            <Badge
-                              className={
-                                statusColors[order.status] ||
-                                'bg-gray-100 text-background'
-                              }
-                            >
-                              {order.status.charAt(0).toUpperCase() +
-                                order.status.slice(1)}
-                            </Badge>
-                          </td>
-                          <td className="p-3 text-foreground flex gap-3">
-                            <Eye
-                              className="cursor-pointer"
-                              onClick={() =>
-                                setActiveModal({
-                                  type: 'view',
-                                  orderId: order._id,
-                                })
-                              }
-                            />
-                            <Edit
-                              className="cursor-pointer"
-                              onClick={() =>
-                                setActiveModal({
-                                  type: 'edit',
-                                  orderId: order._id,
-                                })
-                              }
-                            />
-                            <Trash2
-                              className="cursor-pointer"
-                              onClick={() =>
-                                setActiveModal({
-                                  type: 'delete',
-                                  orderId: order._id,
-                                })
-                              }
-                            />
-                          </td>
-                        </tr>
-                      ))}
-                </tbody>
-              </table>
 
-              {/* Pagination */}
-              <div className="flex items-center justify-between p-4 border-t">
-                <p className="text-sm text-gray-500">
-                  Showing 1 to 10 of {orders.length} entries
-                </p>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
-                    Previous
-                  </Button>
-                  {[1, 2, 3, 4, 5].map((num) => (
-                    <Button
-                      key={num}
-                      variant={num === 1 ? 'default' : 'outline'}
-                      size="sm"
-                    >
-                      {num}
-                    </Button>
-                  ))}
-                  <Button variant="outline" size="sm">
-                    Next
-                  </Button>
-                </div>
-              </div>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+
+                    {/* Actions */}
+                    {/* <td className="p-3 flex gap-3 mt-6">
+                        <Eye
+                          className="cursor-pointer"
+                          onClick={() => router.push(`/orders/${order._id}`)}
+                        />
+                      </td> */}
+                    <td className="p-3 flex gap-3 mt-6">
+                      <Eye
+                        className="cursor-pointer"
+                        onClick={() => router.push(`/orders/${order._id}`)}
+                      />
+                      <Trash2
+                        className="cursor-pointer text-red-500"
+                        onClick={() => setActiveModal({ type: 'cancel', orderId: order._id })}
+                      />
+                    </td>
+
+                    {/* Cancel Modal */}
+                    {activeModal?.type === 'cancel' && activeModal.orderId === order._id && (
+                      <DeleteOrderModal
+                        orderId={activeModal.orderId}
+                        onClose={() => setActiveModal(null)}
+                        showDeleteModal
+                      />
+                    )}
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+
+          {/* Pagination */}
+          <div className="flex items-center justify-between p-4 border-t">
+            <p className="text-sm text-gray-500">
+              Showing page {page} of {totalPages}
+            </p>
+            <div className="flex gap-2">
+              <Button disabled={page === 1} onClick={() => handlePageChange(page - 1)}>
+                Previous
+              </Button>
+              <Button disabled={page === totalPages} onClick={() => handlePageChange(page + 1)}>
+                Next
+              </Button>
             </div>
-          </TabsContent>
-        </Tabs>
+          </div>
+        </div>
       </div>
 
-      {/* ===== Modals ===== */}
-      {activeModal?.type === 'view' && (
-        <ViewOrderModal
-          orderId={activeModal.orderId}
-          onClose={() => setActiveModal(null)}
-          showViewModal={activeModal?.type === 'view'}
-        />
-      )}
-      {activeModal?.type === 'edit' && (
-        <EditOrderModal
-          orderId={activeModal.orderId}
-          onClose={() => setActiveModal(null)}
-          showEditModal={activeModal?.type === 'edit'}
-        />
-      )}
-      {activeModal?.type === 'delete' && (
-        <DeleteOrderModal
-          orderId={activeModal.orderId}
-          onClose={() => setActiveModal(null)}
-          order={orders}
-          showDeleteModal={activeModal?.type === 'delete'}
-        />
-      )}
+
     </DashboardLayout>
   )
 }

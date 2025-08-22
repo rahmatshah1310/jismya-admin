@@ -23,12 +23,15 @@ export default function ProductDetailsPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   const { data, isLoading, isError } = useSingleProduct(id)
+  console.log(data,"data............")
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <ClipLoader color="#fff" />
-      </div>
+      <DashboardLayout>
+        <div className="h-screen flex justify-center items-center">
+         <ClipLoader color='#fff'/>
+        </div>
+      </DashboardLayout>
     )
   }
 
@@ -78,7 +81,7 @@ export default function ProductDetailsPage() {
                 {allImages.map((img, idx) => (
                   <div
                     key={idx}
-                    className={`cursor-pointer border-2 rounded-lg overflow-hidden transition-all duration-200 ${
+                    className={`cursor-pointer border-2 overflow-hidden transition-all duration-200 ${
                       idx === currentImageIndex
                         ? 'border-blue-500 scale-105'
                         : 'border-gray-200 hover:border-gray-300'
@@ -105,7 +108,7 @@ export default function ProductDetailsPage() {
                   alt={product.productName}
                   width={600}
                   height={600}
-                  className="rounded-xl object-cover border shadow-lg w-[500px] h-[500px]"
+                  className="object-cover border shadow-lg w-[500px] h-[500px]"
                 />
 
                 {/* Navigation Arrows */}
@@ -196,21 +199,7 @@ export default function ProductDetailsPage() {
                 </div>
               </div>
 
-              {/* Product Stats */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-4 rounded-lg text-foreground">
-                  <p className="text-sm text-gray-600">Sales</p>
-                  <p className="text-xl font-semibold text-foreground">
-                    {product.sales}
-                  </p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg text-foreground">
-                  <p className="text-sm text-gray-600">Rating</p>
-                  <p className="text-xl font-semibold text-foreground">
-                    ⭐ {product.averageRating}
-                  </p>
-                </div>
-              </div>
+            
 
               {/* Product Details */}
               <div className="space-y-4">
@@ -311,14 +300,13 @@ export default function ProductDetailsPage() {
               {product.reviews.map((review, idx) => (
                 <div
                   key={review._id || idx}
-                  className="border rounded-lg p-4 shadow-sm bg-gray-50 text-foreground border-foreground"
+                  className="border rounded-lg p-4 shadow-sm  text-foreground border-foreground"
                 >
-                  <p className="font-semibold">{review.userName}</p>
-                  <p className="text-yellow-500">⭐ {review.rating}</p>
-                  <p className="text-gray-700">{review.comment}</p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {new Date(review.createdAt).toLocaleDateString()}
-                  </p>
+                  <p className="font-semibold">{review.name}</p>
+                  <p className="text-foreground">{review.from}</p>
+                  <p className="text-foreground">{review.reviewDescription}</p>
+                 
+
                 </div>
               ))}
             </CardContent>

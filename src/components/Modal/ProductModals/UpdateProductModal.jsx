@@ -16,7 +16,13 @@ export default function UpdateProductModal({ isOpen, onClose, product }) {
   const isSubmitting = updateProduct.isPending
 
   useEffect(() => {
-    if (product) setFormData({ ...product, imageFile: null })
+    if (product) {
+      setFormData({
+        ...product,
+        categoryId: product.category?._id || '',
+        imageFile: null,
+      })
+    }
   }, [product])
 
   const handleChange = (e) => {
@@ -44,10 +50,9 @@ export default function UpdateProductModal({ isOpen, onClose, product }) {
 
     const formPayload = new FormData()
     formPayload.append('productName', formData.productName)
-    formPayload.append('category', formData.categoryName)
+    formPayload.append('category', formData.categoryId)
     formPayload.append('description', formData.description)
     formPayload.append('price', formData.price)
-    formPayload.append('discount', formData.discount)
     formPayload.append('sales', formData.sales)
     formPayload.append('fabrics', formData.fabrics)
     if (formData.imageFile) {
@@ -135,14 +140,7 @@ export default function UpdateProductModal({ isOpen, onClose, product }) {
               className="border p-2 w-full"
               label="Price"
             />
-            <Input
-              name="discount"
-              type="number"
-              value={formData.discount}
-              onChange={handleChange}
-              className="border p-2 w-full"
-              label="Discount"
-            />
+
             <Input
               name="sales"
               type="number"

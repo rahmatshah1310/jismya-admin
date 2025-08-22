@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
@@ -20,6 +20,8 @@ import {
   LogOut,
 } from 'lucide-react'
 import { Button } from '../ui/Button'
+import { useLogoutMutation } from '@/app/api/authApi'
+import { useAuth } from '@/context/AuthContext'
 
 const sidebarNavItems = [
   { title: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -38,7 +40,13 @@ export function Sidebar({
   setMobileOpen,
 }) {
   const pathname = usePathname()
+  const router = useRouter()
+  const { handleLogout } = useAuth() 
 
+  const onLogout = () => {
+    handleLogout() 
+    router.push('/login') 
+  }
   return (
     <>
       {/* Overlay for mobile */}
@@ -123,17 +131,15 @@ export function Sidebar({
           </ScrollArea>
         </div>
         <div className="p-3 border-t">
-          <Button
-            variant="ghost"
-            className={cn(
-              'w-full flex items-center justify-start',
-              collapsed && 'justify-center'
-            )}
-          >
-            <LogOut className="h-4 w-4" />
-            {!collapsed && <span className="ml-2">Logout</span>}
-          </Button>
-        </div>
+      <Button
+        variant="ghost"
+        className={`w-full flex items-center justify-start ${collapsed ? 'justify-center' : ''}`}
+        onClick={onLogout}
+      >
+        <LogOut className="h-4 w-4" />
+        {!collapsed && <span className="ml-2">Logout</span>}
+      </Button>
+    </div>
       </div>
     </>
   )

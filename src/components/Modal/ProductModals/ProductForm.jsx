@@ -12,11 +12,10 @@ import { Input } from '@/components/ui/input'
 export default function ProductForm({ isOpen, onClose }) {
   const { data: categories } = useGetAllCategories()
   const [formData, setFormData] = useState({
-    categoryId: '',  
+    categoryId: '',
     productName: '',
     description: '',
     price: '',
-    discount: '',
     sales: 1,
     saleName: '',
     colorsAvailable: [],
@@ -61,7 +60,6 @@ export default function ProductForm({ isOpen, onClose }) {
     formPayload.append('category', formData.categoryId)
     formPayload.append('description', formData.description)
     formPayload.append('price', formData.price)
-    formPayload.append('discount', formData.discount)
     formPayload.append('sales', formData.sales || 1)
     formPayload.append('fabrics', formData.fabrics)
     formPayload.append('image', formData.imageFile)
@@ -108,25 +106,24 @@ export default function ProductForm({ isOpen, onClose }) {
               Category
             </label>
             <select
-  id="category"
-  name="category"
-  value={formData.categoryId}
-  onChange={(e) =>
-    setFormData((prev) => ({ ...prev, categoryId: e.target.value }))
-  }
-  className="border border-gray-800 rounded p-3 w-full bg-background"
-  required
->
-  <option value="" disabled>
-    Select Category
-  </option>
-  {categories?.data?.map((cat) => (
-    <option key={cat._id} value={cat._id}>
-      {cat.name}
-    </option>
-  ))}
-</select>
-
+              id="category"
+              name="category"
+              value={formData.categoryId}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, categoryId: e.target.value }))
+              }
+              className="border border-gray-800 rounded p-3 w-full bg-background"
+              required
+            >
+              <option value="" disabled>
+                Select Category
+              </option>
+              {categories?.data?.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Description */}
@@ -155,15 +152,7 @@ export default function ProductForm({ isOpen, onClose }) {
               className="border p-2 w-full"
               label="Price"
             />
-            <Input
-              id="discount"
-              name="discount"
-              type="number"
-              value={formData.discount}
-              onChange={handleChange}
-              className="border p-2 w-full"
-              label="Discount  (%)"
-            />
+
             {/* Fabrics */}
             <Input
               id="fabrics"

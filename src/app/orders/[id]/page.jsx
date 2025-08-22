@@ -1,66 +1,237 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import { DashboardLayout } from '@/components/layout/dashboard-layout'
+import { useGetSingleOrder } from '@/app/api/orderApi'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/Button'
+import { ArrowLeft, Edit, Trash2 } from 'lucide-react'
+import { OrderSkeletonRow } from '@/components/ui/common/Skeleton'
+import EditOrderModal from '@/components/Modal/OrdersModel/EditOrderModal'
+import DeleteOrderModal from '@/components/Modal/OrdersModel/DeleteOrderModel'
 
-const OrderDetail = ({ order, onClose, onUpdateStatus }) => {
-  const [status, setStatus] = useState(order?.status || "");
+const statusColors = {
+  complete: 'bg-green-100 text-green-700',
+  pending: 'bg-yellow-100 text-yellow-700',
+  cancelled: 'bg-red-100 text-red-700',
+  delivered: 'bg-blue-100 text-blue-700',
+  shifted: 'bg-purple-100 text-purple-700',
+}
 
-  useEffect(() => {
-    // Update local status if order prop changes
-    setStatus(order?.status || "");
-  }, [order]);
+export default function OrderDetailsPage() {
+  const params = useParams()
+  const router = useRouter()
+  const orderId = params.id
 
-  const handleUpdate = () => {
-    if (onUpdateStatus && order) {
-      onUpdateStatus(order._id, status); // call parent mutation
-    }
-    onClose(); // close modal
-  };
+  const { data, isLoading, error } = useGetSingleOrder(orderId)
+  const order = data?.data
 
-  if (!order) return null; // render nothing if no order selected
+  const [activeModal, setActiveModal] = useState(null)
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="p-6">
+          <div className="border rounded-lg overflow-hidden bg-background text-foreground shadow-sm">
+            <table className="w-full border-collapse text-sm">
+              <thead className="bg-gray-50 text-background">
+                <tr>
+                  <th className="p-3 text-left">Loading...</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...Array(6)].map((_, i) => <OrderSkeletonRow key={i} />)}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  if (error || !order) {
+    return (
+      <DashboardLayout>
+        <div className="p-6">
+          <div className="text-center py-12">
+            <h2 className="text-xl font-semibold text-foreground">Order not found</h2>
+            <p className="text-gray-500 mt-2">The order you're looking for doesn't exist.</p>
+            <Button 
+              onClick={() => router.push('/orders')} 
+              className="mt-4"
+            >
+              Back to Orders
+            </Button>
+          </div>
+        </div>
+      </DashboardLayout>
+    )
+  }
 
   return (
-    <div className="p-4 space-y-4 bg-white rounded-xl shadow-md w-full max-w-md">
-      <h2 className="text-xl font-semibold mb-4">Order #{order._id}</h2>
+    <DashboardLayout>
+      <div className="p-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="outline" 
+              onClick={() => router.push('/orders')}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Orders
+            </Button>
+            <h1 className="text-2xl font-semibold">Order #{order.orderId}</h1>
+          </div>
+          
+          <div className="flex gap-2">
+            <Button 
+              onClick={() => setActiveModal({ type: 'edit', orderId: order._id })}
+              className="flex items-center gap-2"
+            >
+              <Edit className="w-4 h-4" />
+              Edit Order
+            </Button>
+            <Button 
+              variant="destructive"
+              onClick={() => setActiveModal({ type: 'delete', orderId: order._id })}
+              className="flex items-center gap-2"
+            >
+              <Trash2 className="w-4 h-4" />
+              Delete Order
+            </Button>
+          </div>
+        </div>
 
-      <div className="space-y-2 text-gray-700">
-        <p>
-          <strong>User:</strong> {order.customer.name} ({order.customer.phone})
-        </p>
-        <p>
-          <strong>Address:</strong> {order.customer.address.line1}, {order.customer.address.city}
-        </p>
-        <p>
-          <strong>Total:</strong> ${order.total}
-        </p>
+        {/* Order Status */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-background text-foreground p-4 rounded-lg border shadow-sm">
+            <h3 className="font-medium text-foreground mb-2">Order Status</h3>
+            <Badge className={statusColors[order.status] || 'bg-gray-100 text-foreground'}>
+              {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+            </Badge>
+          </div>
+          
+          <div className="bg-background text-foreground p-4 rounded-lg border shadow-sm">
+            <h3 className="font-medium text-foreground mb-2">Payment Status</h3>
+            <Badge className={
+              order.paymentStatus === 'paid' 
+                ? 'bg-green-100 text-green-700' 
+                : 'bg-yellow-100 text-yellow-700'
+            }>
+              {order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1)}
+            </Badge>
+          </div>
+          
+          <div className="bg-background text-foreground p-4 rounded-lg border shadow-sm">
+            <h3 className="font-medium text-foreground mb-2">Total Amount</h3>
+            <p className="text-2xl font-bold text-green-600">${order.totalAmount.toFixed(2)}</p>
+          </div>
+        </div>
+
+        {/* Customer Information */}
+        <div className="bg-background text-foreground p-6 rounded-lg border shadow-sm mb-6">
+          <h2 className="text-xl font-semibold mb-4">Customer Information</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-foreground">Name</label>
+              <p className="text-foreground">{order.user.name}</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground">Email</label>
+              <p className="text-foreground">{order.user.email}</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground">Phone</label>
+              <p className="text-foreground">{order.user.phone}</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground">Country</label>
+              <p className="text-foreground">{order.user.country}</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground">City</label>
+              <p className="text-foreground">{order.user.city}</p>
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-foreground">Complete Address</label>
+              <p className="text-foreground">{order.user.completeAddress}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Order Items */}
+        <div className="bg-background text-foreground p-6 rounded-lg border shadow-sm mb-6">
+          <h2 className="text-xl font-semibold mb-4">Order Items</h2>
+          <div className="space-y-4">
+            {order.items.map((item, index) => (
+              <div key={item._id} className="flex items-center gap-4 p-4 border rounded-lg">
+                <img
+                  src={item.productId.imageUrl}
+                  alt={item.productId.productName}
+                  className="w-16 h-16 rounded object-cover"
+                />
+                <div className="flex-1">
+                  <h4 className="font-medium">{item.productId.productName}</h4>
+                  <p className="text-sm text-foreground">Quantity: {item.quantity}</p>
+                  <p className="text-sm text-foreground">Price: ${item.productId.price}</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-medium">${item.totalPrice.toFixed(2)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Order Details */}
+        <div className="bg-background text-foreground p-6 rounded-lg border shadow-sm mb-6">
+          <h2 className="text-xl font-semibold mb-4">Order Details</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-foreground">Order ID</label>
+              <p className="text-foreground font-mono">{order.orderId}</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground">Order Date</label>
+              <p className="text-foreground">{new Date(order.createdAt).toLocaleDateString()}</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground">Shipping Method</label>
+              <p className="text-foreground capitalize">{order.shippingMethod}</p>
+            </div>
+            {order.estimatedDelivery && (
+              <div>
+                <label className="block text-sm font-medium text-foreground">Estimated Delivery</label>
+                <p className="text-foreground">{new Date(order.estimatedDelivery).toLocaleDateString()}</p>
+              </div>
+            )}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-foreground">Notes</label>
+              <p className="text-foreground">{order.notes || 'No notes provided'}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <h3 className="font-medium mt-4">Items</h3>
-      <ul className="list-disc list-inside text-gray-600">
-        {order.items.map((item, idx) => (
-          <li key={idx}>
-            {item.productName || item.product?.name} × {item.quantity}
-          </li>
-        ))}
-      </ul>
-
-      {/* Update Status */}
-      <div className="space-y-3">
-        <select value={status} onChange={(e) => setStatus(e.target.value)} className="w-full border rounded p-2">
-          <option value="pending">Pending</option>
-          <option value="confirmed">Confirmed</option>
-          <option value="shipped">Shipped</option>
-          <option value="delivered">Delivered</option>
-          <option value="cancelled">Cancelled</option>
-          <option value="returned">Returned</option>
-        </select>
-
-        <button onClick={handleUpdate} className="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-          Update
-        </button>
-      </div>
-    </div>
-  );
-};
-
-export default OrderDetail;
+      {/* Modals */}
+      {activeModal?.type === 'edit' && (
+        <EditOrderModal
+          orderId={activeModal.orderId}
+          onClose={() => setActiveModal(null)}
+          showEditModal={true}
+        />
+      )}
+      {activeModal?.type === 'delete' && (
+        <DeleteOrderModal
+          orderId={activeModal.orderId}
+          onClose={() => setActiveModal(null)}
+          order={order}
+          showDeleteModal={true}
+        />
+      )}
+    </DashboardLayout>
+  )
+}

@@ -55,7 +55,6 @@ export const createCategory = async (data) => {
   return response.data
 }
 
-
 export const updateCategory = async (id, data) => {
   const response = await sendRequest({
     method: 'PUT',
@@ -66,7 +65,6 @@ export const updateCategory = async (id, data) => {
 }
 
 export const deleteCategory = async (id) => {
-
   const response = await sendRequest({
     method: 'DELETE',
     url: `/categories/${id}`,
