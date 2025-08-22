@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/context/CartContext'
-import { ClipLoader } from 'react-spinners'
 
 export default function SingleCartItem() {
   const { id } = useParams()
@@ -26,7 +25,7 @@ export default function SingleCartItem() {
   if (loading)
     return (
       <h1 className="text-center py-20">
-        <ClipLoader />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </h1>
     )
   if (!cartItem) return <h1 className="text-center py-20">Item not found.</h1>
