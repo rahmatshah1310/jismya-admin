@@ -11,10 +11,3 @@ export const useLoginMutation = () => {
   })
 }
 
-export const useLogoutMutation = () => {
-  return useMutation({
-    mutationFn: async () => {
-      await authService.logout()
-    },
-  })
-}
