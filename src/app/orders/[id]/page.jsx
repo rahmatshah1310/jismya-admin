@@ -41,7 +41,9 @@ export default function OrderDetailsPage() {
                 </tr>
               </thead>
               <tbody>
-                {[...Array(6)].map((_, i) => <OrderSkeletonRow key={i} />)}
+                {[...Array(6)].map((_, i) => (
+                  <OrderSkeletonRow key={i} />
+                ))}
               </tbody>
             </table>
           </div>
@@ -55,12 +57,13 @@ export default function OrderDetailsPage() {
       <DashboardLayout>
         <div className="p-6">
           <div className="text-center py-12">
-            <h2 className="text-xl font-semibold text-foreground">Order not found</h2>
-            <p className="text-gray-500 mt-2">The order you're looking for doesn't exist.</p>
-            <Button 
-              onClick={() => router.push('/orders')} 
-              className="mt-4"
-            >
+            <h2 className="text-xl font-semibold text-foreground">
+              Order not found
+            </h2>
+            <p className="text-gray-500 mt-2">
+              The order you're looking for doesn't exist.
+            </p>
+            <Button onClick={() => router.push('/orders')} className="mt-4">
               Back to Orders
             </Button>
           </div>
@@ -75,8 +78,8 @@ export default function OrderDetailsPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => router.push('/orders')}
               className="flex items-center gap-2"
             >
@@ -85,18 +88,22 @@ export default function OrderDetailsPage() {
             </Button>
             <h1 className="text-2xl font-semibold">Order #{order.orderId}</h1>
           </div>
-          
+
           <div className="flex gap-2">
-            <Button 
-              onClick={() => setActiveModal({ type: 'edit', orderId: order._id })}
+            <Button
+              onClick={() =>
+                setActiveModal({ type: 'edit', orderId: order._id })
+              }
               className="flex items-center gap-2"
             >
               <Edit className="w-4 h-4" />
               Edit Order
             </Button>
-            <Button 
+            <Button
               variant="destructive"
-              onClick={() => setActiveModal({ type: 'delete', orderId: order._id })}
+              onClick={() =>
+                setActiveModal({ type: 'delete', orderId: order._id })
+              }
               className="flex items-center gap-2"
             >
               <Trash2 className="w-4 h-4" />
@@ -109,25 +116,34 @@ export default function OrderDetailsPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-background text-foreground p-4 rounded-lg border shadow-sm">
             <h3 className="font-medium text-foreground mb-2">Order Status</h3>
-            <Badge className={statusColors[order.status] || 'bg-gray-100 text-foreground'}>
+            <Badge
+              className={
+                statusColors[order.status] || 'bg-gray-100 text-foreground'
+              }
+            >
               {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
             </Badge>
           </div>
-          
+
           <div className="bg-background text-foreground p-4 rounded-lg border shadow-sm">
             <h3 className="font-medium text-foreground mb-2">Payment Status</h3>
-            <Badge className={
-              order.paymentStatus === 'paid' 
-                ? 'bg-green-100 text-green-700' 
-                : 'bg-yellow-100 text-yellow-700'
-            }>
-              {order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1)}
+            <Badge
+              className={
+                order.paymentStatus === 'paid'
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-yellow-100 text-yellow-700'
+              }
+            >
+              {order.paymentStatus.charAt(0).toUpperCase() +
+                order.paymentStatus.slice(1)}
             </Badge>
           </div>
-          
+
           <div className="bg-background text-foreground p-4 rounded-lg border shadow-sm">
             <h3 className="font-medium text-foreground mb-2">Total Amount</h3>
-            <p className="text-2xl font-bold text-green-600">${order.totalAmount.toFixed(2)}</p>
+            <p className="text-2xl font-bold text-green-600">
+              ${order.totalAmount.toFixed(2)}
+            </p>
           </div>
         </div>
 
@@ -136,27 +152,39 @@ export default function OrderDetailsPage() {
           <h2 className="text-xl font-semibold mb-4">Customer Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-foreground">Name</label>
+              <label className="block text-sm font-medium text-foreground">
+                Name
+              </label>
               <p className="text-foreground">{order.user.name}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground">Email</label>
+              <label className="block text-sm font-medium text-foreground">
+                Email
+              </label>
               <p className="text-foreground">{order.user.email}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground">Phone</label>
+              <label className="block text-sm font-medium text-foreground">
+                Phone
+              </label>
               <p className="text-foreground">{order.user.phone}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground">Country</label>
+              <label className="block text-sm font-medium text-foreground">
+                Country
+              </label>
               <p className="text-foreground">{order.user.country}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground">City</label>
+              <label className="block text-sm font-medium text-foreground">
+                City
+              </label>
               <p className="text-foreground">{order.user.city}</p>
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-foreground">Complete Address</label>
+              <label className="block text-sm font-medium text-foreground">
+                Complete Address
+              </label>
               <p className="text-foreground">{order.user.completeAddress}</p>
             </div>
           </div>
@@ -167,7 +195,10 @@ export default function OrderDetailsPage() {
           <h2 className="text-xl font-semibold mb-4">Order Items</h2>
           <div className="space-y-4">
             {order.items.map((item, index) => (
-              <div key={item._id} className="flex items-center gap-4 p-4 border rounded-lg">
+              <div
+                key={item._id}
+                className="flex items-center gap-4 p-4 border rounded-lg"
+              >
                 <img
                   src={item.productId.imageUrl}
                   alt={item.productId.productName}
@@ -175,8 +206,12 @@ export default function OrderDetailsPage() {
                 />
                 <div className="flex-1">
                   <h4 className="font-medium">{item.productId.productName}</h4>
-                  <p className="text-sm text-foreground">Quantity: {item.quantity}</p>
-                  <p className="text-sm text-foreground">Price: ${item.productId.price}</p>
+                  <p className="text-sm text-foreground">
+                    Quantity: {item.quantity}
+                  </p>
+                  <p className="text-sm text-foreground">
+                    Price: ${item.productId.price}
+                  </p>
                 </div>
                 <div className="text-right">
                   <p className="font-medium">${item.totalPrice.toFixed(2)}</p>
@@ -191,26 +226,44 @@ export default function OrderDetailsPage() {
           <h2 className="text-xl font-semibold mb-4">Order Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-foreground">Order ID</label>
+              <label className="block text-sm font-medium text-foreground">
+                Order ID
+              </label>
               <p className="text-foreground font-mono">{order.orderId}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground">Order Date</label>
-              <p className="text-foreground">{new Date(order.createdAt).toLocaleDateString()}</p>
+              <label className="block text-sm font-medium text-foreground">
+                Order Date
+              </label>
+              <p className="text-foreground">
+                {new Date(order.createdAt).toLocaleDateString()}
+              </p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground">Shipping Method</label>
-              <p className="text-foreground capitalize">{order.shippingMethod}</p>
+              <label className="block text-sm font-medium text-foreground">
+                Shipping Method
+              </label>
+              <p className="text-foreground capitalize">
+                {order.shippingMethod}
+              </p>
             </div>
             {order.estimatedDelivery && (
               <div>
-                <label className="block text-sm font-medium text-foreground">Estimated Delivery</label>
-                <p className="text-foreground">{new Date(order.estimatedDelivery).toLocaleDateString()}</p>
+                <label className="block text-sm font-medium text-foreground">
+                  Estimated Delivery
+                </label>
+                <p className="text-foreground">
+                  {new Date(order.estimatedDelivery).toLocaleDateString()}
+                </p>
               </div>
             )}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-foreground">Notes</label>
-              <p className="text-foreground">{order.notes || 'No notes provided'}</p>
+              <label className="block text-sm font-medium text-foreground">
+                Notes
+              </label>
+              <p className="text-foreground">
+                {order.notes || 'No notes provided'}
+              </p>
             </div>
           </div>
         </div>
@@ -219,6 +272,7 @@ export default function OrderDetailsPage() {
       {/* Modals */}
       {activeModal?.type === 'edit' && (
         <EditOrderModal
+          orderData={order}
           orderId={activeModal.orderId}
           onClose={() => setActiveModal(null)}
           showEditModal={true}
