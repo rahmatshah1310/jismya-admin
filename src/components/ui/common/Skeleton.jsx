@@ -167,12 +167,6 @@ export const OrderSkeletonRow = () => (
       <div className="h-4 w-20 bg-gray-300 dark:bg-gray-700 rounded" />
     </TableCell>
     <TableCell className="p-3">
-      <div className="h-4 w-12 bg-gray-300 dark:bg-gray-700 rounded" />
-    </TableCell>
-    <TableCell className="p-3">
-      <div className="h-5 w-16 bg-gray-300 dark:bg-gray-700 rounded" />
-    </TableCell>
-    <TableCell className="p-3">
       <div className="flex gap-2">
         <div className="h-6 w-6 bg-gray-300 dark:bg-gray-700 rounded" />
         <div className="h-6 w-6 bg-gray-300 dark:bg-gray-700 rounded" />
