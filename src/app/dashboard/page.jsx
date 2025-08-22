@@ -22,7 +22,7 @@ import {
 // import Image from 'next/image'
 import Link from 'next/link'
 import { useProductSaleStats } from '../api/productApi'
-import { useGetOrderStats } from '../api/orderApi'
+import { useGetAllOrders, useGetOrderStats } from '../api/orderApi'
 import { useGetSalesStats } from '../api/saleApi'
 
 const recentOrders = [
@@ -59,6 +59,8 @@ export default function DashboardPage() {
   const { data: saleData, isLoading: isSalesLoading } = useGetSalesStats()
 
   const loading = isProductsLoading || isOrdersLoading || isSalesLoading
+  const { data, isLoading } = useGetAllOrders({ page: 1, limit: 5 })
+  const recentOrders = data?.data?.orders || []
 
   // Extract totals
   const totalProducts = productData?.data?.total?.totalProducts || 0
@@ -132,39 +134,69 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentOrders.map((order) => (
-                  <div key={order.id} className="flex items-center space-x-4">
-                    <div className="flex-1 space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {order.customer}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {order.product}
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge
-                        variant={
-                          order.status === 'completed'
-                            ? 'default'
-                            : order.status === 'pending'
-                            ? 'secondary'
-                            : 'outline'
-                        }
+                {isLoading
+                  ? [...Array(5)].map((_, i) => <OrderSkeletonRow key={i} />)
+                  : recentOrders.map((order) => (
+                      <div
+                        key={order._id}
+                        className="flex items-center justify-between space-x-4"
                       >
-                        {order.status}
-                      </Badge>
-                      <span className="text-sm font-medium">
-                        {order.amount}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                        <div className="flex-1 space-y-1">
+                          <p className="text-sm font-medium">
+                            {order.user.name}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {order.user.email}
+                          </p>
+                          <div className="text-xs text-gray-500">
+                            Created:{' '}
+                            {new Date(order.createdAt).toLocaleDateString()}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Updated:{' '}
+                            {new Date(order.updatedAt).toLocaleDateString()}
+                          </div>
+                        </div>
+
+                        {/* <div className="flex-1">
+                          {order.items.map((item) => (
+                            <div
+                              key={item._id}
+                              className="flex items-center gap-2"
+                            >
+                              <img
+                                src={item.productId.imageUrl}
+                                alt={item.productId.productName}
+                                className="w-6 h-6 rounded"
+                              />
+                              <span>
+                                {item.productId.productName} (x{item.quantity})
+                              </span>
+                            </div>
+                          ))}
+                        </div> */}
+
+                        <div className="flex flex-col items-end gap-1">
+                          <span className="text-sm font-medium">
+                            ${order.totalAmount.toFixed(2)}
+                          </span>
+                          <Badge
+                            className={
+                              order.paymentStatus === 'paid'
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-yellow-100 text-yellow-700'
+                            }
+                          >
+                            {order.paymentStatus}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
               </div>
             </CardContent>
           </Card>
 
-          <Card className="col-span-4">
+          <Card className="col-span-4 h-auto  ">
             <CardHeader>
               <CardTitle>Quick Actions</CardTitle>
               <CardDescription>Common tasks and shortcuts</CardDescription>
