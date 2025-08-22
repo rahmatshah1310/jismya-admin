@@ -2,7 +2,11 @@
 
 import { useState } from 'react'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
-import { useCancelOrder, useGetAllOrders, useUpdateOrderStatus } from '@/app/api/orderApi'
+import {
+  useCancelOrder,
+  useGetAllOrders,
+  useUpdateOrderStatus,
+} from '@/app/api/orderApi'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/Button'
 import { Edit, Eye, Trash2 } from 'lucide-react'
@@ -17,13 +21,14 @@ const statusColors = {
   delivered: 'bg-blue-100 text-blue-700',
   shifted: 'bg-purple-100 text-purple-700',
 }
+export const dynamic = 'force-dynamic'
 
 export default function OrdersPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [activeModal, setActiveModal] = useState(null)
   const updateStatusMutation = useUpdateOrderStatus()
-  const cancelOrderMutation = useCancelOrder();
+  const cancelOrderMutation = useCancelOrder()
 
   // Extract filters from URL
   const filtersFromURL = Object.fromEntries(
@@ -42,7 +47,9 @@ export default function OrdersPage() {
 
   const updateURL = (filters) => {
     const nonEmptyFilters = Object.fromEntries(
-      Object.entries(filters).filter(([_, value]) => value !== '' && value != null)
+      Object.entries(filters).filter(
+        ([_, value]) => value !== '' && value != null
+      )
     )
     const url = Object.keys(nonEmptyFilters).length
       ? `/orders?${new URLSearchParams(nonEmptyFilters)}`
@@ -50,7 +57,8 @@ export default function OrdersPage() {
     router.push(url)
   }
 
-  const handlePageChange = (newPage) => updateURL({ ...filtersFromURL, page: newPage })
+  const handlePageChange = (newPage) =>
+    updateURL({ ...filtersFromURL, page: newPage })
   const handleFilter = (newFilters) => updateURL({ ...newFilters, page: 1 })
 
   return (
@@ -84,136 +92,170 @@ export default function OrdersPage() {
               {isLoading
                 ? [...Array(6)].map((_, i) => <OrderSkeletonRow key={i} />)
                 : orders.map((order, i) => (
-                  <tr key={order._id} className="border-t transition">
-                    <td className="p-3">{i + 1}</td>
-                    <td className="p-3 font-medium">#{order.orderId}</td>
+                    <tr key={order._id} className="border-t transition">
+                      <td className="p-3">{i + 1}</td>
+                      <td className="p-3 font-medium">#{order.orderId}</td>
 
-                    {/* Customer */}
-                    <td className="p-3">
-                      <div className="font-medium">{order.user.name}</div>
-                      <div className="text-xs text-gray-500">{order.user.email}</div>
-                      <div className="text-xs text-gray-500">{order.user.phone}</div>
-                    </td>
-
-                    {/* Products */}
-                    <td className="p-3">
-                      {order.items.map((item) => (
-                        <div key={item._id} className="flex items-center gap-2">
-                          <img
-                            src={item.productId.imageUrl}
-                            alt={item.productId.productName}
-                            className="w-8 h-8 rounded"
-                          />
-                          <span>{item.productId.productName} (x{item.quantity})</span>
-                        </div>
-                      ))}
-                    </td>
-
-                    {/* Address */}
-                    <td className="p-3">{order.user.completeAddress}</td>
-
-                    {/* Date */}
-                    <td className="p-3">
-                      {new Date(order.createdAt).toLocaleDateString()}
-                      {order.estimatedDelivery && (
+                      {/* Customer */}
+                      <td className="p-3">
+                        <div className="font-medium">{order.user.name}</div>
                         <div className="text-xs text-gray-500">
-                          ETA: {new Date(order.estimatedDelivery).toLocaleDateString()}
+                          {order.user.email}
                         </div>
-                      )}
-                    </td>
+                        <div className="text-xs text-gray-500">
+                          {order.user.phone}
+                        </div>
+                      </td>
 
-                    {/* Total */}
-                    <td className="p-3">${order.totalAmount.toFixed(2)}</td>
+                      {/* Products */}
+                      <td className="p-3">
+                        {order.items.map((item) => (
+                          <div
+                            key={item._id}
+                            className="flex items-center gap-2"
+                          >
+                            <img
+                              src={item.productId.imageUrl}
+                              alt={item.productId.productName}
+                              className="w-8 h-8 rounded"
+                            />
+                            <span>
+                              {item.productId.productName} (x{item.quantity})
+                            </span>
+                          </div>
+                        ))}
+                      </td>
 
-                    {/* Payment */}
-                    <td className="p-3">
-                      <Badge
-                        className={
-                          order.paymentStatus === 'paid'
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-yellow-100 text-yellow-700'
-                        }
-                      >
-                        {order.paymentStatus}
-                      </Badge>
-                    </td>
+                      {/* Address */}
+                      <td className="p-3">{order.user.completeAddress}</td>
 
-                    {/* Shipping */}
-                    <td className="p-3 capitalize">{order.shippingMethod}</td>
+                      {/* Date */}
+                      <td className="p-3">
+                        {new Date(order.createdAt).toLocaleDateString()}
+                        {order.estimatedDelivery && (
+                          <div className="text-xs text-gray-500">
+                            ETA:{' '}
+                            {new Date(
+                              order.estimatedDelivery
+                            ).toLocaleDateString()}
+                          </div>
+                        )}
+                      </td>
 
-                    {/* Notes */}
-                    <td className="p-3 text-xs text-gray-600">{order.notes || '-'}</td>
+                      {/* Total */}
+                      <td className="p-3">${order.totalAmount.toFixed(2)}</td>
 
-                    {/* Status */}
-                    {/* <td className="p-3">
+                      {/* Payment */}
+                      <td className="p-3">
+                        <Badge
+                          className={
+                            order.paymentStatus === 'paid'
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-yellow-100 text-yellow-700'
+                          }
+                        >
+                          {order.paymentStatus}
+                        </Badge>
+                      </td>
+
+                      {/* Shipping */}
+                      <td className="p-3 capitalize">{order.shippingMethod}</td>
+
+                      {/* Notes */}
+                      <td className="p-3 text-xs text-gray-600">
+                        {order.notes || '-'}
+                      </td>
+
+                      {/* Status */}
+                      {/* <td className="p-3">
                         <Badge
                           className={statusColors[order.status] || 'bg-gray-100 text-background'}
                         >
                           {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </Badge>
                       </td> */}
-                    <td className="p-3 relative">
-                      <div className="relative inline-block">
-                        <Badge
-                          className={statusColors[order.status] || 'bg-gray-100 text-background'}
-                          onClick={() => setActiveModal({ type: 'status', orderId: order._id })}
-                        >
-                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                        </Badge>
+                      <td className="p-3 relative">
+                        <div className="relative inline-block">
+                          <Badge
+                            className={
+                              statusColors[order.status] ||
+                              'bg-gray-100 text-background'
+                            }
+                            onClick={() =>
+                              setActiveModal({
+                                type: 'status',
+                                orderId: order._id,
+                              })
+                            }
+                          >
+                            {order.status.charAt(0).toUpperCase() +
+                              order.status.slice(1)}
+                          </Badge>
 
-                        {/* Dropdown for status update (except cancelled) */}
-                        {activeModal?.type === 'status' && activeModal.orderId === order._id && (
-                          <div className="absolute z-10 mt-1 bg-background border rounded shadow w-max">
-                            {['pending', 'shifted', 'delivered', 'complete'].map((s) => (
-                              <div
-                                key={s}
-                                className="px-4 py-2 cursor-pointer"
-                                onClick={() => {
-                                  updateStatusMutation.mutate(
-                                    { id: order._id, status: s },
-                                    {
-                                      onSuccess: () => setActiveModal(null),
-                                    }
-                                  );
-                                }}
-                              >
-                                {s.charAt(0).toUpperCase() + s.slice(1)}
+                          {/* Dropdown for status update (except cancelled) */}
+                          {activeModal?.type === 'status' &&
+                            activeModal.orderId === order._id && (
+                              <div className="absolute z-10 mt-1 bg-background border rounded shadow w-max">
+                                {[
+                                  'pending',
+                                  'shifted',
+                                  'delivered',
+                                  'complete',
+                                ].map((s) => (
+                                  <div
+                                    key={s}
+                                    className="px-4 py-2 cursor-pointer"
+                                    onClick={() => {
+                                      updateStatusMutation.mutate(
+                                        { id: order._id, status: s },
+                                        {
+                                          onSuccess: () => setActiveModal(null),
+                                        }
+                                      )
+                                    }}
+                                  >
+                                    {s.charAt(0).toUpperCase() + s.slice(1)}
+                                  </div>
+                                ))}
                               </div>
-                            ))}
+                            )}
+                        </div>
+                      </td>
 
-                          </div>
-                        )}
-                      </div>
-                    </td>
-
-                    {/* Actions */}
-                    {/* <td className="p-3 flex gap-3 mt-6">
+                      {/* Actions */}
+                      {/* <td className="p-3 flex gap-3 mt-6">
                         <Eye
                           className="cursor-pointer"
                           onClick={() => router.push(`/orders/${order._id}`)}
                         />
                       </td> */}
-                    <td className="p-3 flex gap-3 mt-6">
-                      <Eye
-                        className="cursor-pointer"
-                        onClick={() => router.push(`/orders/${order._id}`)}
-                      />
-                      <Trash2
-                        className="cursor-pointer text-red-500"
-                        onClick={() => setActiveModal({ type: 'cancel', orderId: order._id })}
-                      />
-                    </td>
+                      <td className="p-3 flex gap-3 mt-6">
+                        <Eye
+                          className="cursor-pointer"
+                          onClick={() => router.push(`/orders/${order._id}`)}
+                        />
+                        <Trash2
+                          className="cursor-pointer text-red-500"
+                          onClick={() =>
+                            setActiveModal({
+                              type: 'cancel',
+                              orderId: order._id,
+                            })
+                          }
+                        />
+                      </td>
 
-                    {/* Cancel Modal */}
-                    {activeModal?.type === 'cancel' && activeModal.orderId === order._id && (
-                      <DeleteOrderModal
-                        orderId={activeModal.orderId}
-                        onClose={() => setActiveModal(null)}
-                        showDeleteModal
-                      />
-                    )}
-                  </tr>
-                ))}
+                      {/* Cancel Modal */}
+                      {activeModal?.type === 'cancel' &&
+                        activeModal.orderId === order._id && (
+                          <DeleteOrderModal
+                            orderId={activeModal.orderId}
+                            onClose={() => setActiveModal(null)}
+                            showDeleteModal
+                          />
+                        )}
+                    </tr>
+                  ))}
             </tbody>
           </table>
 
@@ -223,18 +265,22 @@ export default function OrdersPage() {
               Showing page {page} of {totalPages}
             </p>
             <div className="flex gap-2">
-              <Button disabled={page === 1} onClick={() => handlePageChange(page - 1)}>
+              <Button
+                disabled={page === 1}
+                onClick={() => handlePageChange(page - 1)}
+              >
                 Previous
               </Button>
-              <Button disabled={page === totalPages} onClick={() => handlePageChange(page + 1)}>
+              <Button
+                disabled={page === totalPages}
+                onClick={() => handlePageChange(page + 1)}
+              >
                 Next
               </Button>
             </div>
           </div>
         </div>
       </div>
-
-
     </DashboardLayout>
   )
 }
