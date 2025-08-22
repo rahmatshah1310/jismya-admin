@@ -41,7 +41,7 @@ export default function OrderFilters({ onFilter, currentFilters = {} }) {
     onFilter(clearedFilters)
   }
 
-  const hasActiveFilters = Object.values(filters).some(value => value !== '')
+  const hasActiveFilters = Object.values(filters).some((value) => value !== '')
 
   return (
     <div className="flex flex-wrap gap-3 mb-6 items-end border p-4 rounded-lg bg-background shadow-sm">
@@ -125,13 +125,9 @@ export default function OrderFilters({ onFilter, currentFilters = {} }) {
           Search
         </Button>
         {hasActiveFilters && (
-          <Button 
-            onClick={handleClear} 
-            variant="outline" 
-            className="mt-1"
-          >
+          <Button onClick={handleClear} variant="outline" className="mt-1">
             <X className="w-4 h-4 mr-1" />
-            Clear
+            Clear Search
           </Button>
         )}
       </div>
