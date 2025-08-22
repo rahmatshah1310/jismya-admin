@@ -18,12 +18,14 @@ import {
   DollarSign,
   Activity,
   CreditCard,
+  Image,
+  Grid,
+  BarChart3,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useProductSaleStats } from '../api/productApi'
 import { useGetAllOrders, useGetOrderStats } from '../api/orderApi'
 import { useGetSalesStats } from '../api/saleApi'
-import { ClipLoader } from 'react-spinners'
 
 export default function DashboardPage() {
   const { data: productData, isLoading: isProductsLoading } =
@@ -109,7 +111,7 @@ export default function DashboardPage() {
               <div className="space-y-4">
                 {isLoading ? (
                   <div>
-                    <ClipLoader color="#fff" />
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                   </div>
                 ) : (
                   recentOrders.map((order) => (
@@ -154,7 +156,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="col-span-4 h-auto  ">
+          <Card className="col-span-4 h-auto space-y-8">
             <CardHeader>
               <CardTitle>Quick Actions</CardTitle>
               <CardDescription>Common tasks and shortcuts</CardDescription>
@@ -172,19 +174,15 @@ export default function DashboardPage() {
                   href="/banners"
                   className="flex flex-col items-center space-y-2 p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors"
                 >
-                  {/* <Image
-                    width={10}
-                    height={10}
-                    className="h-8 w-8 text-muted-foreground"
-                  /> */}
+                  <Image className="h-8 w-8 text-muted-foreground" />
                   <span className="text-sm font-medium">Upload Banner</span>
                 </Link>
                 <Link
-                  href="/users"
+                  href="/orders"
                   className="flex flex-col items-center space-y-2 p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors"
                 >
-                  <Users className="h-8 w-8 text-muted-foreground" />
-                  <span className="text-sm font-medium">View Users</span>
+                  <ShoppingCart className="h-8 w-8 text-muted-foreground" />
+                  <span className="text-sm font-medium">View Orders</span>
                 </Link>
                 <Link
                   href="/sales"
@@ -192,6 +190,20 @@ export default function DashboardPage() {
                 >
                   <Activity className="h-8 w-8 text-muted-foreground" />
                   <span className="text-sm font-medium">Sales Analytics</span>
+                </Link>
+                <Link
+                  href="/categories"
+                  className="flex flex-col items-center space-y-2 p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors"
+                >
+                  <Grid className="h-8 w-8 text-muted-foreground" />
+                  <span className="text-sm font-medium">View Categories</span>
+                </Link>
+                <Link
+                  href="/statistics"
+                  className="flex flex-col items-center space-y-2 p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors"
+                >
+                  <BarChart3 className="h-8 w-8 text-muted-foreground" />
+                  <span className="text-sm font-medium">View Orders</span>
                 </Link>
               </div>
             </CardContent>
