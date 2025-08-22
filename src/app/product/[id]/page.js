@@ -3,7 +3,6 @@
 import { useParams } from 'next/navigation'
 import Image from 'next/image'
 import { useSingleProduct } from '@/app/api/productApi'
-import { ClipLoader } from 'react-spinners'
 import { useState } from 'react'
 import {
   Card,
@@ -23,13 +22,13 @@ export default function ProductDetailsPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   const { data, isLoading, isError } = useSingleProduct(id)
-  console.log(data,"data............")
+  console.log(data, 'data............')
 
   if (isLoading) {
     return (
       <DashboardLayout>
         <div className="h-screen flex justify-center items-center">
-         <ClipLoader color='#fff'/>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
       </DashboardLayout>
     )
@@ -199,8 +198,6 @@ export default function ProductDetailsPage() {
                 </div>
               </div>
 
-            
-
               {/* Product Details */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-foreground">
@@ -305,8 +302,6 @@ export default function ProductDetailsPage() {
                   <p className="font-semibold">{review.name}</p>
                   <p className="text-foreground">{review.from}</p>
                   <p className="text-foreground">{review.reviewDescription}</p>
-                 
-
                 </div>
               ))}
             </CardContent>
