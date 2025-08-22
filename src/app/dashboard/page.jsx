@@ -21,41 +21,9 @@ import {
 } from 'lucide-react'
 // import Image from 'next/image'
 import Link from 'next/link'
-
-const stats = [
-  {
-    title: 'Total Revenue',
-    value: '$45,231.89',
-    change: '+20.1%',
-    changeType: 'positive',
-    icon: DollarSign,
-    description: 'From last month',
-  },
-  {
-    title: 'Total Orders',
-    value: '2,350',
-    change: '+180.1%',
-    changeType: 'positive',
-    icon: ShoppingCart,
-    description: 'From last month',
-  },
-  {
-    title: 'Total Products',
-    value: '12,234',
-    change: '+19%',
-    changeType: 'positive',
-    icon: Package,
-    description: 'From last month',
-  },
-  {
-    title: 'Active Users',
-    value: '573',
-    change: '+201',
-    changeType: 'positive',
-    icon: Users,
-    description: 'From last month',
-  },
-]
+import { useProductSaleStats } from '../api/productApi'
+import { useGetOrderStats } from '../api/orderApi'
+import { useGetSalesStats } from '../api/saleApi'
 
 const recentOrders = [
   {
@@ -85,6 +53,39 @@ const recentOrders = [
 ]
 
 export default function DashboardPage() {
+  const { data: productData, isLoading: isProductsLoading } =
+    useProductSaleStats()
+  const { data: orderData, isLoading: isOrdersLoading } = useGetOrderStats()
+  const { data: saleData, isLoading: isSalesLoading } = useGetSalesStats()
+
+  const loading = isProductsLoading || isOrdersLoading || isSalesLoading
+
+  // Extract totals
+  const totalProducts = productData?.data?.total?.totalProducts || 0
+  const totalOrders = orderData?.data?.totalOrders || 0
+  const totalRevenue = orderData?.data?.totalRevenue || 0
+
+  const stats = [
+    {
+      title: 'Total Revenue',
+      value: `$${totalRevenue.toFixed(2)}`,
+      icon: DollarSign,
+      description: 'From all orders',
+    },
+    {
+      title: 'Total Orders',
+      value: totalOrders,
+      icon: ShoppingCart,
+      description: 'All placed orders',
+    },
+    {
+      title: 'Total Products',
+      value: totalProducts,
+      icon: Package,
+      description: 'All listed products',
+    },
+  ]
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -98,32 +99,26 @@ export default function DashboardPage() {
 
         {/* Stats Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {stats.map((stat) => (
-            <Card key={stat.title}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {stat.title}
-                </CardTitle>
-                <stat.icon className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <div className="flex items-center space-x-2">
-                  <Badge
-                    variant={
-                      stat.changeType === 'positive' ? 'default' : 'destructive'
-                    }
-                    className="text-xs"
-                  >
-                    {stat.change}
-                  </Badge>
-                  <p className="text-xs text-muted-foreground">
-                    {stat.description}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          {loading
+            ? [...Array(4)].map((_, i) => (
+                <Card key={i} className="animate-pulse h-28" />
+              ))
+            : stats.map((stat) => (
+                <Card key={stat.title}>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      {stat.title}
+                    </CardTitle>
+                    <stat.icon className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{stat.value}</div>
+                    <p className="text-xs text-muted-foreground">
+                      {stat.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
         </div>
 
         {/* Recent Activity */}
