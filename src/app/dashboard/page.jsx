@@ -19,12 +19,10 @@ import {
   Activity,
   CreditCard,
 } from 'lucide-react'
-// import Image from 'next/image'
 import Link from 'next/link'
 import { useProductSaleStats } from '../api/productApi'
 import { useGetAllOrders, useGetOrderStats } from '../api/orderApi'
 import { useGetSalesStats } from '../api/saleApi'
-import { OrderSkeletonRow } from '@/components/ui/common/Skeleton'
 import { ClipLoader } from 'react-spinners'
 
 export default function DashboardPage() {
