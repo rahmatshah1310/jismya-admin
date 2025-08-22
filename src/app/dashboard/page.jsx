@@ -25,33 +25,6 @@ import { useProductSaleStats } from '../api/productApi'
 import { useGetAllOrders, useGetOrderStats } from '../api/orderApi'
 import { useGetSalesStats } from '../api/saleApi'
 
-const recentOrders = [
-  {
-    id: '1',
-    customer: 'John Doe',
-    product: 'Premium Bra Set',
-    amount: '$89.99',
-    status: 'completed',
-    date: '2024-01-15',
-  },
-  {
-    id: '2',
-    customer: 'Jane Smith',
-    product: 'Lace Panties',
-    amount: '$29.99',
-    status: 'pending',
-    date: '2024-01-14',
-  },
-  {
-    id: '3',
-    customer: 'Mike Johnson',
-    product: 'Silk Robe',
-    amount: '$149.99',
-    status: 'processing',
-    date: '2024-01-13',
-  },
-]
-
 export default function DashboardPage() {
   const { data: productData, isLoading: isProductsLoading } =
     useProductSaleStats()
