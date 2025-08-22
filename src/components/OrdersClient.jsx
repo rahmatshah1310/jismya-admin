@@ -77,15 +77,9 @@ export default function OrdersClient() {
               <tr>
                 <th className="p-3 text-left">#</th>
                 <th className="p-3 text-left">Order ID</th>
-                <th className="p-3 text-left">Customer</th>
-                <th className="p-3 text-left">Products</th>
-                <th className="p-3 text-left">Address</th>
                 <th className="p-3 text-left">Date</th>
-                <th className="p-3 text-left">Total</th>
-                <th className="p-3 text-left">Payment</th>
-                <th className="p-3 text-left">Shipping</th>
-                <th className="p-3 text-left">Notes</th>
                 <th className="p-3 text-left">Status</th>
+                <th className="p-3 text-left">Total</th>
                 <th className="p-3 text-left">Actions</th>
               </tr>
             </thead>
@@ -96,39 +90,6 @@ export default function OrdersClient() {
                     <tr key={order._id} className="border-t transition">
                       <td className="p-3">{i + 1}</td>
                       <td className="p-3 font-medium">#{order.orderId}</td>
-
-                      {/* Customer */}
-                      <td className="p-3">
-                        <div className="font-medium">{order.user.name}</div>
-                        <div className="text-xs text-gray-500">
-                          {order.user.email}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {order.user.phone}
-                        </div>
-                      </td>
-
-                      {/* Products */}
-                      <td className="p-3">
-                        {order.items.map((item) => (
-                          <div
-                            key={item._id}
-                            className="flex items-center gap-2"
-                          >
-                            <img
-                              src={item.productId.imageUrl}
-                              alt={item.productId.productName}
-                              className="w-8 h-8 rounded"
-                            />
-                            <span>
-                              {item.productId.productName} (x{item.quantity})
-                            </span>
-                          </div>
-                        ))}
-                      </td>
-
-                      {/* Address */}
-                      <td className="p-3">{order.user.completeAddress}</td>
 
                       {/* Date */}
                       <td className="p-3">
@@ -143,38 +104,7 @@ export default function OrdersClient() {
                         )}
                       </td>
 
-                      {/* Total */}
-                      <td className="p-3">${order.totalAmount.toFixed(2)}</td>
-
                       {/* Payment */}
-                      <td className="p-3">
-                        <Badge
-                          className={
-                            order.paymentStatus === 'paid'
-                              ? 'bg-green-100 text-green-700'
-                              : 'bg-yellow-100 text-yellow-700'
-                          }
-                        >
-                          {order.paymentStatus}
-                        </Badge>
-                      </td>
-
-                      {/* Shipping */}
-                      <td className="p-3 capitalize">{order.shippingMethod}</td>
-
-                      {/* Notes */}
-                      <td className="p-3 text-xs text-gray-600">
-                        {order.notes || '-'}
-                      </td>
-
-                      {/* Status */}
-                      {/* <td className="p-3">
-                        <Badge
-                          className={statusColors[order.status] || 'bg-gray-100 text-background'}
-                        >
-                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                        </Badge>
-                      </td> */}
                       <td className="p-3 relative">
                         <div className="relative inline-block">
                           <Badge
@@ -222,14 +152,11 @@ export default function OrdersClient() {
                             )}
                         </div>
                       </td>
+                      {/* Total */}
+                      <td className="p-3">${order.totalAmount.toFixed(2)}</td>
 
                       {/* Actions */}
-                      {/* <td className="p-3 flex gap-3 mt-6">
-                        <Eye
-                          className="cursor-pointer"
-                          onClick={() => router.push(`/orders/${order._id}`)}
-                        />
-                      </td> */}
+
                       <td className="p-3 flex gap-3 mt-6">
                         <Eye
                           className="cursor-pointer"
