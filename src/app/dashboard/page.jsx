@@ -24,6 +24,8 @@ import Link from 'next/link'
 import { useProductSaleStats } from '../api/productApi'
 import { useGetAllOrders, useGetOrderStats } from '../api/orderApi'
 import { useGetSalesStats } from '../api/saleApi'
+import { OrderSkeletonRow } from '@/components/ui/common/Skeleton'
+import { ClipLoader } from 'react-spinners'
 
 export default function DashboardPage() {
   const { data: productData, isLoading: isProductsLoading } =
@@ -107,64 +109,49 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {isLoading
-                  ? [...Array(5)].map((_, i) => <OrderSkeletonRow key={i} />)
-                  : recentOrders.map((order) => (
-                      <div
-                        key={order._id}
-                        className="flex items-center justify-between space-x-4"
-                      >
-                        <div className="flex-1 space-y-1">
-                          <p className="text-sm font-medium">
-                            {order.user.name}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {order.user.email}
-                          </p>
-                          <div className="text-xs text-gray-500">
-                            Created:{' '}
-                            {new Date(order.createdAt).toLocaleDateString()}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            Updated:{' '}
-                            {new Date(order.updatedAt).toLocaleDateString()}
-                          </div>
-                        </div>
-
-                        {/* <div className="flex-1">
+                {isLoading ? (
+                  <div>
+                    <ClipLoader color="#fff" />
+                  </div>
+                ) : (
+                  recentOrders.map((order) => (
+                    <div
+                      key={order._id}
+                      className="flex items-center justify-between space-x-4"
+                    >
+                      <div className="flex-1 space-y-1">
+                        <p className="text-sm font-medium">{order.user.name}</p>
+                        <div className="flex-1">
                           {order.items.map((item) => (
                             <div
                               key={item._id}
                               className="flex items-center gap-2"
                             >
-                              <img
-                                src={item.productId.imageUrl}
-                                alt={item.productId.productName}
-                                className="w-6 h-6 rounded"
-                              />
                               <span>
-                                {item.productId.productName} (x{item.quantity})
+                                {item.productId.productName} ({item.quantity})
                               </span>
                             </div>
                           ))}
-                        </div> */}
-
-                        <div className="flex flex-col items-end gap-1">
-                          <span className="text-sm font-medium">
-                            ${order.totalAmount.toFixed(2)}
-                          </span>
-                          <Badge
-                            className={
-                              order.paymentStatus === 'paid'
-                                ? 'bg-green-100 text-green-700'
-                                : 'bg-yellow-100 text-yellow-700'
-                            }
-                          >
-                            {order.paymentStatus}
-                          </Badge>
                         </div>
                       </div>
-                    ))}
+
+                      <div className="flex gap-x-3 items-end gap-1">
+                        <span className="text-sm font-medium">
+                          ${order.totalAmount.toFixed(2)}
+                        </span>
+                        <Badge
+                          className={
+                            order.paymentStatus === 'paid'
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-yellow-100 text-yellow-700'
+                          }
+                        >
+                          {order.paymentStatus}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>
