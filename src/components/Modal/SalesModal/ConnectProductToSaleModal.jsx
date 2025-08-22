@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { toast } from 'react-toastify'
-import { ClipLoader } from 'react-spinners'
 
 import { useGetAllSales, useConnectProductsToSale } from '@/app/api/saleApi'
 import { Button } from '@/components/ui/Button'
@@ -49,7 +48,7 @@ export default function ConnectProductToSaleModal({
 
         {salesLoading ? (
           <div className="text-center">
-            <ClipLoader />
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
           </div>
         ) : isError ? (
           <p className="text-red-500">Failed to load sales list.</p>
