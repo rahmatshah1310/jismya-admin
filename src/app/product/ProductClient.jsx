@@ -15,7 +15,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/Button'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import { ProductCardSkeleton } from '@/components/ui/common/Skeleton'
-import { ClipLoader } from 'react-spinners'
 
 export default function ProductClient() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -79,7 +78,7 @@ export default function ProductClient() {
             <Suspense
               fallback={
                 <div>
-                  <ClipLoader color="#fff" />
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                 </div>
               }
             >
