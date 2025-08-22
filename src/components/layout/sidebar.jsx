@@ -18,6 +18,8 @@ import {
   Menu,
   X,
   LogOut,
+  Activity,
+  Grid,
 } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { useLogoutMutation } from '@/app/api/authApi'
@@ -28,9 +30,9 @@ const sidebarNavItems = [
   { title: 'Products', href: '/product', icon: Package },
   { title: 'Banners', href: '/banners', icon: Image },
   { title: 'Orders', href: '/orders', icon: ShoppingCart },
-  { title: 'Categories', href: '/categories', icon: Users },
-  { title: 'Sales Analytics', href: '/sales', icon: BarChart3 },
-  { title: 'Settings', href: '/statistics', icon: Settings },
+  { title: 'Categories', href: '/categories', icon: Grid },
+  { title: 'Sales Analytics', href: '/sales', icon: Activity },
+  { title: 'Statistics', href: '/statistics', icon: BarChart3 },
 ]
 
 export function Sidebar({
@@ -41,11 +43,11 @@ export function Sidebar({
 }) {
   const pathname = usePathname()
   const router = useRouter()
-  const { handleLogout } = useAuth() 
+  const { handleLogout } = useAuth()
 
   const onLogout = () => {
-    handleLogout() 
-    router.push('/login') 
+    handleLogout()
+    router.push('/login')
   }
   return (
     <>
@@ -131,17 +133,18 @@ export function Sidebar({
           </ScrollArea>
         </div>
         <div className="p-3 border-t">
-      <Button
-        variant="ghost"
-        className={`w-full flex items-center justify-start ${collapsed ? 'justify-center' : ''}`}
-        onClick={onLogout}
-      >
-        <LogOut className="h-4 w-4" />
-        {!collapsed && <span className="ml-2">Logout</span>}
-      </Button>
-    </div>
+          <Button
+            variant="ghost"
+            className={`w-full flex items-center justify-start ${
+              collapsed ? 'justify-center' : ''
+            }`}
+            onClick={onLogout}
+          >
+            <LogOut className="h-4 w-4" />
+            {!collapsed && <span className="ml-2">Logout</span>}
+          </Button>
+        </div>
       </div>
     </>
   )
 }
-
