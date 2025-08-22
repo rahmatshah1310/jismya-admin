@@ -3,7 +3,6 @@ import { useGetSingleOrder } from '@/app/api/orderApi'
 import { Button } from '@/components/ui/Button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import Image from 'next/image'
-import { ClipLoader } from 'react-spinners'
 
 export default function ViewOrderModal({ orderId, onClose, showViewModal }) {
   const { data, isLoading, error } = useGetSingleOrder(orderId)
@@ -15,7 +14,7 @@ export default function ViewOrderModal({ orderId, onClose, showViewModal }) {
       <DialogContent className="sm:max-w-lg">
         {isLoading ? (
           <p className="p-4 flex justify-center items-center h-full">
-            <ClipLoader />
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
           </p>
         ) : error ? (
           <p className="p-4 text-red-500">Failed to load banner</p>
