@@ -1,6 +1,4 @@
 'use client'
-
-import { ClipLoader } from 'react-spinners'
 import {
   FaBoxOpen,
   FaCheckCircle,
