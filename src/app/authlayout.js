@@ -4,7 +4,6 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import Header from '@/layouts/Header'
 import { useAuth } from '@/context/AuthContext'
-import { ClipLoader } from 'react-spinners'
 
 export default function AuthLayout({ children }) {
   const { userData, loading } = useAuth()
@@ -29,7 +28,7 @@ export default function AuthLayout({ children }) {
       <main className={`flex-grow bg-white ${!isAuthPage ? 'mt-24' : ''}`}>
         {loading ? (
           <div className="h-[70vh] flex justify-center items-center">
-            <ClipLoader color="#fff" />
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
           </div>
         ) : (
           children
