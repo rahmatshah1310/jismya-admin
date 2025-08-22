@@ -2,7 +2,6 @@
 
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/Button'
-import { ClipLoader } from 'react-spinners'
 import { useGetSingleOrder } from '@/app/api/orderApi'
 
 export default function ViewOrderModal({ orderId, onClose, showViewModal }) {
@@ -14,7 +13,7 @@ export default function ViewOrderModal({ orderId, onClose, showViewModal }) {
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         {isLoading ? (
           <div className="flex justify-center items-center h-40">
-            <ClipLoader />
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
           </div>
         ) : error ? (
           <p className="p-4 text-red-500">Failed to load order</p>
