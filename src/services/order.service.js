@@ -24,11 +24,11 @@ export const getAllOrders = async (params = {}) => {
   if (cleanParams.startDate) query.push(`startDate=${cleanParams.startDate}`)
   if (cleanParams.endDate) query.push(`endDate=${cleanParams.endDate}`)
   if (cleanParams.limit) query.push(`limit=${cleanParams.limit}`)
-  
+
   const url = query.length ? `/orders?${query.join('&')}` : '/orders'
 
   const response = await sendRequest({ method: 'GET', url })
-  return response.data 
+  return response.data
 }
 
 export const getOrderStats = async () => {
