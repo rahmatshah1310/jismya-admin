@@ -22,11 +22,15 @@ export default function EditCategoryModal({ isOpen, onClose, category }) {
     e.preventDefault()
 
     try {
-      const res=await updateCategoryMutation.mutateAsync({ id: category._id, name, })
+      const res = await updateCategoryMutation.mutateAsync({
+        id: category._id,
+        data: { name },
+      })
+      console.log(res, 'resonpse...........')
       toast.success(res?.message || 'Category updated successfully')
       onClose()
-    } catch (err) {
-      toast.error(err?.message || 'Something went wrong.')
+    } catch (error) {
+      toast.error(typeof error === 'string' ? error : 'Something went wrong.')
     }
   }
 
@@ -38,7 +42,6 @@ export default function EditCategoryModal({ isOpen, onClose, category }) {
           <div>
             <label className="block text-sm font-medium mb-1">Name</label>
             <Input value={name} onChange={(e) => setName(e.target.value)} />
-           
           </div>
           {/* <div>
             <label className="block text-sm font-medium mb-1">
