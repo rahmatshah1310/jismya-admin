@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { saleService } from '@/services/saleService'
+import { saleService } from '@/services/sale.service'
 
 // 🔹 GET product sales by product ID
 export const useGetProductSales = (id) =>
