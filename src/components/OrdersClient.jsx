@@ -40,7 +40,6 @@ export default function OrdersClient() {
   if (filtersFromURL.limit) filtersFromURL.limit = Number(filtersFromURL.limit)
 
   const { data, isLoading } = useGetAllOrders(filtersFromURL)
-  console.log(data, 'orders')
 
   const orders = data?.data?.orders || []
   const totalPages = data?.data?.total || 1
