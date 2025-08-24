@@ -32,9 +32,7 @@ export default function Login() {
     }
 
     try {
-      console.log('Attempting login with:', { email, password })
       const res = await loginMutation.mutateAsync({ email, password })
-      console.log('Login response:', res)
       toast.success(res?.message || 'Login Successful')
       router.push('/')
     } catch (error) {
