@@ -32,8 +32,47 @@ export default function MultiSelect({
         onChange={handleChange}
         isMulti
         name={name}
-        className="react-select-container text-gray-800 text-background"
+        className="react-select-container"
         classNamePrefix="react-select"
+        styles={{
+          control: (provided, state) => ({
+            ...provided,
+            backgroundColor: `transparent`,
+            borderColor: state.isFocused
+              ? `hsl(var(--primary))`
+              : `hsl(var(--border))`,
+          }),
+          menu: (provided) => ({
+            ...provided,
+            backgroundColor: `hsl(var(--background))`,
+            borderColor: `hsl(var(--border))`,
+            borderWidth: '1px',
+            borderStyle: 'solid',
+          }),
+          menuList: (provided) => ({
+            ...provided,
+            padding: 0,
+          }),
+          option: (provided, state) => ({
+            ...provided,
+            backgroundColor: state.isSelected
+              ? `hsl(var(--accent))`
+              : state.isFocused
+              ? `hsl(var(--muted))`
+              : `hsl(var(--background))`,
+            color: state.isSelected
+              ? `hsl(var(--accent-foreground))`
+              : `hsl(var(--foreground))`,
+          }),
+          multiValue: (provided) => ({
+            ...provided,
+            backgroundColor: `hsl(var(--accent))`,
+          }),
+          multiValueLabel: (provided) => ({
+            ...provided,
+            color: `hsl(var(--accent-foreground))`,
+          }),
+        }}
       />
     </div>
   )
