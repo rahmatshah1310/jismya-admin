@@ -1,94 +1,47 @@
 'use client'
-
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { useSingleBanner } from '@/app/api/bannerApi'
 import { Button } from '@/components/ui/Button'
-import { useGetSingleOrder } from '@/app/api/orderApi'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
+import Image from 'next/image'
 
-export default function ViewOrderModal({ orderId, onClose, showViewModal }) {
-  const { data: order, isLoading, error } = useGetSingleOrder(orderId)
-  console.log(order.status)
+export default function ViewOrderModal({ bannerId, onClose, showViewModal }) {
+  const { data, isLoading, error } = useSingleBanner(bannerId)
+  const banner = data.data
 
   return (
     <Dialog open={showViewModal} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-lg">
         {isLoading ? (
-          <div className="flex justify-center items-center h-40">
+          <p className="p-4 flex justify-center items-center h-full">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          </div>
+          </p>
         ) : error ? (
-          <p className="p-4 text-red-500">Failed to load order</p>
+          <p className="p-4 text-red-500">Failed to load banner</p>
         ) : (
-          <div className="flex flex-col w-full h-full overflow-auto p-4 space-y-6">
-            {/* Order Header */}
-            <h2 className="text-2xl font-bold text-center">
-              Order #{order?._id}
+          <div className="flex flex-col w-full h-full overflow-auto p-4 space-y-4 bg-background">
+            <h2 className="text-3xl font-bold text-center break-words overflow-auto">
+              {banner?.heading}
             </h2>
-            <p className="text-center text-gray-600">
-              Placed on {new Date(order?.createdAt).toLocaleDateString()}
-            </p>
-
-            {/* Customer Info */}
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold">Customer</h3>
+            <Image
+              src={banner?.imageUrl}
+              width={300}
+              height={300}
+              alt="banner"
+              className="w-full h-64 object-cover rounded"
+            />
+            <div className="flex-1 space-y-2 text-lg break-words overflow-auto">
               <p>
-                <strong>Name:</strong> {order?.customer?.name}
+                <strong>Description:</strong> {banner?.description}
               </p>
               <p>
-                <strong>Phone:</strong> {order?.customer?.phone}
+                <strong>Device Type:</strong> {banner?.deviceType}
               </p>
               <p>
-                <strong>Address:</strong> {order?.customer?.address?.line1},{' '}
-                {order?.customer?.address?.city}
-              </p>
-            </div>
-
-            {/* Products */}
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold">Products</h3>
-              <div className="space-y-3">
-                {order?.items?.map((item) => (
-                  <div
-                    key={item._id}
-                    className="flex items-center gap-4 border-b pb-2"
-                  >
-                    <img
-                      src={item.productId?.imageUrl}
-                      alt={item.productId?.productName}
-                      className="w-16 h-16 object-cover rounded"
-                    />
-                    <div className="flex flex-col">
-                      <span className="font-medium">
-                        {item.productId?.productName}
-                      </span>
-                      <span className="text-sm text-gray-600">
-                        Qty: {item.quantity}
-                      </span>
-                      <span className="text-sm text-gray-600">
-                        Price: ${item.price}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Order Summary */}
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold">Summary</h3>
-              <p>
-                <strong>Status:</strong> {order?.status}
-              </p>
-              <p>
-                <strong>Total:</strong> ${order?.total}
+                <strong>Status:</strong>{' '}
+                {banner?.isActive ? 'Active' : 'Inactive'}
               </p>
             </div>
-
-            <Button
-              onClick={onClose}
-              type="button"
-              variant="outline"
-              className="mt-4"
-            >
+            <Button onClick={onClose} type="button" variant="outline">
               Close
             </Button>
           </div>
