@@ -15,7 +15,7 @@ export default function CategoriesPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(null)
-  
+
   const { data, isLoading, refetch } = useGetAllCategories()
 
   // ✅ Extract categories safely
@@ -48,7 +48,7 @@ export default function CategoriesPage() {
       <div className="p-6 space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-foreground">Categories</h1>
-          <Button 
+          <Button
             onClick={() => setIsAddModalOpen(true)}
             className="bg-blue-600 hover:bg-blue-700 text-white"
           >
@@ -70,7 +70,9 @@ export default function CategoriesPage() {
             <CardContent>
               {categories.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-muted-foreground text-lg">No categories found.</p>
+                  <p className="text-muted-foreground text-lg">
+                    No categories found.
+                  </p>
                   <p className="text-muted-foreground text-sm mt-2">
                     Create your first category to get started.
                   </p>
@@ -83,12 +85,13 @@ export default function CategoriesPage() {
                       className="flex justify-between items-center p-4 border rounded-lg  transition-colors"
                     >
                       <div className="space-y-1">
-                        <h3 className="font-medium text-foreground">{cat.name}</h3>
-                        <p className="text-sm text-muted-foreground">{cat.description}</p>
+                        <h3 className="font-medium text-foreground">
+                          {cat.name}
+                        </h3>
                       </div>
                       <div className="flex gap-2">
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline"
                           onClick={() => handleEdit(cat)}
                           className="text-blue-600 border-blue-600 hover:bg-blue-50"
