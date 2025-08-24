@@ -188,7 +188,7 @@ export default function BannersPage() {
                     </TableHeader>
                     <TableBody>
                       {banners.map((banner) => (
-                        <TableRow key={banner.id} className="text-center">
+                        <TableRow key={banner._id} className="text-center">
                           <TableCell className="font-medium w-[250px] h-[100px]">
                             <div className="flex gap-x-4 items-center w-full overflow-hidden">
                               <Image
@@ -324,4 +324,3 @@ export default function BannersPage() {
     </DashboardLayout>
   )
 }
-
