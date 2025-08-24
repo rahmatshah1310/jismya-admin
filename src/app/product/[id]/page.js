@@ -22,7 +22,6 @@ export default function ProductDetailsPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   const { data, isLoading, isError } = useSingleProduct(id)
-  console.log(data, 'data............')
 
   if (isLoading) {
     return (
