@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useContext, createContext } from "react";
-import { authService } from "@/services/authService";
+import { authService } from "@/services/auth.service";
 import { toast } from "react-toastify";
 
 const AuthContext = createContext(null);
