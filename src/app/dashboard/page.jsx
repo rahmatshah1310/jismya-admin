@@ -41,6 +41,7 @@ export default function DashboardPage() {
   const totalProducts = productData?.data?.total?.totalProducts || 0
   const totalOrders = orderData?.data?.totalOrders || 0
   const totalRevenue = orderData?.data?.totalRevenue || 0
+  console.log(recentOrders, 'recentorfer..................................')
 
   const stats = [
     {
@@ -120,7 +121,12 @@ export default function DashboardPage() {
                       className="flex items-center justify-between space-x-4"
                     >
                       <div className="flex-1 space-y-1">
-                        <p className="text-sm font-medium">{order.user.name}</p>
+                        <p className="text-sm font-medium">
+                          {order?.billingAddress?.name ||
+                            order?.shippingAddress?.name ||
+                            'Guest User'}
+                        </p>
+
                         <div className="flex-1">
                           {order.items.map((item) => (
                             <div
