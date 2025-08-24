@@ -109,7 +109,7 @@ export default function EditBannerModal({ onClose, showEditModal, banner }) {
             <textarea
               id="description"
               rows={3}
-              className="w-full rounded-lg border border-gray-800 p-2 bg-transparent"
+              className="w-full rounded-lg border p-2 bg-transparent"
               value={form.description}
               onChange={(e) =>
                 setForm({ ...form, description: e.target.value })
