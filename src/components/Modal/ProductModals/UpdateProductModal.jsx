@@ -107,7 +107,7 @@ export default function UpdateProductModal({ isOpen, onClose, product }) {
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, categoryId: e.target.value }))
               }
-              className="border border-gray-800 rounded p-3 w-full bg-background"
+              className="border rounded p-3 w-full bg-background"
               required
             >
               <option value="" disabled>
@@ -126,7 +126,7 @@ export default function UpdateProductModal({ isOpen, onClose, product }) {
               name="description"
               value={formData.description}
               onChange={handleChange}
-              className="w-full p-2 border rounded bg-transparent border-gray-800"
+              className="w-full p-2 border rounded bg-transparent "
               rows={3}
             />
           </div>
