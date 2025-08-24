@@ -37,7 +37,7 @@ export default function OrderDetailsPage() {
             <table className="w-full border-collapse text-sm">
               <thead className="bg-gray-50 text-background">
                 <tr>
-                  <th className="p-3 text-left">Loading...</th>
+                  <th className="p-3 text-left"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></th>
                 </tr>
               </thead>
               <tbody>
