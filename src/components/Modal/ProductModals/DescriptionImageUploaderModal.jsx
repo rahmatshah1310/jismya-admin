@@ -76,7 +76,7 @@ export default function DescriptionImageUploaderModal({
             onClick={() => inputRef.current?.click()}
             onDrop={handleDrop}
             onDragOver={(e) => e.preventDefault()}
-            className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl cursor-pointer bg-white hover:border-blue-500 transition-all"
+            className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl cursor-pointe hover:border-blue-500 transition-all"
           >
             <FaUpload className="w-10 h-10  mb-2 text-background" />
             <p className="text-background">Click or drag & drop images here</p>
