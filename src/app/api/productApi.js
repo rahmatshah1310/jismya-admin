@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { productService } from '@/services/productService'
+import { productService } from '@/services/product.service'
 
 // 🔁 Mutations
 
@@ -103,7 +103,6 @@ export const useDeleteCategory = () => {
     },
   })
 }
-
 
 export const useGetSizes = () =>
   useQuery({
