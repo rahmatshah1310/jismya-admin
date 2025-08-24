@@ -116,7 +116,7 @@ export default function CreateBannerModal({
                 setForm({ ...form, description: e.target.value })
               }
               placeholder="Description"
-              className="w-full rounded p-2 bg-transparent border border-gray-800"
+              className="w-full rounded p-2 bg-transparent border"
             />
           </div>
 
