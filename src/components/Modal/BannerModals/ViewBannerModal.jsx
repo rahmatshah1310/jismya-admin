@@ -5,8 +5,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog'
 import Image from 'next/image'
 
 export default function ViewOrderModal({ bannerId, onClose, showViewModal }) {
-  const { data, isLoading, error } = useSingleBanner(bannerId)
-  const banner = data.data
+  const { data: banner, isLoading, error } = useSingleBanner(bannerId)
 
   return (
     <Dialog open={showViewModal} onOpenChange={onClose}>
