@@ -26,6 +26,7 @@ import Link from 'next/link'
 import { useProductSaleStats } from '../api/productApi'
 import { useGetAllOrders, useGetOrderStats } from '../api/orderApi'
 import { useGetSalesStats } from '../api/saleApi'
+import RevenueChart from '@/components/RevenueChart'
 
 export default function DashboardPage() {
   const { data: productData, isLoading: isProductsLoading } =
@@ -35,13 +36,16 @@ export default function DashboardPage() {
 
   const loading = isProductsLoading || isOrdersLoading || isSalesLoading
   const { data, isLoading } = useGetAllOrders({ page: 1, limit: 5 })
-  const recentOrders = data?.data?.orders || []
+  // const recentOrders = data?.data?.orders || []
+  // console.log(orderData, 'orderdata............')
 
   // Extract totals
   const totalProducts = productData?.data?.total?.totalProducts || 0
   const totalOrders = orderData?.data?.totalOrders || 0
   const totalRevenue = orderData?.data?.totalRevenue || 0
-  console.log(recentOrders, 'recentorfer..................................')
+
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May']
+  const revenue = [1200, 1500, 800, 1700, 2000]
 
   const stats = [
     {
@@ -101,7 +105,7 @@ export default function DashboardPage() {
 
         {/* Recent Activity */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-8">
-          <Card className="col-span-4">
+          {/* <Card className="col-span-4">
             <CardHeader>
               <CardTitle>Recent Orders</CardTitle>
               <CardDescription>
@@ -160,7 +164,10 @@ export default function DashboardPage() {
                 )}
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
+          <div className="col-span-4 bg-background border rounded">
+            <RevenueChart months={months} revenue={revenue} />
+          </div>
 
           <Card className="col-span-4 h-auto space-y-8">
             <CardHeader>
