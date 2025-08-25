@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import { useGetSingleOrder } from '@/app/api/orderApi'
@@ -8,8 +8,13 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/Button'
 import { ArrowLeft, Edit, Trash2 } from 'lucide-react'
 import { OrderSkeletonRow } from '@/components/ui/common/Skeleton'
-import EditOrderModal from '@/components/Modal/OrdersModel/EditOrderModal'
 import DeleteOrderModal from '@/components/Modal/OrdersModel/DeleteOrderModel'
+import BillingAddress from '@/components/ordersbillingshipping/BillingAddress'
+import ShippingAddress from '@/components/ordersbillingshipping/ShippingAddress'
+
+// 👇 import the new modals
+import EditBillingModal from '@/components/Modal/OrdersModel/EditBillingModal'
+import EditShippingModal from '@/components/Modal/OrdersModel/EditShippingModal'
 
 const statusColors = {
   complete: 'bg-green-100 text-green-700',
@@ -20,9 +25,8 @@ const statusColors = {
 }
 
 export default function OrderDetailsPage() {
-  const params = useParams()
+  const { id: orderId } = useParams()
   const router = useRouter()
-  const orderId = params.id
 
   const { data, isLoading, error } = useGetSingleOrder(orderId)
   const order = data?.data
@@ -37,7 +41,9 @@ export default function OrderDetailsPage() {
             <table className="w-full border-collapse text-sm">
               <thead className="bg-gray-50 text-background">
                 <tr>
-                  <th className="p-3 text-left"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></th>
+                  <th className="p-3 text-left">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -90,14 +96,24 @@ export default function OrderDetailsPage() {
           </div>
 
           <div className="flex gap-2">
+            {/* 👇 separate edit buttons for Billing & Shipping */}
             <Button
               onClick={() =>
-                setActiveModal({ type: 'edit', orderId: order._id })
+                setActiveModal({ type: 'editBilling', orderId: order._id })
               }
               className="flex items-center gap-2"
             >
               <Edit className="w-4 h-4" />
-              Edit Order
+              Edit Billing
+            </Button>
+            <Button
+              onClick={() =>
+                setActiveModal({ type: 'editShipping', orderId: order._id })
+              }
+              className="flex items-center gap-2"
+            >
+              <Edit className="w-4 h-4" />
+              Edit Shipping
             </Button>
             <Button
               variant="destructive"
@@ -148,53 +164,14 @@ export default function OrderDetailsPage() {
         </div>
 
         {/* Customer Information */}
-        <div className="bg-background text-foreground p-6 rounded-lg border shadow-sm mb-6">
-          <h2 className="text-xl font-semibold mb-4">Customer Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground">
-                Name
-              </label>
-              <p className="text-foreground">{order.user.name}</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground">
-                Email
-              </label>
-              <p className="text-foreground">{order.user.email}</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground">
-                Phone
-              </label>
-              <p className="text-foreground">{order.user.phone}</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground">
-                Country
-              </label>
-              <p className="text-foreground">{order.user.country}</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground">
-                City
-              </label>
-              <p className="text-foreground">{order.user.city}</p>
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-foreground">
-                Complete Address
-              </label>
-              <p className="text-foreground">{order.user.completeAddress}</p>
-            </div>
-          </div>
-        </div>
+        <BillingAddress order={order} />
+        <ShippingAddress order={order} />
 
         {/* Order Items */}
         <div className="bg-background text-foreground p-6 rounded-lg border shadow-sm mb-6">
           <h2 className="text-xl font-semibold mb-4">Order Items</h2>
           <div className="space-y-4">
-            {order.items.map((item, index) => (
+            {order.items.map((item) => (
               <div
                 key={item._id}
                 className="flex items-center gap-4 p-4 border rounded-lg"
@@ -270,14 +247,22 @@ export default function OrderDetailsPage() {
       </div>
 
       {/* Modals */}
-      {activeModal?.type === 'edit' && (
-        <EditOrderModal
+      {activeModal?.type === 'editBilling' && (
+        <EditBillingModal
           orderData={order}
-          orderId={activeModal.orderId}
+          showModal={true}
           onClose={() => setActiveModal(null)}
-          showEditModal={true}
         />
       )}
+
+      {activeModal?.type === 'editShipping' && (
+        <EditShippingModal
+          orderData={order}
+          showModal={true}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+
       {activeModal?.type === 'delete' && (
         <DeleteOrderModal
           orderId={activeModal.orderId}
