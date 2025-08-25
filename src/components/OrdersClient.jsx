@@ -159,7 +159,9 @@ export default function OrdersClient() {
                       <td className="p-3 flex gap-3 mt-6">
                         <Eye
                           className="cursor-pointer"
-                          onClick={() => router.push(`/orders/${order._id}`)}
+                          onClick={() =>
+                            router.push(`/orders/${order.orderId}`)
+                          }
                         />
                         <Trash2
                           className="cursor-pointer text-red-500"
