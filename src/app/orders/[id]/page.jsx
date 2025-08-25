@@ -30,7 +30,6 @@ export default function OrderDetailsPage() {
 
   const { data, isLoading, error } = useGetSingleOrder(orderId)
   const order = data?.data
-
   const [activeModal, setActiveModal] = useState(null)
 
   if (isLoading) {
@@ -96,7 +95,7 @@ export default function OrderDetailsPage() {
           </div>
 
           <div className="flex gap-2">
-            {/* 👇 separate edit buttons for Billing & Shipping */}
+            {/*  separate edit buttons for Billing & Shipping */}
             <Button
               onClick={() =>
                 setActiveModal({ type: 'editBilling', orderId: order._id })
@@ -131,12 +130,8 @@ export default function OrderDetailsPage() {
         {/* Order Status */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-background text-foreground p-4 rounded-lg border shadow-sm">
-            <h3 className="font-medium text-foreground mb-2">Order Status</h3>
-            <Badge
-              className={
-                statusColors[order.status] || 'bg-gray-100 text-foreground'
-              }
-            >
+            <h3 className="font-medium  mb-2">Order Status</h3>
+            <Badge className={statusColors[order.status] || 'text-background'}>
               {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
             </Badge>
           </div>
