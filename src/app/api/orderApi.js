@@ -72,3 +72,36 @@ export const useGetSingleOrder = (orderId) =>
     queryFn: () => orderService.getSingleOrder(orderId),
     enabled: !!orderId,
   })
+
+export const useUpdateShippingAddress = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ orderId, shippingAddress }) =>
+      orderService.updateShippingAddress(orderId, shippingAddress),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['orders'])
+    },
+  })
+}
+
+// Update billing address
+export const useUpdateBillingAddress = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ orderId, billingAddress }) =>
+      orderService.updateBillingAddress(orderId, billingAddress),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['orders'])
+    },
+  })
+}
+
+export const useTrackOrder = (trackingId) => {
+  return useQuery(
+    ['trackOrder', trackingId],
+    () => orderService.trackOrder(trackingId),
+    {
+      enabled: !!trackingId,
+    }
+  )
+}
