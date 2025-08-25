@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/Button'
+import { BeatLoader } from 'react-spinners'
 
 export default function CreateBannerModal({
   onClose,
@@ -138,7 +139,7 @@ export default function CreateBannerModal({
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Creating...' : 'Create'}
+              {isSubmitting ? <BeatLoader color="darkBlue" /> : 'Create'}
             </Button>
           </DialogFooter>
         </form>
