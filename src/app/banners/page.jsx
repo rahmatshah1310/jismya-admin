@@ -94,6 +94,8 @@ export default function BannersPage() {
   const { data: mobileBanners = [], isLoading: loadingMobile } =
     useBannersByDevice('mobile')
 
+  console.log(laptopBanners, 'laptpbaern.......................')
+
   // 🔹 Mutations
   const deleteBanner = useDeleteBannerMutation()
   const toggleStatus = useToggleStatus()
