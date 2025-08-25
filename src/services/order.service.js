@@ -39,10 +39,10 @@ export const getOrderStats = async () => {
   return response.data
 }
 // GET /orders/:id
-export const getSingleOrder = async (id) => {
+export const getSingleOrder = async (orderId) => {
   const response = await sendRequest({
     method: 'GET',
-    url: `/orders/${id}`,
+    url: `/orders/${orderId}`,
   })
   return response.data
 }
