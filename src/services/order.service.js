@@ -85,11 +85,41 @@ export const cancelOrderStatus = async (id, status) => {
   return response.data
 }
 
+export const updateShippingAddress = async (orderId, shippingAddress) => {
+  const response = await sendRequest({
+    method: 'PUT',
+    url: `/orders/shipping-address/${orderId}`,
+    data: shippingAddress,
+  })
+  return response.data
+}
+
+// PUT /orders/billing-address/:id
+export const updateBillingAddress = async (orderId, billingAddress) => {
+  const response = await sendRequest({
+    method: 'PUT',
+    url: `/orders/billing-address/${orderId}`,
+    data: billingAddress,
+  })
+  return response.data
+}
+
+export const trackOrder = async (trackingId) => {
+  const response = await sendRequest({
+    method: 'GET',
+    url: `/orders/track/${trackingId}`,
+  })
+  return response.data
+}
+
 export const orderService = {
   createOrder,
   getAllOrders,
   getSingleOrder,
   updateOrder,
+  updateBillingAddress,
+  updateShippingAddress,
+  trackOrder,
   deleteOrder,
   updateOrderStatus,
   cancelOrderStatus,
