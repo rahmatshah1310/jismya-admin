@@ -66,9 +66,9 @@ export const useGetOrderStats = () =>
     queryFn: orderService.getOrderStats,
   })
 
-export const useGetSingleOrder = (id) =>
+export const useGetSingleOrder = (orderId) =>
   useQuery({
-    queryKey: ['order', id],
-    queryFn: () => orderService.getSingleOrder(id),
-    enabled: !!id,
+    queryKey: ['order', orderId],
+    queryFn: () => orderService.getSingleOrder(orderId),
+    enabled: !!orderId,
   })
