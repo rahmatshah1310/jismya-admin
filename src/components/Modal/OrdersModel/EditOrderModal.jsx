@@ -27,12 +27,12 @@ export default function EditOrderModal({ showEditModal, onClose, orderData }) {
   useEffect(() => {
     if (orderData) {
       setUser({
-        name: orderData.user?.name || '',
-        email: orderData.user?.email || '',
-        phone: orderData.user?.phone || '',
-        country: orderData.user?.country || '',
-        city: orderData.user?.city || '',
-        completeAddress: orderData.user?.completeAddress || '',
+        name: orderData.billingAddress?.name || '',
+        email: orderData.billingAddress?.email || '',
+        phone: orderData.billingAddress?.phone || '',
+        country: orderData.billingAddress?.country || '',
+        city: orderData.billingAddress?.city || '',
+        completeAddress: orderData.billingAddress?.completeAddress || '',
       })
       setItems(
         orderData.items?.length
@@ -120,9 +120,9 @@ export default function EditOrderModal({ showEditModal, onClose, orderData }) {
                 <Input
                   label="Product ID"
                   placeholder="Product ID"
-                  value={item.productId}
+                  value={item.productId.productName}
                   onChange={(e) =>
-                    handleItemChange(i, 'productId', e.target.value)
+                    handleItemChange(i, 'productName', e.target.value)
                   }
                   className="border p-2"
                 />
@@ -184,7 +184,7 @@ export default function EditOrderModal({ showEditModal, onClose, orderData }) {
               disabled={updateOrderMutation.isLoading}
               className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
             >
-              {updateOrderMutation.isLoading ? 'Updating...' : 'Update Order'}
+              {updateOrderMutation.isPending ? 'Updating...' : 'Update Order'}
             </button>
           </div>
         </form>
