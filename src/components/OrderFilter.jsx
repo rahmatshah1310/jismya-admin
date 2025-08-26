@@ -30,7 +30,6 @@ export default function OrderFilters({ onFilter, currentFilters = {} }) {
 
   const handleClear = () => {
     const clearedFilters = {
-      status: '',
       email: '',
       phone: '',
       startDate: '',
@@ -45,34 +44,6 @@ export default function OrderFilters({ onFilter, currentFilters = {} }) {
 
   return (
     <div className="flex flex-wrap gap-3 mb-6 items-end border p-4 rounded-lg bg-background shadow-sm">
-      {/* Status */}
-      <div>
-        <label className="block text-sm mb-1">Status</label>
-        <select
-          value={filters.status}
-          onChange={(e) => handleChange('status', e.target.value)}
-          className="border rounded-md px-3 py-2 text-sm w-40 bg-background"
-        >
-          <option value="">All</option>
-          <option value="pending">Pending</option>
-          <option value="shipped">Shipped</option>
-          <option value="delivered">Delivered</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
-      </div>
-
-      {/* Email */}
-      <div>
-        <label className="block text-sm mb-1">Email</label>
-        <Input
-          type="email"
-          value={filters.email}
-          onChange={(e) => handleChange('email', e.target.value)}
-          placeholder="customer@example.com"
-          className="w-56"
-        />
-      </div>
-
       {/* Phone */}
       <div>
         <label className="block text-sm mb-1">Phone</label>
