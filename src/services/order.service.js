@@ -67,7 +67,7 @@ export const deleteOrder = async (id) => {
 }
 
 // PUT /orders/:id/status (optional: only update status)
-export const updateOrderStatus = async (orderId, status) => {
+export const updateOrderStatus = async ({ orderId, status }) => {
   const response = await sendRequest({
     method: 'PUT',
     url: `/orders/status/${orderId}`,
@@ -75,7 +75,6 @@ export const updateOrderStatus = async (orderId, status) => {
   })
   return response.data
 }
-
 // PUT /orders/status/bulk
 export const bulkUpdateOrderStatus = async (ids, status) => {
   const response = await sendRequest({
