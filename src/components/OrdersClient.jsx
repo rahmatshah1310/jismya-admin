@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { orderService } from '@/services/order.service'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import {
   useCancelOrder,
+  useBulkUpdateOrderStatus,
   useGetAllOrders,
   useGetOrderStats,
-  useUpdateOrderStatus,
 } from '@/app/api/orderApi'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/Button'
@@ -25,14 +27,14 @@ const statusColors = {
 export const dynamic = 'force-dynamic'
 
 export default function OrdersClient() {
+  const queryClient = useQueryClient()
   const searchParams = useSearchParams()
   const router = useRouter()
   const [activeModal, setActiveModal] = useState(null)
-  const updateStatusMutation = useUpdateOrderStatus()
   const { data: orderstat } = useGetOrderStats()
-  const orderStats = orderstat?.data;
-  console.log(orderStats, "orderstat............")
+  const orderStats = orderstat?.data
   const cancelOrderMutation = useCancelOrder()
+  const bulkStatusMutation = useBulkUpdateOrderStatus()
 
   // Extract filters from URL
   const filtersFromURL = Object.fromEntries(
@@ -49,12 +51,137 @@ export default function OrdersClient() {
   const totalPages = data?.data?.total || 1
   const page = filtersFromURL.page || 1
 
+  // Selection state for bulk actions
+  const [selectedOrders, setSelectedOrders] = useState([])
+  const idsOnPage = useMemo(() => orders.map((o) => o._id), [orders])
+  const allSelected = idsOnPage.length > 0 && idsOnPage.every((id) => selectedOrders.includes(id))
+  const toggleSelectAll = () => {
+    if (allSelected) {
+      setSelectedOrders((prev) => prev.filter((id) => !idsOnPage.includes(id)))
+    } else {
+      setSelectedOrders((prev) => Array.from(new Set([...prev, ...idsOnPage])))
+    }
+  }
+  const toggleOne = (id) =>
+    setSelectedOrders((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    )
+
+  // Bulk actions UI state and handlers
+  const [bulkAction, setBulkAction] = useState('')
+
+  const exportSelectedCSV = () => {
+    if (!selectedOrders.length) return
+    const selected = orders.filter((o) => selectedOrders.includes(o._id))
+    if (!selected.length) return
+    const headers = ['OrderID','Date','Status','Total','CustomerName','Email','Phone']
+    const rows = selected.map((o) => [
+      o.orderId,
+      new Date(o.createdAt).toLocaleString(),
+      o.status,
+      o.totalAmount,
+      o.billingAddress?.name || '',
+      o.billingAddress?.email || '',
+      o.billingAddress?.phone || '',
+    ])
+    const csv = [headers, ...rows]
+      .map((r) => r.map((v) => `"${String(v).replaceAll('"', '""')}"`).join(','))
+      .join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `orders_${Date.now()}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const exportSelectedXLSX = () => {
+    if (!selectedOrders.length) return
+    const selected = orders.filter((o) => selectedOrders.includes(o._id))
+    if (!selected.length) return
+    const headers = ['OrderID','Date','Status','Total','CustomerName','Email','Phone']
+    const rows = selected.map((o) => [
+      o.orderId,
+      new Date(o.createdAt).toLocaleString(),
+      o.status,
+      o.totalAmount,
+      o.billingAddress?.name || '',
+      o.billingAddress?.email || '',
+      o.billingAddress?.phone || '',
+    ])
+    const csv = [headers, ...rows]
+      .map((r) => r.map((v) => `"${String(v).replaceAll('"', '""')}"`).join(','))
+      .join('\n')
+    const blob = new Blob([csv], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `orders_${Date.now()}.xlsx`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const applyBulk = async () => {
+    if (!selectedOrders.length) return
+    if (bulkAction === 'export') {
+      exportSelectedCSV()
+      return
+    }
+    if (bulkAction === 'export_xlsx') {
+      exportSelectedXLSX()
+      return
+    }
+    if (bulkAction === 'mark_exported' || bulkAction === 'unmark_exported') {
+      const exported = bulkAction === 'mark_exported'
+      await Promise.all(
+        selectedOrders.map((id) => orderService.updateOrder(id, { exported }))
+      )
+      await queryClient.invalidateQueries({ queryKey: ['orders'] })
+      setSelectedOrders([])
+      setBulkAction('')
+      return
+    }
+    if (bulkAction === 'trash') {
+      await Promise.all(selectedOrders.map((id) => orderService.deleteOrder(id)))
+      await queryClient.invalidateQueries({ queryKey: ['orders'] })
+      setSelectedOrders([])
+      setBulkAction('')
+      return
+    }
+    const map = {
+      processing: 'shifted',
+      on_hold: 'pending',
+      completed: 'complete',
+      cancelled: 'cancelled',
+      slip_generated: 'pending',
+      packed: 'shifted',
+      confirmed: 'delivered',
+      shipped: 'shifted',
+      pending: 'pending',
+    }
+    const next = map[bulkAction]
+    if (!next) return
+    bulkStatusMutation.mutate(
+      { ids: selectedOrders, status: next },
+      {
+        onSuccess: () => {
+          setSelectedOrders([])
+          setBulkAction('')
+        },
+      }
+    )
+  }
+
   const updateURL = (filters) => {
     const nonEmptyFilters = Object.fromEntries(
       Object.entries(filters).filter(
         ([_, value]) => value !== '' && value != null
       )
     )
+    if (!nonEmptyFilters.sort) {
+      nonEmptyFilters.sort = 'createdAt:desc'
+    }
     const url = Object.keys(nonEmptyFilters).length
       ? `/orders?${new URLSearchParams(nonEmptyFilters)}`
       : '/orders'
@@ -72,13 +199,68 @@ export default function OrdersClient() {
 
         {/* Filters */}
         <OrderFilters onFilter={handleFilter} currentFilters={filtersFromURL} />
-      <div className="flex gap-x-4 pb-4">
+        <div className="flex items-center gap-2 border-b pb-4 mb-4 text-sm">
+          {/* All orders */}
+          <div
+            onClick={() => updateURL({})}
+            className="cursor-pointer pr-3 border-r last:border-r-0"
+          >
+            <span className="hover:text-blue-600">All</span>
+            <span className="ml-1 text-gray-500">
+              ({orderStats?.totalOrders || 0})
+            </span>
+          </div>
+
+          {/* Other statuses */}
           {orderStats?.statusBreakdown?.map((stat, i) => (
-            <div key={i} className={`${i % 2 === 0 ? 'bg-muted/40' : 'bg-muted/30'} border-t`}>
-              <span >{stat.status}</span>
-              <span >({stat.count})</span>
+            <div
+              key={i}
+              onClick={() => updateURL({ status: stat.status })}
+              className="cursor-pointer px-3 border-r last:border-r-0"
+            >
+              <span
+                className={`hover:text-blue-600 ${
+                  filtersFromURL.status === stat.status
+                    ? 'font-semibold text-blue-600'
+                    : ''
+                }`}
+              >
+                {stat.status.charAt(0).toUpperCase() + stat.status.slice(1)}
+              </span>
+              <span className="ml-1 text-gray-500">({stat.count})</span>
             </div>
           ))}
+        </div>
+
+        {/* Bulk Actions */}
+        <div className="flex items-center gap-3 mb-3">
+          <select
+            className="border rounded p-2 text-sm min-w-52 bg-background"
+            value={bulkAction}
+            onChange={(e) => setBulkAction(e.target.value)}
+            disabled={!selectedOrders.length}
+          >
+            <option value="">Bulk actions</option>
+            <option value="export">Export as CSV</option>
+            <option value="export_xlsx">Export as XLSX</option>
+            <option value="mark_exported">Mark exported</option>
+            <option value="unmark_exported">Unmark exported</option>
+            <option value="processing">Change status to processing</option>
+            <option value="on_hold">Change status to on-hold</option>
+            <option value="completed">Change status to completed</option>
+            <option value="cancelled">Change status to cancelled</option>
+            <option value="trash">Move to Trash</option>
+            <option value="slip_generated">Change status to Slip Generated</option>
+            <option value="packed">Change status to Packed</option>
+            <option value="confirmed">Change status to Confirmed</option>
+            <option value="shipped">Change status to Shipped</option>
+          </select>
+          <Button onClick={applyBulk} disabled={!selectedOrders.length || (!bulkAction && true)}>
+            Apply
+          </Button>
+          {bulkStatusMutation.isPending && (
+            <span className="text-xs text-gray-500">Applying...</span>
+          )}
         </div>
 
         {/* Orders Table */}
@@ -86,8 +268,15 @@ export default function OrdersClient() {
           <table className="w-full border-collapse text-sm">
             <thead className="bg-background text-foreground">
               <tr>
-                <th className="p-3 text-left">#</th>
-                <th className="p-3 text-left">Order ID</th>
+                <th className="p-3 text-left w-10">
+                  <input
+                    type="checkbox"
+                    aria-label="Select all"
+                    checked={allSelected}
+                    onChange={toggleSelectAll}
+                  />
+                </th>
+                <th className="p-3 text-left">S.No#</th>
                 <th className="p-3 text-left">Date</th>
                 <th className="p-3 text-left">Status</th>
                 <th className="p-3 text-left">Total</th>
@@ -98,105 +287,80 @@ export default function OrdersClient() {
               {isLoading
                 ? [...Array(6)].map((_, i) => <OrderSkeletonRow key={i} />)
                 : orders.map((order, i) => (
-                  <tr key={order._id} className="border-t transition">
-                    <td className="p-3">{i + 1}</td>
-                    <td className="p-3 font-medium">#{order.orderId}</td>
+                    <tr key={order._id} className="border-t transition">
+                      <td className="p-3">
+                        <input
+                          type="checkbox"
+                          checked={selectedOrders.includes(order._id)}
+                          onChange={() => toggleOne(order._id)}
+                        />
+                      </td>
+                      <td className="p-3 font-medium">
+                        {(orderStats?.totalOrders || 0) -
+                          ((page - 1) * (filtersFromURL.limit || 10) + i)}
+                      </td>
 
-                    {/* Date */}
-                    <td className="p-3">
-                      {new Date(order.createdAt).toLocaleDateString()}
-                      {order.estimatedDelivery && (
-                        <div className="text-xs text-gray-500">
-                          ETA:{' '}
-                          {new Date(
-                            order.estimatedDelivery
-                          ).toLocaleDateString()}
+                      {/* Date */}
+                      <td className="p-3">
+                        {new Date(order.createdAt).toLocaleDateString()}
+                        {order.estimatedDelivery && (
+                          <div className="text-xs text-gray-500">
+                            ETA:{' '}
+                            {new Date(
+                              order.estimatedDelivery
+                            ).toLocaleDateString()}
+                          </div>
+                        )}
+                      </td>
+
+                      {/* Payment */}
+                      <td className="p-3 relative">
+                        <div className="relative inline-block">
+                          <Badge
+                            className={
+                              statusColors[order.status] ||
+                              'bg-gray-100 text-background'
+                            }
+                          >
+                            {order.status.charAt(0).toUpperCase() +
+                              order.status.slice(1)}
+                          </Badge>
                         </div>
-                      )}
-                    </td>
+                      </td>
+                      {/* Total */}
+                      <td className="p-3">${order.totalAmount.toFixed(2)}</td>
 
-                    {/* Payment */}
-                    <td className="p-3 relative">
-                      <div className="relative inline-block">
-                        <Badge
-                          className={
-                            statusColors[order.status] ||
-                            'bg-gray-100 text-background'
+                      {/* Actions */}
+
+                      <td className="p-3 flex gap-3 mt-6">
+                        <Eye
+                          className="cursor-pointer"
+                          onClick={() =>
+                            router.push(`/orders/${order.orderId}`)
                           }
+                        />
+                        <Trash2
+                          className="cursor-pointer text-red-500"
                           onClick={() =>
                             setActiveModal({
-                              type: 'status',
+                              type: 'cancel',
                               orderId: order._id,
                             })
                           }
-                        >
-                          {order.status.charAt(0).toUpperCase() +
-                            order.status.slice(1)}
-                        </Badge>
-
-                        {/* Dropdown for status update (except cancelled) */}
-                        {activeModal?.type === 'status' &&
-                          activeModal.orderId === order._id && (
-                            <div className="absolute z-10 mt-1 bg-background border rounded shadow w-max">
-                              {[
-                                'pending',
-                                'shifted',
-                                'delivered',
-                                'complete',
-                              ].map((s) => (
-                                <div
-                                  key={s}
-                                  className="px-4 py-2 cursor-pointer"
-                                  onClick={() => {
-                                    updateStatusMutation.mutate(
-                                      { id: order._id, status: s },
-                                      {
-                                        onSuccess: () => setActiveModal(null),
-                                      }
-                                    )
-                                  }}
-                                >
-                                  {s.charAt(0).toUpperCase() + s.slice(1)}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                      </div>
-                    </td>
-                    {/* Total */}
-                    <td className="p-3">${order.totalAmount.toFixed(2)}</td>
-
-                    {/* Actions */}
-
-                    <td className="p-3 flex gap-3 mt-6">
-                      <Eye
-                        className="cursor-pointer"
-                        onClick={() =>
-                          router.push(`/orders/${order.orderId}`)
-                        }
-                      />
-                      <Trash2
-                        className="cursor-pointer text-red-500"
-                        onClick={() =>
-                          setActiveModal({
-                            type: 'cancel',
-                            orderId: order._id,
-                          })
-                        }
-                      />
-                    </td>
-
-                    {/* Cancel Modal */}
-                    {activeModal?.type === 'cancel' &&
-                      activeModal.orderId === order._id && (
-                        <DeleteOrderModal
-                          orderId={activeModal.orderId}
-                          onClose={() => setActiveModal(null)}
-                          showDeleteModal
                         />
-                      )}
-                  </tr>
-                ))}
+                      </td>
+
+                      {/* Cancel Modal */}
+                      {activeModal?.type === 'cancel' &&
+                        activeModal.orderId === order._id && (
+                          <DeleteOrderModal
+                            orderId={activeModal.orderId}
+                            onClose={() => setActiveModal(null)}
+                            showDeleteModal
+                          />
+                        )}
+                    </tr>
+                  ))}
             </tbody>
           </table>
 
