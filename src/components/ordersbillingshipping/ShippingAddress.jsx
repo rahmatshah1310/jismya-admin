@@ -60,9 +60,9 @@ const ShippingAddress = ({ order, onEditClick }) => {
   }
 
   return (
-    <div className="text-foreground w-[40%] p-6">
+    <div className="text-foreground w-[40%] ">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Shipping Address</h2>
+        <h2 className="text-xl font-semibold">Shipping</h2>
         {!isEditing && (
           <button
             onClick={handleEdit}
