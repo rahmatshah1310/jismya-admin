@@ -6,17 +6,16 @@ import { useDeleteOrder } from '@/app/api/orderApi'
 
 export default function DeleteOrderModal({
   order,
-  orderId,
   onClose,
   showDeleteModal,
 }) {
   if (!order) return null
 
-  const deleteMutation = useDeleteOrder(orderId)
+  const deleteMutation = useDeleteOrder(order.orderId)
   const isLoading = deleteMutation.isPending
 
   const handleDelete = () => {
-    deleteMutation.mutateAsync(orderId, {
+    deleteMutation.mutateAsync(order.orderId, {
       onSuccess: (res) => {
         toast.success(res?.message || 'Order deleted successfully!')
         onClose()
