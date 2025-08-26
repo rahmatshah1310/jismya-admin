@@ -31,6 +31,17 @@ export const useUpdateOrderStatus = () => {
   })
 }
 
+// Bulk update order status
+export const useBulkUpdateOrderStatus = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ ids, status }) => orderService.bulkUpdateOrderStatus(ids, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] })
+    },
+  })
+}
+
 export const useCancelOrder = () => {
   const queryClient = useQueryClient()
   return useMutation({
