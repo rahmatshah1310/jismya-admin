@@ -47,23 +47,8 @@ export default function OrderDetailsPage() {
   if (isLoading) {
     return (
       <DashboardLayout>
-        <div className="p-6">
-          <div className="border rounded-lg overflow-hidden bg-background text-foreground shadow-sm">
-            <table className="w-full border-collapse text-sm">
-              <thead className="bg-gray-50 text-background">
-                <tr>
-                  <th className="p-3 text-left">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {[...Array(6)].map((_, i) => (
-                  <OrderSkeletonRow key={i} />
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="w-full h-screen flex justify-center items-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
       </DashboardLayout>
     )
