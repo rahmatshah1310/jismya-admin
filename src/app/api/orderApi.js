@@ -22,12 +22,9 @@ export const useUpdateOrder = () => {
 }
 
 export const useUpdateOrderStatus = () => {
-  const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, status }) => orderService.updateOrderStatus(id, status),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['orders'] })
-    },
+    mutationFn: ({ orderId, status }) =>
+      orderService.updateOrderStatus({ orderId, status }),
   })
 }
 
@@ -35,7 +32,8 @@ export const useUpdateOrderStatus = () => {
 export const useBulkUpdateOrderStatus = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ ids, status }) => orderService.bulkUpdateOrderStatus(ids, status),
+    mutationFn: ({ ids, status }) =>
+      orderService.bulkUpdateOrderStatus(ids, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] })
     },
