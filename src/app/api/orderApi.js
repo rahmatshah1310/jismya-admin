@@ -22,9 +22,13 @@ export const useUpdateOrder = () => {
 }
 
 export const useUpdateOrderStatus = () => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ orderId, status }) =>
       orderService.updateOrderStatus({ orderId, status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] })
+    },
   })
 }
 
