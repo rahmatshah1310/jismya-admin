@@ -39,7 +39,7 @@ const BillingAddress = ({ order, onEditClick }) => {
     e.preventDefault()
     try {
       const res = await updateOrderMutation.mutateAsync({
-        orderId:order. orderId,
+        orderId: order.orderId,
         billingAddress: billing,
       })
       toast.success(res?.message || 'Billing address updated successfully!')
@@ -50,9 +50,9 @@ const BillingAddress = ({ order, onEditClick }) => {
   }
 
   return (
-    <div className="text-foreground p-6 w-[40%]  shadow-sm mb-6">
+    <div className="text-foreground w-[40%]  shadow-sm mb-6 font-sans">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Billing Address</h2>
+        <h2 className="text-xl font-semibold">Billing</h2>
         {!isEditing ? (
           <button
             onClick={handleEdit}
@@ -73,29 +73,35 @@ const BillingAddress = ({ order, onEditClick }) => {
           </div>
         )}
       </div>
-      
+
       {!isEditing ? (
         // View Mode - Display data as read-only
         <div>
-            <p className="text-foreground">
-              {order.billingAddress?.name || 'N/A'}
-            </p>
-            <p className="text-foreground ">
-              {order.billingAddress?.completeAddress || 'N/A'}
-            </p>
-            <p className="text-foreground ">
-              {order.billingAddress?.city || 'N/A'}
-            </p>
-           <div className='pt-4'> 
-           <label htmlFor="email" className='pt-4'>Email Address:</label>
+          <p className="text-foreground">
+            {order.billingAddress?.name || 'N/A'}
+          </p>
+          <p className="text-foreground ">
+            {order.billingAddress?.completeAddress || 'N/A'}
+          </p>
+          <p className="text-foreground ">
+            {order.billingAddress?.city || 'N/A'}
+          </p>
+          <div className="pt-4">
+            <label htmlFor="email" className="pt-4 font-bold text-gray-500">
+              Email Address:
+            </label>
             <p className="text-blue-700 underline">
               {order.billingAddress?.email || 'N/A'}
-            </p></div>
-            <div className='pt-2'>
-              <label htmlFor="">Phone:</label>
-               <p className="text-blue-700 underline">
+            </p>
+          </div>
+          <div className="pt-2">
+            <label htmlFor="" className="font-bold text-gray-500 ">
+              Phone:
+            </label>
+            <p className="text-blue-700 underline">
               {order.billingAddress?.phone || 'N/A'}
-            </p></div>
+            </p>
+          </div>
         </div>
       ) : (
         // Edit Mode - Display editable form fields
@@ -108,7 +114,9 @@ const BillingAddress = ({ order, onEditClick }) => {
               </label>
               <Input
                 value={billing.name}
-                onChange={(e) => setBilling({ ...billing, name: e.target.value })}
+                onChange={(e) =>
+                  setBilling({ ...billing, name: e.target.value })
+                }
                 className="w-full"
               />
             </div>
@@ -121,7 +129,9 @@ const BillingAddress = ({ order, onEditClick }) => {
               <Input
                 type="email"
                 value={billing.email}
-                onChange={(e) => setBilling({ ...billing, email: e.target.value })}
+                onChange={(e) =>
+                  setBilling({ ...billing, email: e.target.value })
+                }
                 className="w-full"
               />
             </div>
@@ -133,7 +143,9 @@ const BillingAddress = ({ order, onEditClick }) => {
               </label>
               <Input
                 value={billing.phone}
-                onChange={(e) => setBilling({ ...billing, phone: e.target.value })}
+                onChange={(e) =>
+                  setBilling({ ...billing, phone: e.target.value })
+                }
                 className="w-full"
               />
             </div>
@@ -145,7 +157,9 @@ const BillingAddress = ({ order, onEditClick }) => {
               </label>
               <Input
                 value={billing.country}
-                onChange={(e) => setBilling({ ...billing, country: e.target.value })}
+                onChange={(e) =>
+                  setBilling({ ...billing, country: e.target.value })
+                }
                 className="w-full"
               />
             </div>
@@ -157,7 +171,9 @@ const BillingAddress = ({ order, onEditClick }) => {
               </label>
               <Input
                 value={billing.city}
-                onChange={(e) => setBilling({ ...billing, city: e.target.value })}
+                onChange={(e) =>
+                  setBilling({ ...billing, city: e.target.value })
+                }
                 className="w-full"
               />
             </div>
@@ -170,17 +186,23 @@ const BillingAddress = ({ order, onEditClick }) => {
             </label>
             <Input
               value={billing.completeAddress}
-              onChange={(e) => setBilling({ ...billing, completeAddress: e.target.value })}
+              onChange={(e) =>
+                setBilling({ ...billing, completeAddress: e.target.value })
+              }
               className="w-full"
             />
           </div>
           <button
-              onClick={handleSubmit}
-              disabled={updateOrderMutation.isPending}
-              className="p-2 rounded w-full bg-foreground text-background transition-colors"
-            >
-           {updateOrderMutation.isPending?<BeatLoader color='darkBlue'/>:"  Update Billing"}
-            </button>
+            onClick={handleSubmit}
+            disabled={updateOrderMutation.isPending}
+            className="p-2 rounded w-full bg-foreground text-background transition-colors"
+          >
+            {updateOrderMutation.isPending ? (
+              <BeatLoader color="darkBlue" />
+            ) : (
+              '  Update Billing'
+            )}
+          </button>
         </form>
       )}
     </div>
