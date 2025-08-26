@@ -54,7 +54,8 @@ export default function OrdersClient() {
   // Selection state for bulk actions
   const [selectedOrders, setSelectedOrders] = useState([])
   const idsOnPage = useMemo(() => orders.map((o) => o._id), [orders])
-  const allSelected = idsOnPage.length > 0 && idsOnPage.every((id) => selectedOrders.includes(id))
+  const allSelected =
+    idsOnPage.length > 0 && idsOnPage.every((id) => selectedOrders.includes(id))
   const toggleSelectAll = () => {
     if (allSelected) {
       setSelectedOrders((prev) => prev.filter((id) => !idsOnPage.includes(id)))
@@ -74,7 +75,15 @@ export default function OrdersClient() {
     if (!selectedOrders.length) return
     const selected = orders.filter((o) => selectedOrders.includes(o._id))
     if (!selected.length) return
-    const headers = ['OrderID','Date','Status','Total','CustomerName','Email','Phone']
+    const headers = [
+      'OrderID',
+      'Date',
+      'Status',
+      'Total',
+      'CustomerName',
+      'Email',
+      'Phone',
+    ]
     const rows = selected.map((o) => [
       o.orderId,
       new Date(o.createdAt).toLocaleString(),
@@ -85,7 +94,9 @@ export default function OrdersClient() {
       o.billingAddress?.phone || '',
     ])
     const csv = [headers, ...rows]
-      .map((r) => r.map((v) => `"${String(v).replaceAll('"', '""')}"`).join(','))
+      .map((r) =>
+        r.map((v) => `"${String(v).replaceAll('"', '""')}"`).join(',')
+      )
       .join('\n')
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
@@ -100,7 +111,15 @@ export default function OrdersClient() {
     if (!selectedOrders.length) return
     const selected = orders.filter((o) => selectedOrders.includes(o._id))
     if (!selected.length) return
-    const headers = ['OrderID','Date','Status','Total','CustomerName','Email','Phone']
+    const headers = [
+      'OrderID',
+      'Date',
+      'Status',
+      'Total',
+      'CustomerName',
+      'Email',
+      'Phone',
+    ]
     const rows = selected.map((o) => [
       o.orderId,
       new Date(o.createdAt).toLocaleString(),
@@ -111,9 +130,13 @@ export default function OrdersClient() {
       o.billingAddress?.phone || '',
     ])
     const csv = [headers, ...rows]
-      .map((r) => r.map((v) => `"${String(v).replaceAll('"', '""')}"`).join(','))
+      .map((r) =>
+        r.map((v) => `"${String(v).replaceAll('"', '""')}"`).join(',')
+      )
       .join('\n')
-    const blob = new Blob([csv], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+    const blob = new Blob([csv], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -143,7 +166,9 @@ export default function OrdersClient() {
       return
     }
     if (bulkAction === 'trash') {
-      await Promise.all(selectedOrders.map((id) => orderService.deleteOrder(id)))
+      await Promise.all(
+        selectedOrders.map((id) => orderService.deleteOrder(id))
+      )
       await queryClient.invalidateQueries({ queryKey: ['orders'] })
       setSelectedOrders([])
       setBulkAction('')
@@ -250,12 +275,17 @@ export default function OrdersClient() {
             <option value="completed">Change status to completed</option>
             <option value="cancelled">Change status to cancelled</option>
             <option value="trash">Move to Trash</option>
-            <option value="slip_generated">Change status to Slip Generated</option>
+            <option value="slip_generated">
+              Change status to Slip Generated
+            </option>
             <option value="packed">Change status to Packed</option>
             <option value="confirmed">Change status to Confirmed</option>
             <option value="shipped">Change status to Shipped</option>
           </select>
-          <Button onClick={applyBulk} disabled={!selectedOrders.length || (!bulkAction && true)}>
+          <Button
+            onClick={applyBulk}
+            disabled={!selectedOrders.length || (!bulkAction && true)}
+          >
             Apply
           </Button>
           {bulkStatusMutation.isPending && (
