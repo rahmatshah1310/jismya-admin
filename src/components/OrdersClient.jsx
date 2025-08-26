@@ -163,16 +163,24 @@ export default function OrdersClient() {
 
       // Handle cancel (different API)
       if (bulkAction === 'cancelled') {
-        const res = await Promise.all(
-          selectedOrders.map((id) =>
-            cancelOrderMutation.mutateAsync({ orderId: id })
-          )
+        const results = await Promise.all(
+          selectedOrders.map(async (_id) => {
+            const order = orders.find((o) => o._id === _id)
+            try {
+              const res = await cancelOrderMutation.mutateAsync({
+                orderId: order?.orderId,
+                reason: 'Cancelled by admin',
+              })
+              setSelectedOrders([])
+              setBulkAction('')
+              toast.success(res?.message || 'Orders Cancelled Successfully')
+            } catch (err) {
+              toast.error(
+                typeof err === 'string' ? err : 'Failed to cancel order'
+              )
+            }
+          })
         )
-        console.log('Cancel responses:', res)
-        await queryClient.invalidateQueries({ queryKey: ['orders'] })
-        setSelectedOrders([])
-        setBulkAction('')
-        return
       }
 
       // Map your frontend bulk actions → API statuses
