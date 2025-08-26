@@ -44,19 +44,15 @@ export default function OrderDetailsPage() {
 
   const [activeModal, setActiveModal] = useState(null)
 
-  if (isLoading) {
-    return (
-      <DashboardLayout>
+  return (
+    <DashboardLayout>
+      {isLoading ? (
+        // Loading state
         <div className="w-full h-screen flex justify-center items-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
-      </DashboardLayout>
-    )
-  }
-
-  if (error || !order) {
-    return (
-      <DashboardLayout>
+      ) : error || !order ? (
+        // Error state
         <div className="p-6">
           <div className="text-center py-12">
             <h2 className="text-xl font-semibold text-foreground">
@@ -70,266 +66,282 @@ export default function OrderDetailsPage() {
             </Button>
           </div>
         </div>
-      </DashboardLayout>
-    )
-  }
-
-  return (
-    <DashboardLayout>
-      <div className="p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              onClick={() => router.push('/orders')}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Orders
-            </Button>
-            <h1 className="text-2xl font-semibold">Order #{order.orderId}</h1>
-          </div>
-
-          <div className="flex gap-2">
-            <Button
-              variant="destructive"
-              onClick={() =>
-                setActiveModal({ type: 'delete', orderId: order._id })
-              }
-              className="flex items-center gap-2"
-            >
-              <Trash2 className="w-4 h-4" />
-              Delete Order
-            </Button>
-          </div>
-        </div>
-
-        {/* Main Grid Layout */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 w-full">
-          <div className="xl:col-span-2 flex gap-4">
-            <div className="w-[40%]">
-              <h2 className="text-xl font-semibold">General</h2>
-              <div className="mt-2 w-full">
-                <h3 className="text-lg font-semibold ">Status</h3>
-                <div className="flex items-center gap-4">
-                  <select
-                    className="border p-2 rounded-md text-sm bg-transparent !w-full"
-                    value={order.status}
-                    onChange={async (e) => {
-                      try {
-                        const res = await updateStatusMutation.mutateAsync({
-                          orderId: order.orderId,
-                          status: e.target.value,
-                        })
-
-                        toast.success(
-                          res?.message || 'Order status updated successfully!'
-                        )
-                      } catch (error) {
-                        console.error('Update order status error:', error)
-                        toast.error(
-                          typeof error === 'string'
-                            ? error
-                            : 'Something went wrong while updating status.'
-                        )
-                      }
-                    }}
-                  >
-                    <option value="pending" className="bg-background">
-                      Pending
-                    </option>
-                    <option value="confirmed" className="bg-background">
-                      Confirmed
-                    </option>
-                    <option value="slip_generated" className="bg-background">
-                      Slip Generated
-                    </option>
-                    <option value="shipped" className="bg-background">
-                      Shipped
-                    </option>
-                    <option value="delivered" className="bg-background">
-                      Delivered
-                    </option>
-                    <option value="complete" className="bg-background">
-                      Complete
-                    </option>
-                    <option value="cancelled" className="bg-background">
-                      Cancelled
-                    </option>
-                  </select>
-                </div>
+      ) : (
+        // Success state (main UI)
+        <div className="p-6">
+          <div className="p-6">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="outline"
+                  onClick={() => router.push('/orders')}
+                  className="flex items-center gap-2"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Back to Orders
+                </Button>
+                <h1 className="text-2xl font-semibold">
+                  Order #{order.orderId}
+                </h1>
               </div>
-            </div>
-            {/* Order Status Update Section */}
 
-            <BillingAddress order={order} />
-            <ShippingAddress order={order} />
-          </div>
-
-          {/* Right Sidebar */}
-          <div className="space-y-6">
-            {/* Customer Statistics */}
-            <div className="bg-background text-foreground p-6 rounded-lg border shadow-sm">
-              <h3 className="text-lg font-semibold mb-4">
-                Customer Statistics
-              </h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="font-medium text-foreground mb-2">
-                      Date Created
-                    </span>
-                  </div>
-                  <span className="font-semibold text-lg">
-                    {new Date(order.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <h3 className="font-medium text-foreground mb-2">
-                      Total Amount
-                    </h3>
-                  </div>
-                  <span className="text-2xl font-bold text-green-600">
-                    ${order.totalAmount.toFixed(2)}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  {order.estimatedDelivery && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-600">
-                        Estimated Delivery
-                      </label>
-                      <p className="text-foreground">
-                        {new Date(order.estimatedDelivery).toLocaleDateString()}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Order Actions */}
-            <div className="bg-background text-foreground p-6 rounded-lg border shadow-sm">
-              <h3 className="text-lg font-semibold mb-4">Order Actions</h3>
-              <div className="space-y-3">
-                <select className="w-full p-2 border rounded-md text-sm">
-                  <option>Choose an action...</option>
-                  <option>Mark as completed</option>
-                  <option>Mark as shipped</option>
-                  <option>Cancel order</option>
-                </select>
-                <Button variant="destructive" className="w-full">
-                  Move to Trash
+              <div className="flex gap-2">
+                <Button
+                  variant="destructive"
+                  onClick={() =>
+                    setActiveModal({ type: 'delete', orderId: order._id })
+                  }
+                  className="flex items-center gap-2"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete Order
                 </Button>
               </div>
             </div>
 
-            {/* Order Attribution */}
-            <div className="bg-background text-foreground p-6 rounded-lg border shadow-sm">
-              <h3 className="text-lg font-semibold mb-4">Order Attribution</h3>
-              <div className="flex items-center gap-x-5">
-                {' '}
-                <div>
-                  <h3 className="font-medium">Order Status</h3>
-                  <Badge
-                    className={statusColors[order.status] || 'text-background'}
-                  >
-                    {order.status.charAt(0).toUpperCase() +
-                      order.status.slice(1)}
-                  </Badge>
+            {/* Main Grid Layout */}
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 w-full">
+              <div className="xl:col-span-2 flex gap-4">
+                <div className="w-[40%]">
+                  <h2 className="text-xl font-semibold">General</h2>
+                  <div className="mt-2 w-full">
+                    <h3 className="text-lg font-semibold ">Status</h3>
+                    <div className="flex items-center gap-4">
+                      <select
+                        className="border p-2 rounded-md text-sm bg-transparent !w-full"
+                        value={order.status}
+                        onChange={async (e) => {
+                          try {
+                            const res = await updateStatusMutation.mutateAsync({
+                              orderId: order.orderId,
+                              status: e.target.value,
+                            })
+
+                            toast.success(
+                              res?.message ||
+                                'Order status updated successfully!'
+                            )
+                          } catch (error) {
+                            console.error('Update order status error:', error)
+                            toast.error(
+                              typeof error === 'string'
+                                ? error
+                                : 'Something went wrong while updating status.'
+                            )
+                          }
+                        }}
+                      >
+                        <option value="pending" className="bg-background">
+                          Pending
+                        </option>
+                        <option value="confirmed" className="bg-background">
+                          Confirmed
+                        </option>
+                        <option
+                          value="slip_generated"
+                          className="bg-background"
+                        >
+                          Slip Generated
+                        </option>
+                        <option value="shipped" className="bg-background">
+                          Shipped
+                        </option>
+                        <option value="delivered" className="bg-background">
+                          Delivered
+                        </option>
+                        <option value="complete" className="bg-background">
+                          Complete
+                        </option>
+                        <option value="cancelled" className="bg-background">
+                          Cancelled
+                        </option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  {' '}
-                  <h3 className="font-medium text-foreground">
-                    Payment Status
+                {/* Order Status Update Section */}
+
+                <BillingAddress order={order} />
+                <ShippingAddress order={order} />
+              </div>
+
+              {/* Right Sidebar */}
+              <div className="space-y-6">
+                {/* Customer Statistics */}
+                <div className="bg-background text-foreground p-6 rounded-lg border shadow-sm">
+                  <h3 className="text-lg font-semibold mb-4">
+                    Customer Statistics
                   </h3>
-                  <Badge
-                    className={
-                      order.paymentStatus === 'paid'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-yellow-100 text-yellow-700'
-                    }
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="font-medium text-foreground mb-2">
+                          Date Created
+                        </span>
+                      </div>
+                      <span className="font-semibold text-lg">
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <h3 className="font-medium text-foreground mb-2">
+                          Total Amount
+                        </h3>
+                      </div>
+                      <span className="text-2xl font-bold text-green-600">
+                        ${order.totalAmount.toFixed(2)}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      {order.estimatedDelivery && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-600">
+                            Estimated Delivery
+                          </label>
+                          <p className="text-foreground">
+                            {new Date(
+                              order.estimatedDelivery
+                            ).toLocaleDateString()}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Order Actions */}
+                <div className="bg-background text-foreground p-6 rounded-lg border shadow-sm">
+                  <h3 className="text-lg font-semibold mb-4">Order Actions</h3>
+                  <div className="space-y-3">
+                    <select className="w-full p-2 border rounded-md text-sm">
+                      <option>Choose an action...</option>
+                      <option>Mark as completed</option>
+                      <option>Mark as shipped</option>
+                      <option>Cancel order</option>
+                    </select>
+                    <Button variant="destructive" className="w-full">
+                      Move to Trash
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Order Attribution */}
+                <div className="bg-background text-foreground p-6 rounded-lg border shadow-sm">
+                  <h3 className="text-lg font-semibold mb-4">
+                    Order Attribution
+                  </h3>
+                  <div className="flex items-center gap-x-5">
+                    {' '}
+                    <div>
+                      <h3 className="font-medium">Order Status</h3>
+                      <Badge
+                        className={
+                          statusColors[order.status] || 'text-background'
+                        }
+                      >
+                        {order.status.charAt(0).toUpperCase() +
+                          order.status.slice(1)}
+                      </Badge>
+                    </div>
+                    <div>
+                      {' '}
+                      <h3 className="font-medium text-foreground">
+                        Payment Status
+                      </h3>
+                      <Badge
+                        className={
+                          order.paymentStatus === 'paid'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-yellow-100 text-yellow-700'
+                        }
+                      >
+                        {order.paymentStatus.charAt(0).toUpperCase() +
+                          order.paymentStatus.slice(1)}
+                      </Badge>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-foreground">
+                        Shipping Method
+                      </label>
+                      <p className="text-foreground capitalize">
+                        {order.shippingMethod}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Order Notes */}
+                <div className="bg-background text-foreground p-6 rounded-lg border shadow-sm">
+                  <h3 className="text-lg font-semibold">Order Notes</h3>
+                  <div>
+                    <p className="text-foreground">
+                      {order.notes || 'No notes provided'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Order Items */}
+            <div className="bg-background text-foreground p-6 rounded-lg border shadow-sm mt-6">
+              <h2 className="text-xl font-semibold mb-4">Order Items</h2>
+              <div className="space-y-4">
+                {order.items?.map((item) => (
+                  <div
+                    key={item._id}
+                    className="flex items-center gap-4 p-4 border rounded-lg"
                   >
-                    {order.paymentStatus.charAt(0).toUpperCase() +
-                      order.paymentStatus.slice(1)}
-                  </Badge>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-foreground">
-                    Shipping Method
-                  </label>
-                  <p className="text-foreground capitalize">
-                    {order.shippingMethod}
-                  </p>
-                </div>
+                    <img
+                      src={item.productId?.imageUrl}
+                      alt={item.productId?.productName}
+                      className="w-16 h-16 rounded object-cover"
+                    />
+                    <div className="flex-1">
+                      <h4 className="font-medium">
+                        {item.productId?.productName}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        Quantity: {item.quantity}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Price: ${item.productId?.price}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-medium">
+                        ${item.totalPrice?.toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
 
-            {/* Order Notes */}
-            <div className="bg-background text-foreground p-6 rounded-lg border shadow-sm">
-              <h3 className="text-lg font-semibold">Order Notes</h3>
-              <div>
-                <p className="text-foreground">
-                  {order.notes || 'No notes provided'}
-                </p>
+              {/* Shipping Details */}
+              <div className="mt-6 pt-4 border-t">
+                <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                  <Truck className="w-4 h-4" />
+                  <span>Free shipping</span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  Items:{' '}
+                  {order.items
+                    ?.map(
+                      (item) =>
+                        `${item.productId?.productName} x ${item.quantity}`
+                    )
+                    .join(', ')}
+                </div>
+                <div className="text-sm text-gray-600">
+                  <span>Total: ${order.totalAmount.toFixed(2)}</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Order Items */}
-        <div className="bg-background text-foreground p-6 rounded-lg border shadow-sm mt-6">
-          <h2 className="text-xl font-semibold mb-4">Order Items</h2>
-          <div className="space-y-4">
-            {order.items?.map((item) => (
-              <div
-                key={item._id}
-                className="flex items-center gap-4 p-4 border rounded-lg"
-              >
-                <img
-                  src={item.productId?.imageUrl}
-                  alt={item.productId?.productName}
-                  className="w-16 h-16 rounded object-cover"
-                />
-                <div className="flex-1">
-                  <h4 className="font-medium">{item.productId?.productName}</h4>
-                  <p className="text-sm text-gray-600">
-                    Quantity: {item.quantity}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Price: ${item.productId?.price}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="font-medium">${item.totalPrice?.toFixed(2)}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Shipping Details */}
-          <div className="mt-6 pt-4 border-t">
-            <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-              <Truck className="w-4 h-4" />
-              <span>Free shipping</span>
-            </div>
-            <div className="text-sm text-gray-600">
-              Items:{' '}
-              {order.items
-                ?.map(
-                  (item) => `${item.productId?.productName} x ${item.quantity}`
-                )
-                .join(', ')}
-            </div>
-            <div className="text-sm text-gray-600">
-              <span>Total: ${order.totalAmount.toFixed(2)}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* Delete Modal Only */}
       {activeModal?.type === 'delete' && (
