@@ -85,11 +85,11 @@ export const bulkUpdateOrderStatus = async (ids, status) => {
   return response.data
 }
 
-export const cancelOrderStatus = async (orderId, status) => {
+export const cancelOrderStatus = async (orderId, reason) => {
   const response = await sendRequest({
     method: 'PUT',
     url: `/orders/cancel/${orderId}`,
-    data: { status },
+    data: { reason },
   })
   return response.data
 }
