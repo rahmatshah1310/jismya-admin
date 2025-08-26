@@ -67,19 +67,29 @@ export const deleteOrder = async (id) => {
 }
 
 // PUT /orders/:id/status (optional: only update status)
-export const updateOrderStatus = async (id, status) => {
+export const updateOrderStatus = async (orderId, status) => {
   const response = await sendRequest({
     method: 'PUT',
-    url: `/orders/status/${id}`,
+    url: `/orders/status/${orderId}`,
     data: { status },
   })
   return response.data
 }
 
-export const cancelOrderStatus = async (id, status) => {
+// PUT /orders/status/bulk
+export const bulkUpdateOrderStatus = async (ids, status) => {
   const response = await sendRequest({
     method: 'PUT',
-    url: `/orders/cancel/${id}`,
+    url: `/orders/status/bulk`,
+    data: { ids, status },
+  })
+  return response.data
+}
+
+export const cancelOrderStatus = async (orderId, status) => {
+  const response = await sendRequest({
+    method: 'PUT',
+    url: `/orders/cancel/${orderId}`,
     data: { status },
   })
   return response.data
@@ -122,6 +132,7 @@ export const orderService = {
   trackOrder,
   deleteOrder,
   updateOrderStatus,
+  bulkUpdateOrderStatus,
   cancelOrderStatus,
   getOrderStats,
 }
