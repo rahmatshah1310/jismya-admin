@@ -134,9 +134,10 @@ export default function OrderDetailsPage() {
                     onChange={async (e) => {
                       try {
                         const res = await updateStatusMutation.mutateAsync({
-                          orderId: order._id,
+                          orderId: order.orderId,
                           status: e.target.value,
                         })
+
                         toast.success(
                           res?.message || 'Order status updated successfully!'
                         )
@@ -159,8 +160,8 @@ export default function OrderDetailsPage() {
                     <option value="slip_generated" className="bg-background">
                       Slip Generated
                     </option>
-                    <option value="shifted" className="bg-background">
-                      Shifted
+                    <option value="shipped" className="bg-background">
+                      Shipped
                     </option>
                     <option value="delivered" className="bg-background">
                       Delivered
