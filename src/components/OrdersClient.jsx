@@ -9,6 +9,7 @@ import {
   useBulkUpdateOrderStatus,
   useGetAllOrders,
   useGetOrderStats,
+  useUpdateOrderStatus,
 } from '@/app/api/orderApi'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/Button'
@@ -17,6 +18,7 @@ import DeleteOrderModal from '@/components/Modal/OrdersModel/DeleteOrderModel'
 import { OrderSkeletonRow } from '@/components/ui/common/Skeleton'
 import OrderFilters from '@/components/OrderFilter'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { toast } from 'react-toastify'
 
 const statusColors = {
   complete: 'bg-green-100 text-green-700',
@@ -34,7 +36,7 @@ export default function OrdersClient() {
   const { data: orderstat } = useGetOrderStats()
   const orderStats = orderstat?.data
   const cancelOrderMutation = useCancelOrder()
-  const bulkStatusMutation = useBulkUpdateOrderStatus()
+  const bulkStatusMutation = useUpdateOrderStatus()
 
   // Extract filters from URL
   const filtersFromURL = Object.fromEntries(
@@ -147,55 +149,62 @@ export default function OrdersClient() {
 
   const applyBulk = async () => {
     if (!selectedOrders.length) return
-    if (bulkAction === 'export') {
-      exportSelectedCSV()
-      return
-    }
-    if (bulkAction === 'export_xlsx') {
-      exportSelectedXLSX()
-      return
-    }
-    if (bulkAction === 'mark_exported' || bulkAction === 'unmark_exported') {
-      const exported = bulkAction === 'mark_exported'
-      await Promise.all(
-        selectedOrders.map((id) => orderService.updateOrder(id, { exported }))
-      )
-      await queryClient.invalidateQueries({ queryKey: ['orders'] })
-      setSelectedOrders([])
-      setBulkAction('')
-      return
-    }
-    if (bulkAction === 'trash') {
-      await Promise.all(
-        selectedOrders.map((id) => orderService.deleteOrder(id))
-      )
-      await queryClient.invalidateQueries({ queryKey: ['orders'] })
-      setSelectedOrders([])
-      setBulkAction('')
-      return
-    }
-    const map = {
-      processing: 'shifted',
-      on_hold: 'pending',
-      completed: 'complete',
-      cancelled: 'cancelled',
-      slip_generated: 'pending',
-      packed: 'shifted',
-      confirmed: 'delivered',
-      shipped: 'shifted',
-      pending: 'pending',
-    }
-    const next = map[bulkAction]
-    if (!next) return
-    bulkStatusMutation.mutate(
-      { ids: selectedOrders, status: next },
-      {
-        onSuccess: () => {
-          setSelectedOrders([])
-          setBulkAction('')
-        },
+
+    try {
+      // Handle local-only actions
+      if (bulkAction === 'export') {
+        exportSelectedCSV()
+        return
       }
-    )
+      if (bulkAction === 'export_xlsx') {
+        exportSelectedXLSX()
+        return
+      }
+
+      // Handle cancel (different API)
+      if (bulkAction === 'cancelled') {
+        const res = await Promise.all(
+          selectedOrders.map((id) =>
+            cancelOrderMutation.mutateAsync({ orderId: id })
+          )
+        )
+        console.log('Cancel responses:', res)
+        await queryClient.invalidateQueries({ queryKey: ['orders'] })
+        setSelectedOrders([])
+        setBulkAction('')
+        return
+      }
+
+      // Map your frontend bulk actions → API statuses
+      const map = {
+        processing: 'processing',
+        on_hold: 'pending',
+        completed: 'complete',
+        slip_generated: 'pending',
+        packed: 'packed',
+        confirmed: 'delivered',
+        shipped: 'shipped',
+        pending: 'pending',
+      }
+
+      const nextStatus = map[bulkAction]
+      if (!nextStatus) return
+      // Call your update status API for each selected order
+      const res = await Promise.all(
+        selectedOrders.map((_id) => {
+          const order = orders.find((o) => o._id === _id)
+          return bulkStatusMutation.mutateAsync({
+            orderId: order?.orderId,
+            status: nextStatus,
+          })
+        })
+      )
+      toast.success(res?.message || 'Status Updated Successfully')
+      setSelectedOrders([])
+      setBulkAction('')
+    } catch (err) {
+      toast.error(typeof err === 'string' ? err : 'Something Went Wrong')
+    }
   }
 
   const updateURL = (filters) => {
