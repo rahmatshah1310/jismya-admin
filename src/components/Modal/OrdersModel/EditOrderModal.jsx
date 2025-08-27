@@ -177,7 +177,7 @@ export default function EditOrderModal({ showEditModal, onClose, orderData }) {
 
           <div className="flex justify-between items-center mt-4">
             <span className="font-medium">
-              Total Amount: ${totalAmount.toFixed(2)}
+              Total Amount: Rs.{totalAmount.toFixed(2)}
             </span>
             <button
               type="submit"
