@@ -81,7 +81,7 @@ export default function OrderFilters({ onFilter, currentFilters = {} }) {
         <label className="block text-sm mb-1">Limit</label>
         <Input
           type="number"
-          value={filters.limit}
+          value={filters.limit ?? ''}
           onChange={(e) => handleChange('limit', e.target.value)}
           placeholder="20"
           className="w-20"
