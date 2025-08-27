@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
               <Providers>
                 {children}
                 <ToastContainer
-                  position="top-right"
+                  position="bottom-right"
                   autoClose={3000}
                   hideProgressBar={false}
                   newestOnTop
