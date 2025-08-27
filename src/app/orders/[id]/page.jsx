@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
-import { useGetSingleOrder, useUpdateOrderStatus } from '@/app/api/orderApi'
+import { useGetSingleOrder, useUpdateBillingAddress, useUpdateOrderStatus, useUpdateShippingAddress } from '@/app/api/orderApi'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/Button'
 import {
@@ -41,6 +41,8 @@ export default function OrderDetailsPage() {
   const { data, isLoading, error } = useGetSingleOrder(orderId)
   const order = data?.data
   const updateStatusMutation = useUpdateOrderStatus()
+  const updateShippingMutation=useUpdateShippingAddress()
+  const updateBillingMutation=useUpdateBillingAddress()
 
   const [activeModal, setActiveModal] = useState(null)
   
@@ -57,8 +59,17 @@ export default function OrderDetailsPage() {
   }, [order])
 
   // Copy billing to shipping function
-  const handleCopyToShipping = () => {
-    setShippingAddress(billingAddress)
+ const handleCopyToShipping = async () => {
+    try {
+      await updateShippingMutation.mutateAsync({
+        orderId: order.orderId,
+        shippingAddress: billingAddress,
+      })
+      setShippingAddress(billingAddress) // update local state too
+      toast.success('Billing address copied to shipping!')
+    } catch (error) {
+      toast.error(typeof error === 'string' ? error : 'Failed to update shipping')
+    }
   }
 
   return (
