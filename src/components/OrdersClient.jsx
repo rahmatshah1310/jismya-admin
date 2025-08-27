@@ -375,7 +375,7 @@ export default function OrdersClient() {
                         </div>
                       </td>
                       {/* Total */}
-                      <td className="p-3">${order.totalAmount.toFixed(2)}</td>
+                      <td className="p-3">Rs.{order.totalAmount.toFixed(2)}</td>
 
                       {/* Actions */}
 
