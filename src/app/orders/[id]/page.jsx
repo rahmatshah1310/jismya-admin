@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import { useGetSingleOrder, useUpdateOrderStatus } from '@/app/api/orderApi'
@@ -43,6 +43,23 @@ export default function OrderDetailsPage() {
   const updateStatusMutation = useUpdateOrderStatus()
 
   const [activeModal, setActiveModal] = useState(null)
+  
+  // State for billing and shipping addresses
+  const [billingAddress, setBillingAddress] = useState(order?.billingAddress || {})
+  const [shippingAddress, setShippingAddress] = useState(order?.shippingAddress || {})
+
+  // Update state when order data changes
+  useEffect(() => {
+    if (order) {
+      setBillingAddress(order.billingAddress || {})
+      setShippingAddress(order.shippingAddress || {})
+    }
+  }, [order])
+
+  // Copy billing to shipping function
+  const handleCopyToShipping = () => {
+    setShippingAddress(billingAddress)
+  }
 
   return (
     <DashboardLayout>
@@ -162,8 +179,17 @@ export default function OrderDetailsPage() {
                 </div>
                 {/* Order Status Update Section */}
 
-                <BillingAddress order={order} />
-                <ShippingAddress order={order} />
+                <BillingAddress 
+                  order={order} 
+                  billingAddress={billingAddress}
+                  setBillingAddress={setBillingAddress}
+                  onCopyToShipping={handleCopyToShipping}
+                />
+                <ShippingAddress 
+                  order={order} 
+                  shippingAddress={shippingAddress}
+                  setShippingAddress={setShippingAddress}
+                />
               </div>
 
               {/* Right Sidebar */}
