@@ -49,7 +49,7 @@ export default function DashboardPage() {
   const stats = [
     {
       title: 'Total Revenue',
-      value: `$${totalRevenue.toFixed(2)}`,
+      value: `Rs.${totalRevenue.toFixed(2)}`,
       icon: DollarSign,
       description: 'From all orders',
     },
@@ -146,7 +146,7 @@ export default function DashboardPage() {
 
                       <div className="flex gap-x-3 items-end gap-1">
                         <span className="text-sm font-medium">
-                          ${order.totalAmount.toFixed(2)}
+                          Rs.{order.totalAmount.toFixed(2)}
                         </span>
                         <Badge
                           className={
