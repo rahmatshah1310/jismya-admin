@@ -191,7 +191,7 @@ export default function OrderDetailsPage() {
                         </h3>
                       </div>
                       <span className="text-2xl font-bold text-green-600">
-                        ${order.totalAmount.toFixed(2)}
+                        Rs.{order.totalAmount.toFixed(2)}
                       </span>
                     </div>
 
@@ -307,12 +307,12 @@ export default function OrderDetailsPage() {
                         Quantity: {item.quantity}
                       </p>
                       <p className="text-sm text-gray-600">
-                        Price: ${item.productId?.price}
+                        Price: Rs.{item.productId?.price}
                       </p>
                     </div>
                     <div className="text-right">
                       <p className="font-medium">
-                        ${item.totalPrice?.toFixed(2)}
+                        Rs.{item.totalPrice?.toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -335,7 +335,7 @@ export default function OrderDetailsPage() {
                     .join(', ')}
                 </div>
                 <div className="text-sm text-gray-600">
-                  <span>Total: ${order.totalAmount.toFixed(2)}</span>
+                  <span>Total: Rs.{order.totalAmount.toFixed(2)}</span>
                 </div>
               </div>
             </div>
