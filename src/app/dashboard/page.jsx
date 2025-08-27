@@ -37,7 +37,6 @@ export default function DashboardPage() {
   const loading = isProductsLoading || isOrdersLoading || isSalesLoading
   const { data, isLoading } = useGetAllOrders({ page: 1, limit: 5 })
   // const recentOrders = data?.data?.orders || []
-  // console.log(orderData, 'orderdata............')
 
   // Extract totals
   const totalProducts = productData?.data?.total?.totalProducts || 0
