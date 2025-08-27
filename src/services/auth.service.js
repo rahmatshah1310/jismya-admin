@@ -9,7 +9,7 @@ export const login = async (data) => {
     });
     return response.data;
   } catch (error) {
-    console.log(`Auth Service [login] error: ${error}`);
+    console.error(`Auth Service [login] error: ${error}`);
     throw error;
   }
 };
@@ -22,7 +22,7 @@ export const me = async () => {
     });
     return response.data;
   } catch (error) {
-    console.log(`Auth Service [me] error: ${error}`);
+    console.error(`Auth Service [me] error: ${error}`);
     throw error;
   }
 };
