@@ -176,14 +176,14 @@ export default function ProductDetailsPage() {
                   {product.discount > 0 ? (
                     <>
                       <span className="text-2xl font-bold text-foreground">
-                        $
+                        Rs.
                         {(
                           product.price -
                           (product.price * product.discount) / 100
                         ).toFixed(2)}
                       </span>
                       <span className="text-lg text-gray-400 line-through">
-                        ${product.price.toFixed(2)}
+                        Rs.{product.price.toFixed(2)}
                       </span>
                       <span className="px-2 py-1 bg-red-100 text-red-600 text-sm font-medium rounded">
                         -{product.discount}% OFF
@@ -191,7 +191,7 @@ export default function ProductDetailsPage() {
                     </>
                   ) : (
                     <span className="text-2xl font-bold text-foreground">
-                      ${product.price.toFixed(2)}
+                      Rs.{product.price.toFixed(2)}
                     </span>
                   )}
                 </div>
