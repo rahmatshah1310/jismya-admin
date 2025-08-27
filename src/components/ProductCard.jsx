@@ -78,10 +78,10 @@ export default function ProductCard({ product, onCardClick, onAddToSale }) {
             {product.discount > 0 ? (
               <>
                 <span className="line-through text-muted-foreground text-xs">
-                  ${product.price.toFixed(2)}
+                  Rs.{product.price.toFixed(2)}
                 </span>
                 <span className="text-green-600 font-semibold">
-                  $
+                  Rs.
                   {(
                     product.price -
                     (product.price * product.discount) / 100
@@ -93,7 +93,7 @@ export default function ProductCard({ product, onCardClick, onAddToSale }) {
               </>
             ) : (
               <span className="text-primary font-medium">
-                ${product.price.toFixed(2)}
+                Rs.{product.price.toFixed(2)}
               </span>
             )}
           </div>
