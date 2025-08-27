@@ -1,19 +1,20 @@
 import React, { useState } from 'react'
 import { Edit, Pencil, Save, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/Button'
 import { useUpdateShippingAddress } from '@/app/api/orderApi'
 import { toast } from 'react-toastify'
 import { BeatLoader } from 'react-spinners'
 
-const ShippingAddress = ({ order, onEditClick }) => {
+const ShippingAddress = ({ order, shippingAddress, setShippingAddress }) => {
   const [isEditing, setIsEditing] = useState(false)
   const [shipping, setShipping] = useState({
-    name: order.shippingAddress?.name || '',
-    email: order.shippingAddress?.email || '',
-    phone: order.shippingAddress?.phone || '',
-    country: order.shippingAddress?.country || '',
-    city: order.shippingAddress?.city || '',
-    completeAddress: order.shippingAddress?.completeAddress || '',
+    name: shippingAddress?.name || '',
+    email: shippingAddress?.email || '',
+    phone: shippingAddress?.phone || '',
+    country: shippingAddress?.country || '',
+    city: shippingAddress?.city || '',
+    completeAddress: shippingAddress?.completeAddress || '',
   })
 
   const updateOrderMutation = useUpdateShippingAddress()
@@ -22,12 +23,12 @@ const ShippingAddress = ({ order, onEditClick }) => {
     setIsEditing(true)
     // Reset form to current values
     setShipping({
-      name: order.shippingAddress?.name || '',
-      email: order.shippingAddress?.email || '',
-      phone: order.shippingAddress?.phone || '',
-      country: order.shippingAddress?.country || '',
-      city: order.shippingAddress?.city || '',
-      completeAddress: order.shippingAddress?.completeAddress || '',
+      name: shippingAddress?.name || '',
+      email: shippingAddress?.email || '',
+      phone: shippingAddress?.phone || '',
+      country: shippingAddress?.country || '',
+      city: shippingAddress?.city || '',
+      completeAddress: shippingAddress?.completeAddress || '',
     })
   }
 
@@ -35,12 +36,12 @@ const ShippingAddress = ({ order, onEditClick }) => {
     setIsEditing(false)
     // Reset to original values
     setShipping({
-      name: order.shippingAddress?.name || '',
-      email: order.shippingAddress?.email || '',
-      phone: order.shippingAddress?.phone || '',
-      country: order.shippingAddress?.country || '',
-      city: order.shippingAddress?.city || '',
-      completeAddress: order.shippingAddress?.completeAddress || '',
+      name: shippingAddress?.name || '',
+      email: shippingAddress?.email || '',
+      phone: shippingAddress?.phone || '',
+      country: shippingAddress?.country || '',
+      city: shippingAddress?.city || '',
+      completeAddress: shippingAddress?.completeAddress || '',
     })
   }
 
@@ -53,7 +54,8 @@ const ShippingAddress = ({ order, onEditClick }) => {
       })
       toast.success(res?.message || 'Shipping address updated successfully!')
       setIsEditing(false)
-      // Optionally refresh the order data here
+      // Update the parent state
+      setShippingAddress(shipping)
     } catch (error) {
       toast.error(typeof error === 'string' ? error : 'Something went wrong.')
     }
@@ -86,31 +88,31 @@ const ShippingAddress = ({ order, onEditClick }) => {
       </div>
 
       {!isEditing ? (
-        Object.values(order.shippingAddress || {}).every((v) => !v) ? (
+        Object.values(shippingAddress || {}).every((v) => !v) ? (
           <p className="text-gray-500 italic">No shipping address yet.</p>
         ) : (
           <div>
             <p className="text-foreground">
-              {order.shippingAddress?.name || 'N/A'}
+              {shippingAddress?.name || 'N/A'}
             </p>
             <p className="text-foreground ">
-              {order.shippingAddress?.completeAddress || 'N/A'}
+              {shippingAddress?.completeAddress || 'N/A'}
             </p>
             <p className="text-foreground ">
-              {order.shippingAddress?.city || 'N/A'}
+              {shippingAddress?.city || 'N/A'}
             </p>
             <div className="pt-4">
               <label htmlFor="email" className="pt-4">
                 Email Address:
               </label>
               <p className="text-blue-700 underline">
-                {order.shippingAddress?.email || 'N/A'}
+                {shippingAddress?.email || 'N/A'}
               </p>
             </div>
             <div className="pt-2">
               <label htmlFor="">Phone:</label>
               <p className="text-blue-700 underline">
-                {order.shippingAddress?.phone || 'N/A'}
+                {shippingAddress?.phone || 'N/A'}
               </p>
             </div>
           </div>
@@ -204,20 +206,16 @@ const ShippingAddress = ({ order, onEditClick }) => {
               className="w-full"
             />
           </div>
-          <div>
-            {' '}
-            <button
-              onClick={handleSubmit}
-              disabled={updateOrderMutation.isPending}
-              className="p-2 rounded w-full bg-foreground text-background transition-colors"
-            >
-              {updateOrderMutation.isPending ? (
-                <BeatLoader color="darkBlue" />
-              ) : (
-                '  Update Shipping'
-              )}
-            </button>
-          </div>
+          <Button
+            onClick={handleSubmit}
+            disabled={updateOrderMutation.isPending}
+            className="w-full"
+          >
+            {updateOrderMutation.isPending ? 
+              <BeatLoader color="white" size={8} />
+              :'Update Shipping'
+          }
+          </Button>
         </form>
       )}
     </div>
