@@ -1,19 +1,20 @@
 import React, { useState } from 'react'
-import { Edit, Pencil, Save, X } from 'lucide-react'
+import { Edit, Pencil, Save, X, Copy } from 'lucide-react'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/Button'
 import { useUpdateBillingAddress } from '@/app/api/orderApi'
 import { toast } from 'react-toastify'
 import { BeatLoader } from 'react-spinners'
 
-const BillingAddress = ({ order, onEditClick }) => {
+const BillingAddress = ({ order, billingAddress, setBillingAddress, onCopyToShipping }) => {
   const [isEditing, setIsEditing] = useState(false)
   const [billing, setBilling] = useState({
-    name: order.billingAddress?.name || '',
-    email: order.billingAddress?.email || '',
-    phone: order.billingAddress?.phone || '',
-    country: order.billingAddress?.country || '',
-    city: order.billingAddress?.city || '',
-    completeAddress: order.billingAddress?.completeAddress || '',
+    name: billingAddress?.name || '',
+    email: billingAddress?.email || '',
+    phone: billingAddress?.phone || '',
+    country: billingAddress?.country || '',
+    city: billingAddress?.city || '',
+    completeAddress: billingAddress?.completeAddress || '',
   })
 
   const updateOrderMutation = useUpdateBillingAddress()
@@ -22,17 +23,26 @@ const BillingAddress = ({ order, onEditClick }) => {
     setIsEditing(true)
     // Reset form to current values
     setBilling({
-      name: order.billingAddress?.name || '',
-      email: order.billingAddress?.email || '',
-      phone: order.billingAddress?.phone || '',
-      country: order.billingAddress?.country || '',
-      city: order.billingAddress?.city || '',
-      completeAddress: order.billingAddress?.completeAddress || '',
+      name: billingAddress?.name || '',
+      email: billingAddress?.email || '',
+      phone: billingAddress?.phone || '',
+      country: billingAddress?.country || '',
+      city: billingAddress?.city || '',
+      completeAddress: billingAddress?.completeAddress || '',
     })
   }
 
   const handleCancel = () => {
     setIsEditing(false)
+    // Reset to original values
+    setBilling({
+      name: billingAddress?.name || '',
+      email: billingAddress?.email || '',
+      phone: billingAddress?.phone || '',
+      country: billingAddress?.country || '',
+      city: billingAddress?.city || '',
+      completeAddress: billingAddress?.completeAddress || '',
+    })
   }
 
   const handleSubmit = async (e) => {
@@ -44,23 +54,36 @@ const BillingAddress = ({ order, onEditClick }) => {
       })
       toast.success(res?.message || 'Billing address updated successfully!')
       setIsEditing(false)
+      // Update the parent state
+      setBillingAddress(billing)
     } catch (error) {
       toast.error(typeof error === 'string' ? error : 'Something went wrong.')
     }
   }
 
   return (
-    <div className="text-foreground w-[40%]  shadow-sm mb-6 font-sans">
+    <div className="text-foreground w-[40%] shadow-sm mb-6 font-sans">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Billing</h2>
         {!isEditing ? (
-          <button
-            onClick={handleEdit}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            title="Edit billing address"
-          >
-            <Pencil className="w-4 h-4 text-gray-600" />
-          </button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onCopyToShipping}
+              className="flex items-center gap-1 text-xs"
+              title="Copy to Shipping"
+            >
+              <Copy className="w-3 h-3" />
+            </Button>
+            <button
+              onClick={handleEdit}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              title="Edit billing address"
+            >
+              <Pencil className="w-4 h-4 text-gray-600" />
+            </button>
+          </div>
         ) : (
           <div className="flex gap-2">
             <button
@@ -78,20 +101,20 @@ const BillingAddress = ({ order, onEditClick }) => {
         // View Mode - Display data as read-only
         <div>
           <p className="text-foreground">
-            {order.billingAddress?.name || 'N/A'}
+            {billingAddress?.name || 'N/A'}
           </p>
           <p className="text-foreground ">
-            {order.billingAddress?.completeAddress || 'N/A'}
+            {billingAddress?.completeAddress || 'N/A'}
           </p>
           <p className="text-foreground ">
-            {order.billingAddress?.city || 'N/A'}
+            {billingAddress?.city || 'N/A'}
           </p>
           <div className="pt-4">
             <label htmlFor="email" className="pt-4 font-bold text-gray-500">
               Email Address:
             </label>
             <p className="text-blue-700 underline">
-              {order.billingAddress?.email || 'N/A'}
+              {billingAddress?.email || 'N/A'}
             </p>
           </div>
           <div className="pt-2">
@@ -99,7 +122,7 @@ const BillingAddress = ({ order, onEditClick }) => {
               Phone:
             </label>
             <p className="text-blue-700 underline">
-              {order.billingAddress?.phone || 'N/A'}
+              {billingAddress?.phone || 'N/A'}
             </p>
           </div>
         </div>
@@ -192,17 +215,17 @@ const BillingAddress = ({ order, onEditClick }) => {
               className="w-full"
             />
           </div>
-          <button
+          <Button
             onClick={handleSubmit}
             disabled={updateOrderMutation.isPending}
-            className="p-2 rounded w-full bg-foreground text-background transition-colors"
+            className="w-full"
           >
             {updateOrderMutation.isPending ? (
-              <BeatLoader color="darkBlue" />
+              <BeatLoader color="white" size={8} />
             ) : (
-              '  Update Billing'
+              'Update Billing'
             )}
-          </button>
+          </Button>
         </form>
       )}
     </div>
