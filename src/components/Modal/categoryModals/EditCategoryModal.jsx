@@ -26,7 +26,6 @@ export default function EditCategoryModal({ isOpen, onClose, category }) {
         id: category._id,
         data: { name },
       })
-      console.log(res, 'resonpse...........')
       toast.success(res?.message || 'Category updated successfully')
       onClose()
     } catch (error) {
