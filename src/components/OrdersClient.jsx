@@ -29,7 +29,6 @@ const statusColors = {
 export const dynamic = 'force-dynamic'
 
 export default function OrdersClient() {
-  const queryClient = useQueryClient()
   const searchParams = useSearchParams()
   const router = useRouter()
   const [activeModal, setActiveModal] = useState(null)
@@ -52,6 +51,7 @@ export default function OrdersClient() {
   const orders = data?.data?.orders || []
   const totalPages = data?.data?.total || 1
   const page = filtersFromURL.page || 1
+
 
   // Selection state for bulk actions
   const [selectedOrders, setSelectedOrders] = useState([])
