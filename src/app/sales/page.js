@@ -147,7 +147,7 @@ export default function Sales() {
                         />
                         <div className="text-sm">
                           <h4 className="font-semibold">
-                            {/* {product.productId.productName} */}
+                            {product.productId.productName}
                           </h4>
                           <p>
                             <span className="line-through text-gray-200 mr-1">
