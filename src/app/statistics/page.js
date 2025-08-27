@@ -116,7 +116,7 @@ export default function StatisticsPage() {
             <StatCard
               icon={FaMoneyBillWave}
               title="Total Revenue"
-              value={`$${orderStats.totalRevenue?.toFixed(2)}`}
+              value={`Rs.${orderStats.totalRevenue?.toFixed(2)}`}
               color="bg-green-600"
             />
           </div>
@@ -143,7 +143,7 @@ export default function StatisticsPage() {
                   >
                     <td className="p-3">{stat.status}</td>
                     <td className="p-3">{stat.count}</td>
-                    <td className="p-3">${stat.totalAmount.toFixed(2)}</td>
+                    <td className="p-3">Rs.{stat.totalAmount.toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -184,7 +184,7 @@ export default function StatisticsPage() {
                   title="Avg Discount (%)"
                   value={
                     typeof salestats.avgDiscount === 'number'
-                      ? `${salestats.avgDiscount.toFixed(1)}%`
+                      ? `Rs.${salestats.avgDiscount.toFixed(1)}%`
                       : '0.0%'
                   }
                   color="bg-orange-500"
