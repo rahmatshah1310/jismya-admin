@@ -23,7 +23,6 @@ export default function DeleteCategoryModal({
 
   const handleDelete = async () => {
     if (!category?._id) {
-      console.log(category._id)
       toast.error('Invalid category data')
       return
     }
