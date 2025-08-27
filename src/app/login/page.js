@@ -7,7 +7,7 @@ import { toast } from 'react-toastify'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
-
+//iut
 export default function Login() {
   const router = useRouter()
   const loginMutation = useLoginMutation()
@@ -25,7 +25,7 @@ export default function Login() {
 
   const onSubmit = async (e) => {
     e.preventDefault()
-    
+
     if (!email || !password) {
       toast.error('Please fill in all fields')
       return
@@ -40,7 +40,6 @@ export default function Login() {
       toast.error(typeof error === 'string' ? error : 'Something went wrong.')
     }
   }
-
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-emerald-50 via-white to-sky-50 flex items-center justify-center px-4 py-10">
@@ -57,7 +56,12 @@ export default function Login() {
 
             <form onSubmit={onSubmit} className="space-y-4">
               <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium text-gray-700">Email</label>
+                <label
+                  htmlFor="email"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Email
+                </label>
                 <Input
                   id="email"
                   name="email"
@@ -71,8 +75,18 @@ export default function Login() {
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="password" className="text-sm font-medium text-gray-700">Password</label>
-                  <Link href="/forgot-password" className="text-xs text-[var(--light-green)] hover:underline">Forgot password?</Link>
+                  <label
+                    htmlFor="password"
+                    className="text-sm font-medium text-gray-700"
+                  >
+                    Password
+                  </label>
+                  <Link
+                    href="/forgot-password"
+                    className="text-xs text-[var(--light-green)] hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
                 </div>
                 <div className="relative">
                   <Input
@@ -88,7 +102,9 @@ export default function Login() {
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
                     className="absolute inset-y-0 right-2 my-1 px-3 text-xs font-medium rounded-md text-gray-700 hover:text-gray-900 bg-white border hover:bg-gray-50"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    aria-label={
+                      showPassword ? 'Hide password' : 'Show password'
+                    }
                   >
                     {showPassword ? 'Hide' : 'Show'}
                   </button>
@@ -108,7 +124,8 @@ export default function Login() {
         </div>
 
         <p className="mt-6 text-center text-xs text-gray-500">
-          Protected area of <span className="font-semibold text-gray-700">Jismya Admin</span>
+          Protected area of{' '}
+          <span className="font-semibold text-gray-700">Jismya Admin</span>
         </p>
       </div>
     </div>
