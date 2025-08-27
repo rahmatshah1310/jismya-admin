@@ -43,22 +43,22 @@ export const policy = [
 export const products = [
   {
     name: 'Lace Bralette',
-    price: '$29.99',
+    price: 'Rs.29.99',
     image: '/banner-1.jpg',
   },
   {
     name: 'Silk Camisole',
-    price: '$39.99',
+    price: 'Rs.39.99',
     image: '/banner-2.jpg',
   },
   {
     name: 'Cotton Briefs',
-    price: '$19.99',
+    price: 'Rs.19.99',
     image: '/banner-3.jpg',
   },
   {
     name: 'Sleep Set',
-    price: '$49.99',
+    price: 'Rs.49.99',
     image: '/banner-1.jpg',
   }
 ]
