@@ -31,7 +31,7 @@ export const createSale = async (data) => {
 export const addProductsToSale = async ({ saleId, productIds }) => {
   const response = await sendRequest({
     method: 'POST',
-    url: `/sales/${saleId}/products`,
+    url: `/sales/products/${saleId}`,
     data: { productIds },
   })
   return response.data
