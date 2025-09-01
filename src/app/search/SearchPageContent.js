@@ -92,9 +92,11 @@ export default function SearchPageContent() {
       {/* Results Section */}
       <div className="px-4 sm:px-6 lg:px-8 py-8">
         {isLoading ? (
-          <div className="text-center text-bacground py-12">
-            <ProductCardSkeleton count={10} />
-          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <ProductCardSkeleton key={i} />
+          ))}
+        </div>
         ) : error ? (
           <div className="text-center text-red-500 py-12">Error: {error}</div>
         ) : products.length > 0 ? (
