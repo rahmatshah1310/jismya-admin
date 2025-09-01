@@ -6,7 +6,7 @@ import Header from '@/layouts/Header'
 import { useAuth } from '@/context/AuthContext'
 
 export default function AuthLayout({ children }) {
-  const { userData, loading } = useAuth()
+  const { isAuthenticated, loading } = useAuth()
   const pathname = usePathname()
   const router = useRouter()
 
@@ -15,12 +15,12 @@ export default function AuthLayout({ children }) {
   useEffect(() => {
     if (loading) return
 
-    if (userData && isAuthPage) {
-      router.push('/')
-    } else if (!userData && !isAuthPage) {
+    if (isAuthenticated() && isAuthPage) {
+      router.push('/dashboard')
+    } else if (!isAuthenticated() && !isAuthPage) {
       router.push('/login')
     }
-  }, [userData, loading, pathname, isAuthPage, router])
+  }, [isAuthenticated, loading, pathname, isAuthPage, router])
 
   return (
     <div className="flex flex-col min-h-screen">
