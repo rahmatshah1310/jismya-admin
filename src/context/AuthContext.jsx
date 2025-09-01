@@ -10,53 +10,102 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Set cookie helper function
+  const setCookie = (name, value, days = 7) => {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+  };
+
+  // Remove cookie helper function
+  const removeCookie = (name) => {
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+  };
+
+  // Validate token format and expiration
+  const isValidToken = (token) => {
+    if (!token) return false;
+    
+    // Basic JWT format validation (3 parts separated by dots)
+    const parts = token.split('.');
+    if (parts.length !== 3) return false;
+    
+    try {
+      // Decode payload to check expiration
+      const payload = JSON.parse(atob(parts[1]));
+      const currentTime = Date.now() / 1000;
+      
+      // Check if token is expired
+      if (payload.exp && payload.exp < currentTime) {
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
   // Fetch current user data
   const fetchCurrentUser = async () => {
-  try {
-    const response = await authService.me();
-    if (response?.data?.user) {
-      setUserData(response.data.user);
-    } else if (response?.data) {
-      setUserData(response.data);
-    }
-  } catch (error) {
-    console.error("Failed to fetch user data:", error);
+    try {
+      const response = await authService.me();
+      if (response?.data?.user) {
+        setUserData(response.data.user);
+      } else if (response?.data) {
+        setUserData(response.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch user data:", error);
 
-    // ✅ Only logout if it's unauthorized
-    if (error?.response?.status === 401) {
-      handleLogout();
-    } else {
-      toast.warn("You're offline or server is unreachable");
+      // ✅ Only logout if it's unauthorized
+      if (error?.response?.status === 401) {
+        handleLogout();
+      } else {
+        toast.warn("You're offline or server is unreachable");
+      }
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   // Load user data and token from localStorage on mount
   useEffect(() => {
-   const storedToken = localStorage.getItem("accessToken");
-const storedUserData = localStorage.getItem("userData");
+    const storedToken = localStorage.getItem("accessToken");
+    const storedUserData = localStorage.getItem("userData");
 
-if (storedToken) {
-  setToken(storedToken);
+    if (storedToken && isValidToken(storedToken)) {
+      setToken(storedToken);
 
-  // ✅ If userData exists locally, use it as a fallback
-  if (storedUserData) {
-    setUserData(JSON.parse(storedUserData));
-  }
+      // ✅ If userData exists locally, use it as a fallback
+      if (storedUserData) {
+        try {
+          const parsedUserData = JSON.parse(storedUserData);
+          setUserData(parsedUserData);
+        } catch (error) {
+          console.error("Invalid user data in localStorage:", error);
+          localStorage.removeItem("userData");
+        }
+      }
 
-  fetchCurrentUser(); // Still try to update from server
-} else {
-  setLoading(false);
-}
-
+      fetchCurrentUser(); // Still try to update from server
+    } else {
+      // Clear invalid data
+      if (storedToken) {
+        localStorage.removeItem("accessToken");
+        removeCookie("accessToken");
+        toast.warn("Session expired. Please login again.");
+      }
+      if (storedUserData) {
+        localStorage.removeItem("userData");
+      }
+      setLoading(false);
+    }
   }, []);
 
   // Refetch user data when token changes
   useEffect(() => {
-    if (token) {
+    if (token && isValidToken(token)) {
       fetchCurrentUser(token);
     }
   }, [token]);
@@ -64,6 +113,7 @@ if (storedToken) {
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("userData");
+    removeCookie("accessToken");
     setToken(null);
     setUserData(null);
     toast.success("Logged out successfully");
@@ -79,16 +129,29 @@ if (storedToken) {
 
     const rawToken = data.token;
     const cleanToken = rawToken.replace("Bearer ", "");
+    
+    // Validate token before setting
+    if (!isValidToken(cleanToken)) {
+      toast.error("Invalid token received");
+      return;
+    }
+    
     const user = data.user;
 
     localStorage.setItem("accessToken", cleanToken);
     localStorage.setItem("userData", JSON.stringify(user));
+    setCookie("accessToken", cleanToken, 7); // Store in cookie for 7 days
 
     setToken(cleanToken);
     setUserData(user);
   };
 
   const getToken = () => token;
+
+  // Check if user is authenticated
+  const isAuthenticated = () => {
+    return !!(token && userData && isValidToken(token));
+  };
 
   return (
     <AuthContext.Provider
@@ -99,6 +162,8 @@ if (storedToken) {
         setAuthData,
         getToken,
         loading,
+        isAuthenticated,
+        token,
       }}
     >
       {children}

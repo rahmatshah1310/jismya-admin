@@ -2,20 +2,29 @@
 import React, { useEffect, useState } from 'react'
 import { useLoginMutation } from '../api/authApi'
 import { useAuth } from '@/context/AuthContext'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'react-toastify'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
-//iut
+
 export default function Login() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const loginMutation = useLoginMutation()
   const isLoading = loginMutation.isPending
-  const { userData, setAuthData } = useAuth()
+  const { userData, setAuthData, isAuthenticated, loading } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (!loading && isAuthenticated()) {
+      const redirectTo = searchParams.get('redirect') || '/dashboard'
+      router.push(redirectTo)
+    }
+  }, [loading, isAuthenticated, router, searchParams])
 
   useEffect(() => {
     if (loginMutation.status === 'success') {
@@ -34,11 +43,28 @@ export default function Login() {
     try {
       const res = await loginMutation.mutateAsync({ email, password })
       toast.success(res?.message || 'Login Successful')
-      router.push('/')
+      
+      // Redirect to the intended page or dashboard
+      const redirectTo = searchParams.get('redirect') || '/dashboard'
+      router.push(redirectTo)
     } catch (error) {
       console.error('Login error:', error)
       toast.error(typeof error === 'string' ? error : 'Something went wrong.')
     }
+  }
+
+  // Show loading while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen w-full bg-gradient-to-br from-emerald-50 via-white to-sky-50 flex items-center justify-center px-4 py-10">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
+
+  // Don't render login form if already authenticated
+  if (isAuthenticated()) {
+    return null
   }
 
   return (
