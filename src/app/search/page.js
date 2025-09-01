@@ -5,7 +5,7 @@ import SearchPageContent from "@/app/search/SearchPageContent";
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<div>Loading search...</div>}>
+    <Suspense>
       <SearchPageContent />
     </Suspense>
   );
