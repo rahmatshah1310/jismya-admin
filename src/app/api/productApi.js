@@ -104,6 +104,7 @@ export const useDeleteCategory = () => {
   })
 }
 
+
 export const useGetSizes = () =>
   useQuery({
     queryKey: ['sizes'],
@@ -137,3 +138,12 @@ export const useProductSaleStats = () => {
     queryFn: productService.getProductSalestats,
   })
 }
+
+// Search products mutation
+export const useSearchProducts = (searchTerm) => {
+  return useQuery({
+    queryKey: ["searchProducts", searchTerm],
+    queryFn: () => productService.searchProducts(searchTerm),
+    enabled: !!searchTerm && searchTerm.length > 0,
+  });
+};
