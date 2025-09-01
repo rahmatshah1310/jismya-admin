@@ -10,17 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Set cookie helper function
-  const setCookie = (name, value, days = 7) => {
-    const expires = new Date();
-    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
-  };
 
-  // Remove cookie helper function
-  const removeCookie = (name) => {
-    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
-  };
 
   // Validate token format and expiration
   const isValidToken = (token) => {
@@ -93,7 +83,6 @@ export const AuthProvider = ({ children }) => {
       // Clear invalid data
       if (storedToken) {
         localStorage.removeItem("accessToken");
-        removeCookie("accessToken");
         toast.warn("Session expired. Please login again.");
       }
       if (storedUserData) {
@@ -113,7 +102,6 @@ export const AuthProvider = ({ children }) => {
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("userData");
-    removeCookie("accessToken");
     setToken(null);
     setUserData(null);
     toast.success("Logged out successfully");
@@ -140,7 +128,6 @@ export const AuthProvider = ({ children }) => {
 
     localStorage.setItem("accessToken", cleanToken);
     localStorage.setItem("userData", JSON.stringify(user));
-    setCookie("accessToken", cleanToken, 7); // Store in cookie for 7 days
 
     setToken(cleanToken);
     setUserData(user);
