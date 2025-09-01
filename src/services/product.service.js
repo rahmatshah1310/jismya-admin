@@ -167,6 +167,14 @@ export const getProductSalestats = async () => {
   return response.data
 }
 
+export const searchProducts = async (searchTerm) => {
+  const response = await sendRequest({
+    method: "GET",
+    url: `/products/search?item=${encodeURIComponent(searchTerm)}`,
+  });
+  return response.data;
+};
+
 export const productService = {
   createProduct,
   updateProduct,
@@ -177,6 +185,7 @@ export const productService = {
   updateCategory,
   deleteCategory,
   getSizes,
+  searchProducts,
   createCategory,
   getProductsBySize,
   getProductsByCategory,
