@@ -2,18 +2,17 @@
 import React, { useEffect, useState } from 'react'
 import { useLoginMutation } from '../api/authApi'
 import { useAuth } from '@/context/AuthContext'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 
-export default function Login() {
+export default function Login({ searchParams }) {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const loginMutation = useLoginMutation()
   const isLoading = loginMutation.isPending
-  const { userData, setAuthData, isAuthenticated, loading } = useAuth()
+  const { setAuthData, isAuthenticated, loading } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -21,7 +20,7 @@ export default function Login() {
   // Redirect if already authenticated
   useEffect(() => {
     if (!loading && isAuthenticated()) {
-      const redirectTo = searchParams.get('redirect') || '/dashboard'
+      const redirectTo = searchParams?.redirect || '/dashboard'
       router.push(redirectTo)
     }
   }, [loading, isAuthenticated, router, searchParams])
@@ -34,7 +33,6 @@ export default function Login() {
 
   const onSubmit = async (e) => {
     e.preventDefault()
-
     if (!email || !password) {
       toast.error('Please fill in all fields')
       return
@@ -43,16 +41,14 @@ export default function Login() {
     try {
       const res = await loginMutation.mutateAsync({ email, password })
       toast.success(res?.message || 'Login Successful')
-      
-      // Redirect to the intended page or dashboard
-      const redirectTo = searchParams.get('redirect') || '/dashboard'
+
+      const redirectTo = searchParams?.redirect || '/dashboard'
       router.push(redirectTo)
     } catch (error) {
       console.error('Login error:', error)
       toast.error(typeof error === 'string' ? error : 'Something went wrong.')
     }
   }
-
   // Show loading while checking authentication
   if (loading) {
     return (
