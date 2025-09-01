@@ -3,6 +3,7 @@
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Bell, Search, User, Menu } from 'lucide-react'
 import { Button } from '../ui/Button'
+import SearchBar from '../ui/SearchBar'
 
 export function Header({ onOpenMobile }) {
   return (
@@ -23,10 +24,7 @@ export function Header({ onOpenMobile }) {
           <div className="w-full flex-1 md:w-auto md:flex-none">
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <input
-                placeholder="Search..."
-                className="w-full rounded-md border border-input bg-background pl-8 pr-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 md:w-[300px]"
-              />
+              <SearchBar />
             </div>
           </div>
 
