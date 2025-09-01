@@ -6,12 +6,15 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 const ProtectedRoute = ({ children }) => {
-  const { userData, token, loading } = useAuth()
+  const { userData, token, loading, isAuthenticated } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    // Check if we have both token and userData
-    if (!loading && (!token || !userData)) {
+    // Only check authentication when loading is complete
+    if (loading) return
+
+    // Check if user is authenticated using the context method
+    if (!isAuthenticated()) {
       // Clear any invalid data from localStorage
       localStorage.removeItem('accessToken')
       localStorage.removeItem('userData')
@@ -21,11 +24,11 @@ const ProtectedRoute = ({ children }) => {
 
     // Additional validation: check if token exists in localStorage
     const storedToken = localStorage.getItem('accessToken')
-    if (!loading && !storedToken) {
+    if (!storedToken) {
       router.push('/login')
       return
     }
-  }, [userData, token, loading, router])
+  }, [userData, token, loading, router, isAuthenticated])
 
   // Show loading while checking authentication
   if (loading) {
@@ -37,7 +40,7 @@ const ProtectedRoute = ({ children }) => {
   }
 
   // Don't render anything if not authenticated
-  if (!token || !userData) {
+  if (!isAuthenticated()) {
     return null
   }
 
