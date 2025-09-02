@@ -283,8 +283,6 @@ export default function OrdersClient() {
           >
             <option value="">Bulk actions</option>
             <option value="export">Export as CSV</option>
-            <option value="mark_exported">Mark exported</option>
-            <option value="unmark_exported">Unmark exported</option>
             <option value="processing">Change status to processing</option>
             <option value="on_hold">Change status to on-hold</option>
             <option value="completed">Change status to completed</option>
