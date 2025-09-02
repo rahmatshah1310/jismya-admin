@@ -52,7 +52,6 @@ export default function OrdersClient() {
   const totalPages = data?.data?.total || 1
   const page = filtersFromURL.page || 1
 
-
   // Selection state for bulk actions
   const [selectedOrders, setSelectedOrders] = useState([])
   const idsOnPage = useMemo(() => orders.map((o) => o._id), [orders])
@@ -284,7 +283,6 @@ export default function OrdersClient() {
           >
             <option value="">Bulk actions</option>
             <option value="export">Export as CSV</option>
-            <option value="export_xlsx">Export as XLSX</option>
             <option value="mark_exported">Mark exported</option>
             <option value="unmark_exported">Unmark exported</option>
             <option value="processing">Change status to processing</option>
