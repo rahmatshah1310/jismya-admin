@@ -114,7 +114,6 @@ export default function EditOrderModal({ showEditModal, onClose, orderData }) {
 
           {/* Order Items */}
           <div>
-            <h2 className="font-semibold">Order Items</h2>
             {items.map((item, i) => (
               <div key={i} className="grid grid-cols-3 gap-2 mb-2">
                 <Input
