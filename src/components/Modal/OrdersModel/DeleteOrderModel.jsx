@@ -3,6 +3,7 @@ import { toast } from 'react-toastify'
 import { Button } from '@/components/ui/Button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { useDeleteOrder } from '@/app/api/orderApi'
+import { useRouter } from 'next/navigation'
 
 export default function DeleteOrderModal({
   order,
@@ -13,12 +14,13 @@ export default function DeleteOrderModal({
 
   const deleteMutation = useDeleteOrder(order.orderId)
   const isLoading = deleteMutation.isPending
-
+  const router = useRouter()
   const handleDelete = () => {
     deleteMutation.mutateAsync(order.orderId, {
       onSuccess: (res) => {
         toast.success(res?.message || 'Order deleted successfully!')
         onClose()
+        router.push('/orders')
       },
       onError: (error) => {
         console.error('Delete error:', error)
