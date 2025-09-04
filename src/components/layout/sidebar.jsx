@@ -31,7 +31,7 @@ const sidebarNavItems = [
   { title: 'Banners', href: '/banners', icon: Image },
   { title: 'Orders', href: '/orders', icon: ShoppingCart },
   { title: 'Categories', href: '/categories', icon: Grid },
-  { title: 'Sales Analytics', href: '/sales', icon: Activity },
+  { title: 'Sales', href: '/sales', icon: Activity },
   { title: 'Statistics', href: '/statistics', icon: BarChart3 },
 ]
 
