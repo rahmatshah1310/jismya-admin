@@ -19,6 +19,7 @@ import { OrderSkeletonRow } from '@/components/ui/common/Skeleton'
 import OrderFilters from '@/components/OrderFilter'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'react-toastify'
+import CreateOrderModal from '@/components/Modal/OrdersModel/CreateOrderModel'
 
 const statusColors = {
   complete: 'bg-green-100 text-green-700',
@@ -32,6 +33,7 @@ export default function OrdersClient() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [activeModal, setActiveModal] = useState(null)
+  const [showCreateModal, setShowCreateModal] = useState(false)
   const { data: orderstat } = useGetOrderStats()
   const orderStats = orderstat?.data
   const cancelOrderMutation = useCancelOrder()
@@ -236,7 +238,20 @@ export default function OrdersClient() {
   return (
     <DashboardLayout>
       <div className="p-6">
-        <h1 className="text-2xl font-semibold mb-6">Orders</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-semibold">Orders</h1>
+          <Button
+            onClick={() => setShowCreateModal(true)}
+            className="bg-blue-600 text-white hover:bg-blue-700"
+          >
+            Create Order
+          </Button>
+        </div>
+
+        <CreateOrderModal
+          showModal={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+        />
 
         {/* Filters */}
         <OrderFilters onFilter={handleFilter} currentFilters={filtersFromURL} />
@@ -380,15 +395,6 @@ export default function OrdersClient() {
                           className="cursor-pointer"
                           onClick={() =>
                             router.push(`/orders/${order.orderId}`)
-                          }
-                        />
-                        <Trash2
-                          className="cursor-pointer text-red-500"
-                          onClick={() =>
-                            setActiveModal({
-                              type: 'cancel',
-                              orderId: order._id,
-                            })
                           }
                         />
                       </td>
