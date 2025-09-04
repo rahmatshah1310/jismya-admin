@@ -127,28 +127,6 @@ export default function CreateOrderModal({ showModal, onClose }) {
                 className="border p-2 w-full"
               />
             </div>
-            <div>
-              <label htmlFor="ba-phone" className="text-sm font-medium text-foreground">Phone</label>
-              <Input
-                id="ba-phone"
-                placeholder="Phone"
-                value={billingAddress.phone}
-                onChange={(e) => setBillingAddress({ ...billingAddress, phone: e.target.value })}
-                required
-                className="border p-2 w-full"
-              />
-            </div>
-            <div>
-              <label htmlFor="ba-country" className="text-sm font-medium text-foreground">Country</label>
-              <Input
-                id="ba-country"
-                placeholder="Country"
-                value={billingAddress.country}
-                onChange={(e) => setBillingAddress({ ...billingAddress, country: e.target.value })}
-                required
-                className="border p-2 w-full"
-              />
-            </div>
             <div className="sm:col-span-2">
               <label htmlFor="ba-city" className="text-sm font-medium text-foreground">City</label>
               <Input
@@ -173,6 +151,29 @@ export default function CreateOrderModal({ showModal, onClose }) {
                 className="border p-2 w-full"
               />
             </div>
+            <div>
+              <label htmlFor="ba-phone" className="text-sm font-medium text-foreground">Phone</label>
+              <Input
+                id="ba-phone"
+                placeholder="Phone"
+                value={billingAddress.phone}
+                onChange={(e) => setBillingAddress({ ...billingAddress, phone: e.target.value })}
+                required
+                className="border p-2 w-full"
+              />
+            </div>
+            <div>
+              <label htmlFor="ba-country" className="text-sm font-medium text-foreground">Country</label>
+              <Input
+                id="ba-country"
+                placeholder="Country"
+                value={billingAddress.country}
+                onChange={(e) => setBillingAddress({ ...billingAddress, country: e.target.value })}
+                required
+                className="border p-2 w-full"
+              />
+            </div>
+           
           </div>
 
           {/* Order Items */}
